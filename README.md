@@ -49,6 +49,7 @@ flowchart TD
 ├── users.py                # FastAPI Users configuration
 ├── init_db.py              # Database initialization
 ├── create_superuser.py     # Superuser creation script
+├── add_sample_products.py  # Sample product data script
 ├── test.db                 # SQLite database (auto-created)
 ├── pyproject.toml          # Project dependencies
 └── uv.lock                 # Lock file
@@ -75,10 +76,20 @@ uv run python create_superuser.py
 ```
 
 This creates a superuser with:
+
 - **Email**: `admin@example.com`
 - **Password**: `admin123`
 
-### 4. Start the Application
+### 4. Add Sample Data (Optional)
+
+```bash
+# Add sample products to see the admin panel in action
+uv run python add_sample_products.py
+```
+
+This adds 8 sample products across different categories (Electronics, Footwear, Books, etc.) to demonstrate the admin panel functionality.
+
+### 5. Start the Application
 
 ```bash
 uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
@@ -156,6 +167,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 ### 1. **Admin Panel** (http://localhost:8000/admin/)
 - Django-like admin interface
 - User management (create, edit, delete)
+- Product management (create, edit, delete)
 - Database record management
 - Session-based authentication
 
@@ -175,6 +187,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 - SQLite for development
 - Async database operations
 - Alembic migrations support
+- Multiple model support (Users, Products, etc.)
 
 ## Security Features
 
@@ -203,9 +216,10 @@ uv run ruff check auth.py
 
 ### Adding New Models
 
-1. **Define model** in `models.py`
-2. **Create admin view** in `main.py`
+1. **Define model** in `models.py` (see Product model example)
+2. **Create admin view** in `main.py` (see ProductAdmin example)
 3. **Run database migration** (if using Alembic)
+4. **Add sample data** (optional, see `add_sample_products.py`)
 
 ### Customizing Authentication
 
@@ -248,4 +262,5 @@ The authentication system is modular:
 rm test.db
 uv run python init_db.py
 uv run python create_superuser.py
+uv run python add_sample_products.py  # Optional: add sample data
 ```

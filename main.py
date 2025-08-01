@@ -9,7 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from sqladmin import Admin, ModelView
 from sqlalchemy import select
 from db import async_engine, AsyncSessionLocal
-from models import User
+from models import User, Product
 from auth import create_user_token
 from admin_auth import AdminAuth
 from fastapi_users.password import PasswordHelper
@@ -78,4 +78,10 @@ class UserAdmin(ModelView, model=User):
     column_list = [User.id, User.email, User.is_active, User.is_superuser]
 
 
+class ProductAdmin(ModelView, model=Product):
+    column_list = [Product.id, Product.name, Product.price, Product.category, Product.in_stock, Product.created_at]
+    column_searchable_list = [Product.name, Product.description, Product.category]
+
+
 admin.add_view(UserAdmin)
+admin.add_view(ProductAdmin)
