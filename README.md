@@ -72,9 +72,10 @@ uv run python oppman.py runserver
 ```
 
 Then visit:
-- **Homepage**: http://localhost:8000/
-- **Admin Panel**: http://localhost:8000/admin/ (login: admin@example.com / admin123)
-- **API Docs**: http://localhost:8000/docs
+
+- **Homepage**: `http://localhost:8000/`
+- **Admin Panel**: `http://localhost:8000/admin/` (login: `admin@example.com / admin123`)
+- **API Docs**: `http://localhost:8000/docs`
 
 ## Setup
 
@@ -91,6 +92,7 @@ uv run python oppman.py init
 ```
 
 This single command will:
+
 - Initialize the database
 - Create superuser: `admin@example.com` / `admin123`
 - Add test users (password: `test123`)
@@ -216,29 +218,34 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 - Complete database initialization with one command
 - Individual setup operations (database, users, products)
 - Development server management (start/stop with `--reload`)
+- Production server with Gunicorn (no Nginx required)
 - Database backup and deletion with automatic backups
 - Comprehensive help system
 - Test data creation for development
 
-### 2. **Admin Panel** (http://localhost:8000/admin/)
+### 2. **Admin Panel** (`http://localhost:8000/admin/`)
+
 - Django-like admin interface
 - User management (create, edit, delete)
 - Product management (create, edit, delete)
 - Database record management
 - Session-based authentication
 
-### 2. **API Documentation** (http://localhost:8000/docs)
+### 2. **API Documentation** (`http://localhost:8000/docs`)
+
 - Interactive Swagger UI
 - Auto-generated from FastAPI code
 - Test endpoints directly
 
 ### 3. **User Management**
+
 - User registration and authentication
 - Password hashing with [FastAPI Users](https://github.com/fastapi-users/fastapi-users)
 - Superuser permissions
 - Active/inactive user status
 
 ### 4. **Database Integration**
+
 - SQLModel ORM (Pydantic + SQLAlchemy)
 - SQLite for development
 - Async database operations
@@ -293,6 +300,7 @@ The authentication system is modular:
    - Update session secret in `main.py`
 
 2. **Use environment variables**:
+
    ```python
    import os
    SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
@@ -326,3 +334,8 @@ uv run python oppman.py superuser
 uv run python oppman.py users
 uv run python oppman.py products
 ```
+
+## Resources
+
+- [PostgreSQL Install for Production](docs/postgresql_install.md)
+- [Production versus Development](docs/production_vs_development.md)

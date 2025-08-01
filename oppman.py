@@ -140,6 +140,40 @@ def stop_server():
         return False
 
 
+def run_production_server():
+    """Start the production server with Gunicorn"""
+    print("🚀 Starting FastAPI production server...")
+    print("📡 Server will be available at: http://localhost:8000")
+    print("🔧 Admin panel: http://localhost:8000/admin/")
+    print("📚 API docs: http://localhost:8000/docs")
+    print("⏹️  Press Ctrl+C to stop the server")
+    print()
+    
+    try:
+        # Start gunicorn with uvicorn workers
+        subprocess.run([
+            "uv", "run", "gunicorn",
+            "main:app",
+            "-w", "4",  # 4 workers
+            "-k", "uvicorn.workers.UvicornWorker",
+            "--bind", "0.0.0.0:8000",
+            "--timeout", "120",
+            "--keep-alive", "5",
+            "--max-requests", "1000",
+            "--max-requests-jitter", "50"
+        ], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to start server: {e}")
+        print("Make sure asyncpg and gunicorn are installed: uv add asyncpg gunicorn")
+        return False
+    except KeyboardInterrupt:
+        print("\n🛑 Server stopped by user")
+        return True
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return False
+
+
 async def run_full_init():
     """Run complete initialization: init + superuser + users + products"""
     print("🚀 Running full initialization...")
@@ -176,6 +210,7 @@ COMMANDS:
     products    Add sample products only
     runserver   Start development server with uvicorn --reload
     stopserver  Stop development server
+    production  Start production server with Gunicorn (no Nginx)
     delete      Delete current database (with backup)
     backup      Backup current database
     help        Show this help message
@@ -195,6 +230,9 @@ EXAMPLES:
     
     # Stop development server
     python oppman.py stopserver
+    
+    # Start production server (no Nginx)
+    python oppman.py production
     
     # Database management
     python oppman.py backup
@@ -238,7 +276,10 @@ Examples:
     parser.add_argument(
         "command",
         nargs="?",
-        choices=["init", "db", "superuser", "users", "products", "runserver", "stopserver", "delete", "backup", "help"],
+        choices=[
+            "init", "db", "superuser", "users", "products", 
+            "runserver", "stopserver", "production", "delete", "backup", "help"
+        ],
         help="Command to execute"
     )
     
@@ -269,6 +310,10 @@ Examples:
     
     if args.command == "stopserver":
         stop_server()
+        return
+    
+    if args.command == "production":
+        run_production_server()
         return
     
     # Handle async commands
