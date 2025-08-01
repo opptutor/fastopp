@@ -1,6 +1,7 @@
 # =========================
 # main.py
 # =========================
+import os
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -13,10 +14,18 @@ from models import User, Product
 from auth import create_user_token
 from admin_auth import AdminAuth
 from fastapi_users.password import PasswordHelper
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get secret key from environment
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
+
 # from users import fastapi_users, auth_backend  # type: ignore
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="SECRET_KEY_CHANGE_ME")
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 templates = Jinja2Templates(directory="templates")
 security = HTTPBasic()
 
@@ -71,7 +80,7 @@ async def login(credentials: HTTPBasicCredentials = Depends(security)):
 # app.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])  # type: ignore
 # app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])  # type: ignore
 
-admin = Admin(app, async_engine, authentication_backend=AdminAuth(secret_key="SECRET_KEY_CHANGE_ME"))
+admin = Admin(app, async_engine, authentication_backend=AdminAuth(secret_key=SECRET_KEY))
 
 
 class UserAdmin(ModelView, model=User):

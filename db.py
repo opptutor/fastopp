@@ -1,9 +1,17 @@
 # db.py
+import os
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get database URL from environment (defaults to SQLite for development)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 # Database URL formats:
-# SQLite (async) - current format
-DATABASE_URL = "sqlite+aiosqlite:///./test.db"  # or your desired filename
+# SQLite (async) - development default
+# DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
 # Alternative formats:
 # DATABASE_URL = "sqlite+aiosqlite:///absolute/path/to/test.db"  # Absolute path

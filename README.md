@@ -44,7 +44,7 @@ flowchart TD
 ├── auth.py                 # JWT authentication system
 ├── admin_auth.py           # SQLAdmin authentication backend
 ├── templates/index.html    # Jinja2 templates
-├── db.py                   # Database configuration
+├── db.py                   # Database configuration (uses environment variables)
 ├── models.py               # SQLModel models
 ├── users.py                # FastAPI Users configuration
 ├── oppman.py               # Management tool for database operations
@@ -52,100 +52,201 @@ flowchart TD
 │   ├── init_db.py          # Database initialization
 │   ├── create_superuser.py # Superuser creation script
 │   ├── add_test_users.py   # Test users creation script
-│   └── add_sample_products.py # Sample product data script
+│   ├── add_sample_products.py # Sample product data script
+│   ├── check_env.py        # Environment configuration checker
+│   └── migrate/            # Database migration management
 ├── test.db                 # SQLite database (auto-created)
+├── .env                    # Environment variables (create this)
 ├── pyproject.toml          # Project dependencies
 └── uv.lock                 # Lock file
 ```
 
-## Quick Start
+## 🚀 Quick Start (For Team Members)
 
-For a complete setup and start in one go:
+### Prerequisites
+
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/) package manager
+
+### 1. Clone and Setup
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd fastapi_d
+
 # Install dependencies
 uv sync
 
-# Initialize everything and start server
-uv run python oppman.py init
-uv run python oppman.py runserver
+# Add environment variable support
+uv add python-dotenv
 ```
 
-Then visit:
+### 2. Environment Configuration
 
-- **Homepage**: `http://localhost:8000/`
-- **Admin Panel**: `http://localhost:8000/admin/` (login: `admin@example.com / admin123`)
-- **API Docs**: `http://localhost:8000/docs`
-
-## Setup
+Create a `.env` file in your project root:
 
 ```bash
-uv sync
+# Create environment file with secure defaults
+cat > .env << EOF
+DATABASE_URL=sqlite+aiosqlite:///./test.db
+SECRET_KEY=dev_secret_key_$(openssl rand -hex 32)
+ENVIRONMENT=development
+EOF
 ```
 
-### 2. Initialize Database and Add Data
-
-**Option A: Full Setup (Recommended)**
+**Or manually create `.env`:**
 
 ```bash
-uv run python oppman.py init
+# .env
+DATABASE_URL=sqlite+aiosqlite:///./test.db
+SECRET_KEY=dev_secret_key_change_in_production_$(openssl rand -hex 32)
+ENVIRONMENT=development
+```
+
+### 3. One-Command Setup
+
+```bash
+# Complete setup with one command
+python oppman.py init
 ```
 
 This single command will:
+- Initialize migrations
+- Create initial migration
+- Apply migrations
+- Initialize database with sample data
+- Create superuser and test data
 
-- Initialize the database
-- Create superuser: `admin@example.com` / `admin123`
-- Add test users (password: `test123`)
-- Add sample products
+**Alternative: Step-by-Step Setup**
 
-**Option B: Step-by-Step Setup**
-
-```bash
-# Initialize database
-uv run python oppman.py db
-
-# Create superuser
-uv run python oppman.py superuser
-
-# Add test users (optional)
-uv run python oppman.py users
-
-# Add sample products (optional)
-uv run python oppman.py products
-```
-
-**Database Management**
+If you prefer to understand each step:
 
 ```bash
-# Backup current database
-uv run python oppman.py backup
+# Initialize migrations (first time only)
+python oppman.py migrate init
 
-# Delete database (with automatic backup)
-uv run python oppman.py delete
+# Create initial migration
+python oppman.py migrate create "Initial migration"
 
-# Show help
-uv run python oppman.py help
+# Apply migrations
+python oppman.py migrate upgrade
+
+# Initialize database with sample data
+python oppman.py init
 ```
 
-### 5. Start the Application
-
-**Option A: Using Management Tool (Recommended)**
+### 4. Start Development Server
 
 ```bash
-# Start server
-uv run python oppman.py runserver
-
-# Stop server
-uv run python oppman.py stopserver
+# Start the server
+python oppman.py runserver
 ```
 
-**Option B: Direct Command**
+### 5. Access the Application
+
+Visit these URLs in your browser:
+
+- **Homepage**: `http://localhost:8000/`
+- **Admin Panel**: `http://localhost:8000/admin/`
+- **API Docs**: `http://localhost:8000/docs`
+
+#### Admin Panel Login
+
+Use these credentials to access the admin panel:
+
+- **Email**: `admin@example.com`
+- **Password**: `admin123`
+
+## 🔧 Environment Configuration
+
+The project uses environment variables for flexible configuration:
+
+### Development Setup (Default)
 
 ```bash
-uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# .env
+DATABASE_URL=sqlite+aiosqlite:///./test.db
+SECRET_KEY=dev_secret_key_change_in_production_$(openssl rand -hex 32)
+ENVIRONMENT=development
 ```
 
-## Authentication System
+### Production Setup (Optional)
+
+```bash
+# .env (production)
+DATABASE_URL=postgresql+asyncpg://user:password@localhost/fastopp_db
+SECRET_KEY=your_very_secure_production_secret_key_here
+ENVIRONMENT=production
+```
+
+### Check Environment Configuration
+
+```bash
+# Verify your environment setup
+python oppman.py env
+```
+
+## 🛠️ Management Commands
+
+### Database Operations
+
+```bash
+# Initialize everything (database + superuser + users + products)
+python oppman.py init
+
+# Individual operations
+python oppman.py db              # Initialize database only
+python oppman.py superuser       # Create superuser only
+python oppman.py users           # Add test users only
+python oppman.py products        # Add sample products only
+
+# Database management
+python oppman.py backup          # Backup database
+python oppman.py delete          # Delete database (with backup)
+```
+
+### Server Management
+
+```bash
+# Development server
+python oppman.py runserver       # Start development server
+python oppman.py stopserver      # Stop development server
+
+# Production server (optional)
+python oppman.py production      # Start production server
+```
+
+### Migration Management
+
+```bash
+# Initialize migrations (first time only)
+python oppman.py migrate init
+
+# Create new migration
+python oppman.py migrate create "Add new table"
+
+# Apply migrations
+python oppman.py migrate upgrade
+
+# Check migration status
+python oppman.py migrate current
+
+# View migration history
+python oppman.py migrate history
+```
+
+### Environment Management
+
+```bash
+# Check environment configuration
+python oppman.py env
+
+# Show all available commands
+python oppman.py help
+```
+
+## 🔐 Authentication System
 
 This FastAPI application includes a comprehensive authentication system with both web-based and API authentication. We use a **hybrid approach** that combines:
 
@@ -153,13 +254,9 @@ This FastAPI application includes a comprehensive authentication system with bot
 - **Custom JWT authentication** for API access
 - **Custom session-based authentication** for the admin panel
 
-### Why This Approach?
-
-We initially tried to use FastAPI Users' built-in authentication, but encountered compatibility issues with version 14.0.1. Instead, we built a custom authentication system that leverages FastAPI Users' excellent password hashing and user management features while providing our own JWT and session authentication.
-
 ### Admin Panel Authentication
 
-The admin panel uses session-based authentication similar to Django's admin interface. **Authentication now verifies users against the database** instead of using hardcoded credentials.
+The admin panel uses session-based authentication similar to Django's admin interface. **Authentication verifies users against the database** instead of using hardcoded credentials.
 
 #### Access Admin Panel
 
@@ -191,151 +288,142 @@ curl -X POST http://localhost:8000/login \
 **Response**:
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
   "token_type": "bearer"
 }
 ```
 
-#### Use Token for API Calls
+#### Use Authentication Token
 
 ```bash
-curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  http://localhost:8000/admin/
+curl -X GET http://localhost:8000/admin/ \
+  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
 ```
 
-### Authentication Endpoints
+## 📊 Test Data
 
-| Endpoint | Method | Description | Auth Required |
-|----------|--------|-------------|---------------|
-| `/` | GET | Homepage | No |
-| `/admin/` | GET | Admin panel | Yes (Session) |
-| `/login` | POST | Get JWT token | Basic Auth |
-| `/docs` | GET | API documentation | No |
+The application comes with pre-loaded test data:
 
-## Available Features
+### Users
 
-### 1. **Management Tool** (`oppman.py`)
-- Complete database initialization with one command
-- Individual setup operations (database, users, products)
-- Development server management (start/stop with `--reload`)
-- Production server with Gunicorn (no Nginx required)
-- Database backup and deletion with automatic backups
-- Comprehensive help system
-- Test data creation for development
+- **Superuser**: `admin@example.com` / `admin123`
+- **Test Users**: `john@example.com`, `jane@example.com`, `bob@example.com` / `test123`
 
-### 2. **Admin Panel** (`http://localhost:8000/admin/`)
+### Products
 
-- Django-like admin interface
-- User management (create, edit, delete)
-- Product management (create, edit, delete)
-- Database record management
-- Session-based authentication
+Sample products with various categories and prices for testing the admin interface.
 
-### 2. **API Documentation** (`http://localhost:8000/docs`)
+## 🔄 Database Migrations
 
-- Interactive Swagger UI
-- Auto-generated from FastAPI code
-- Test endpoints directly
+The project uses Alembic for database migrations, providing Django-like migration functionality:
 
-### 3. **User Management**
+### Migration Workflow
 
-- User registration and authentication
-- Password hashing with [FastAPI Users](https://github.com/fastapi-users/fastapi-users)
-- Superuser permissions
-- Active/inactive user status
+1. **Add/Modify Models**: Edit `models.py` with your changes
+2. **Create Migration**: `python oppman.py migrate create "Description"`
+3. **Review Migration**: Check the generated file in `alembic/versions/`
+4. **Apply Migration**: `python oppman.py migrate upgrade`
+5. **Verify**: `python oppman.py migrate current`
 
-### 4. **Database Integration**
-
-- SQLModel ORM (Pydantic + SQLAlchemy)
-- SQLite for development
-- Async database operations
-- Alembic migrations support
-- Multiple model support (Users, Products, etc.)
-
-## Security Features
-
-- ✅ **JWT token authentication** for APIs (custom implementation)
-- ✅ **Session-based authentication** for admin panel (custom implementation)
-- ✅ **Password hashing** with Argon2 (via FastAPI Users)
-- ✅ **Superuser permission checking**
-- ✅ **Database user verification**
-- ✅ **Secure session management**
-
-## Development
-
-### Code Quality Checks
+### Migration Commands
 
 ```bash
-# Type checking with mypy
-uv run mypy db.py
-uv run mypy main.py
-uv run mypy auth.py
+# Initialize migrations (first time only)
+python oppman.py migrate init
 
-# Linting with ruff
-uv run ruff check db.py
-uv run ruff check main.py
-uv run ruff check auth.py
+# Create a new migration
+python oppman.py migrate create "Add user profile table"
+
+# Apply all pending migrations
+python oppman.py migrate upgrade
+
+# Check current status
+python oppman.py migrate current
+
+# View migration history
+python oppman.py migrate history
 ```
 
-### Adding New Models
-
-1. **Define model** in `models.py` (see Product model example)
-2. **Create admin view** in `main.py` (see ProductAdmin example)
-3. **Run database migration** (if using Alembic)
-4. **Add sample data** (optional, see `add_sample_products.py`)
-
-### Customizing Authentication
-
-The authentication system is modular:
-
-- **`auth.py`**: Custom JWT token authentication
-- **`admin_auth.py`**: Custom SQLAdmin authentication backend
-- **`main.py`**: Login endpoints and admin configuration
-- **`users.py`**: FastAPI Users configuration (for password hashing)
-
-## Production Considerations
-
-1. **Change default secrets**:
-   - Update `SECRET_KEY` in `auth.py`
-   - Update session secret in `main.py`
-
-2. **Use environment variables**:
-
-   ```python
-   import os
-   SECRET_KEY = os.getenv("SECRET_KEY", "default-secret")
-   ```
-
-3. **Database**: Switch from SQLite to PostgreSQL
-4. **HTTPS**: Configure SSL/TLS certificates
-5. **Rate limiting**: Add request rate limiting
-6. **Logging**: Configure proper logging
-
-## Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-1. **Module not found errors**: Run `uv sync` to install dependencies
-2. **Database errors**: Run `uv run python init_db.py` to recreate database
-3. **Authentication fails**: Check if superuser exists with `uv run python create_superuser.py`
-4. **Port already in use**: Change port with `--port 8001`
+1. **"Alembic not found"**
+   ```bash
+   uv add alembic
+   ```
 
-### Reset Database
+2. **"Alembic not initialized"**
+   ```bash
+   python oppman.py migrate init
+   ```
+
+3. **Environment issues**
+   ```bash
+   # Check environment configuration
+   python oppman.py env
+   ```
+
+4. **Database issues**
+   ```bash
+   # Backup and reset
+   python oppman.py backup
+   python oppman.py delete
+   python oppman.py init
+   ```
+
+5. **"Module not found" errors**
+   ```bash
+   # Reinstall dependencies
+   uv sync
+   ```
+
+6. **Port already in use**
+   ```bash
+   # Stop any running servers
+   python oppman.py stopserver
+   
+   # Or use a different port
+   uv run uvicorn main:app --reload --port 8001
+   ```
+
+### Quick Reset
+
+If something goes wrong, you can reset everything:
 
 ```bash
-# Option A: Using management tool (recommended)
-uv run python oppman.py delete
-uv run python oppman.py init
+# Backup current database
+python oppman.py backup
 
-# Option B: Manual reset
-rm test.db
-uv run python oppman.py db
-uv run python oppman.py superuser
-uv run python oppman.py users
-uv run python oppman.py products
+# Delete and reinitialize
+python oppman.py delete
+python oppman.py init
+
+# Verify setup
+python oppman.py env
 ```
 
-## Resources
+### Environment Variables
 
-- [PostgreSQL Install for Production](docs/postgresql_install.md)
-- [Production versus Development](docs/production_vs_development.md)
+- ✅ **Never commit `.env` files** to version control
+- ✅ **Use different secret keys** for development and production
+- ✅ **Use strong, random secret keys** in production
+- ✅ **Environment variables** keep credentials out of source code
+
+## 📚 Documentation
+
+- [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
+- [Production vs Development](docs/production_vs_development.md) - Environment differences
+- [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
+
+## 🎯 Evaluation Focus
+
+This setup allows your team to quickly evaluate:
+
+1. **FastAPI Admin Interface** - Compare with Django Admin
+2. **Authentication System** - JWT + Session-based auth
+3. **Database Management** - SQLModel + Alembic migrations
+4. **Development Experience** - Environment variables, management commands
+5. **Production Readiness** - PostgreSQL, Gunicorn, environment config
+
+The goal is to assess whether FastAPI + pre-built admin tools can provide a Django-like development experience for your team.

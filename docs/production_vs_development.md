@@ -12,14 +12,76 @@
 | **Logging** | Console | File + rotation |
 | **Backups** | Manual | Automated |
 
-## Database URLs
+## Database Configuration (Recommended: Environment Variables)
 
-### Development
+### Development Setup
+
+Create a `.env` file in your project root:
+
+```bash
+# .env
+DATABASE_URL=sqlite+aiosqlite:///./test.db
+SECRET_KEY=your_development_secret_key_here
+ENVIRONMENT=development
+```
+
+Update your `db.py` to use environment variables:
+
+```python
+# db.py
+import os
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Get database URL from environment (defaults to SQLite for development)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
+
+# Create async engine
+async_engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,  # set to False in production
+    future=True
+)
+
+# Session factory
+AsyncSessionLocal = async_sessionmaker(
+    bind=async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False,
+    autocommit=False
+)
+```
+
+### Production Setup
+
+For production, your `.env` file would contain:
+
+```bash
+# .env (production)
+DATABASE_URL=postgresql+asyncpg://fastopp_user:your_secure_password@localhost/fastopp_db
+SECRET_KEY=your_very_secure_production_secret_key_here
+ENVIRONMENT=production
+```
+
+### Install python-dotenv
+
+```bash
+# Add dotenv dependency
+uv add python-dotenv
+```
+
+## Database URLs by Environment
+
+### Development (SQLite)
 ```python
 DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 ```
 
-### Production
+### Production (PostgreSQL)
 ```python
 DATABASE_URL = "postgresql+asyncpg://user:password@localhost/fastopp_db"
 ```
@@ -28,7 +90,11 @@ DATABASE_URL = "postgresql+asyncpg://user:password@localhost/fastopp_db"
 
 ### Development
 ```bash
+# Start development server
 uv run uvicorn main:app --reload
+
+# Or use oppman.py
+python oppman.py runserver
 ```
 
 ### Production
@@ -45,35 +111,53 @@ sudo journalctl -u fastopp -f
 
 ## Key Differences
 
-### 1. **asyncpg vs aiosqlite**
+### 1. **Environment-Based Configuration**
+- **Development**: Uses `.env` file with SQLite configuration
+- **Production**: Uses `.env` file with PostgreSQL configuration
+- **Benefits**: Easy switching, secure credential management
+
+### 2. **asyncpg vs aiosqlite**
 - **Development**: `aiosqlite` for SQLite async operations
 - **Production**: `asyncpg` for PostgreSQL async operations
 - **Performance**: asyncpg is much faster for PostgreSQL
 
-### 2. **Gunicorn + Uvicorn**
+### 3. **Gunicorn + Uvicorn**
 - **Development**: Single uvicorn process with auto-reload
 - **Production**: Multiple worker processes managed by Gunicorn
 - **Benefits**: Better performance, process isolation, auto-restart
 
-### 3. **Environment Variables**
-- **Development**: Hardcoded values in code
-- **Production**: Environment variables for security
+### 4. **Environment Variables**
+- **Development**: `.env` file with development settings
+- **Production**: `.env` file with production settings
+- **Security**: Credentials never hardcoded in source code
 
-### 4. **Logging**
+### 5. **Logging**
 - **Development**: Console output
 - **Production**: Structured file logging with rotation
 
-### 5. **Security**
+### 6. **Security**
 - **Development**: Basic setup
 - **Production**: SSL, security headers, firewall
 
-## Migration Checklist
+## Development Setup Checklist
+
+For development environment:
+
+- [ ] Install python-dotenv: `uv add python-dotenv`
+- [ ] Create `.env` file with development settings
+- [ ] Update `db.py` to use environment variables
+- [ ] Test database connection
+- [ ] Run migrations: `python oppman.py migrate init`
+- [ ] Initialize database: `python oppman.py init`
+- [ ] Start development server: `python oppman.py runserver`
+
+## Production Migration Checklist
 
 When moving from development to production:
 
 - [ ] Install PostgreSQL 15
 - [ ] Install asyncpg: `uv add asyncpg`
-- [ ] Update DATABASE_URL in db.py
+- [ ] Create production `.env` file
 - [ ] Install Gunicorn: `uv add gunicorn`
 - [ ] Create gunicorn.conf.py
 - [ ] Create systemd service
@@ -92,4 +176,21 @@ When moving from development to production:
 | **Database Performance** | Good | Excellent |
 | **Memory Usage** | Low | Optimized |
 | **Reliability** | Basic | High |
-| **Monitoring** | None | Comprehensive | 
+| **Monitoring** | None | Comprehensive |
+
+## Environment Variable Benefits
+
+### Security
+- ✅ Credentials never in source code
+- ✅ Different settings per environment
+- ✅ Easy to change without code changes
+
+### Flexibility
+- ✅ Easy switching between databases
+- ✅ Development team can use different settings
+- ✅ CI/CD friendly
+
+### Best Practices
+- ✅ Follows 12-factor app methodology
+- ✅ Industry standard approach
+- ✅ Works with containerization (Docker) 

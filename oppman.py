@@ -20,6 +20,8 @@ try:
     from scripts.create_superuser import create_superuser
     from scripts.add_test_users import add_test_users
     from scripts.add_sample_products import add_sample_products
+    from scripts.migrate.cli import run_migrate_command, show_migration_help
+    from scripts.check_env import check_environment
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure all script files are in the scripts/ directory")
@@ -213,6 +215,8 @@ COMMANDS:
     production  Start production server with Gunicorn (no Nginx)
     delete      Delete current database (with backup)
     backup      Backup current database
+    migrate     Database migration management (see examples below)
+    env         Check environment configuration
     help        Show this help message
 
 EXAMPLES:
@@ -237,6 +241,15 @@ EXAMPLES:
     # Database management
     python oppman.py backup
     python oppman.py delete
+    
+    # Migration management
+    python oppman.py migrate init
+    python oppman.py migrate create "Add new table"
+    python oppman.py migrate upgrade
+    python oppman.py migrate current
+    
+    # Environment management
+    python oppman.py env
 
 DEFAULT CREDENTIALS:
     Superuser: admin@example.com / admin123
@@ -278,9 +291,21 @@ Examples:
         nargs="?",
         choices=[
             "init", "db", "superuser", "users", "products", 
-            "runserver", "stopserver", "production", "delete", "backup", "help"
+            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help"
         ],
         help="Command to execute"
+    )
+    
+    parser.add_argument(
+        "migrate_command",
+        nargs="?",
+        help="Migration subcommand (use with 'migrate')"
+    )
+    
+    parser.add_argument(
+        "migrate_args",
+        nargs="*",
+        help="Additional arguments for migration command"
     )
     
     args = parser.parse_args()
@@ -314,6 +339,20 @@ Examples:
     
     if args.command == "production":
         run_production_server()
+        return
+    
+    if args.command == "migrate":
+        if not args.migrate_command:
+            show_migration_help()
+            return
+        
+        success = run_migrate_command(args.migrate_command, args.migrate_args)
+        if not success:
+            sys.exit(1)
+        return
+    
+    if args.command == "env":
+        check_environment()
         return
     
     # Handle async commands
