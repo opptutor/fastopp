@@ -35,7 +35,7 @@ flowchart TD
 | Production SQL Database | PostgreSQL with pgvector | PostgreSQL with pgvector |
 | User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
 | Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
-| Authentication | Custom JWT + Session Auth (with FastAPI Users password hashing) | Django Admin Auth |
+| Authentication | Custom JWT + Session Auth (with database user verification and FastAPI Users password hashing) | Django Admin Auth |
 
 ## Project structure
 
@@ -47,49 +47,97 @@ flowchart TD
 ├── db.py                   # Database configuration
 ├── models.py               # SQLModel models
 ├── users.py                # FastAPI Users configuration
-├── init_db.py              # Database initialization
-├── create_superuser.py     # Superuser creation script
-├── add_sample_products.py  # Sample product data script
+├── oppman.py               # Management tool for database operations
+├── scripts/                # Database setup scripts
+│   ├── init_db.py          # Database initialization
+│   ├── create_superuser.py # Superuser creation script
+│   ├── add_test_users.py   # Test users creation script
+│   └── add_sample_products.py # Sample product data script
 ├── test.db                 # SQLite database (auto-created)
 ├── pyproject.toml          # Project dependencies
 └── uv.lock                 # Lock file
 ```
 
-## Setup
+## Quick Start
 
-### 1. Install Dependencies
+For a complete setup and start in one go:
+
+```bash
+# Install dependencies
+uv sync
+
+# Initialize everything and start server
+uv run python oppman.py init
+uv run python oppman.py runserver
+```
+
+Then visit:
+- **Homepage**: http://localhost:8000/
+- **Admin Panel**: http://localhost:8000/admin/ (login: admin@example.com / admin123)
+- **API Docs**: http://localhost:8000/docs
+
+## Setup
 
 ```bash
 uv sync
 ```
 
-### 2. Initialize Database
+### 2. Initialize Database and Add Data
+
+**Option A: Full Setup (Recommended)**
 
 ```bash
-uv run python init_db.py
+uv run python oppman.py init
 ```
 
-### 3. Create Superuser
+This single command will:
+- Initialize the database
+- Create superuser: `admin@example.com` / `admin123`
+- Add test users (password: `test123`)
+- Add sample products
+
+**Option B: Step-by-Step Setup**
 
 ```bash
-uv run python create_superuser.py
+# Initialize database
+uv run python oppman.py db
+
+# Create superuser
+uv run python oppman.py superuser
+
+# Add test users (optional)
+uv run python oppman.py users
+
+# Add sample products (optional)
+uv run python oppman.py products
 ```
 
-This creates a superuser with:
-
-- **Email**: `admin@example.com`
-- **Password**: `admin123`
-
-### 4. Add Sample Data (Optional)
+**Database Management**
 
 ```bash
-# Add sample products to see the admin panel in action
-uv run python add_sample_products.py
-```
+# Backup current database
+uv run python oppman.py backup
 
-This adds 8 sample products across different categories (Electronics, Footwear, Books, etc.) to demonstrate the admin panel functionality.
+# Delete database (with automatic backup)
+uv run python oppman.py delete
+
+# Show help
+uv run python oppman.py help
+```
 
 ### 5. Start the Application
+
+**Option A: Using Management Tool (Recommended)**
+
+```bash
+# Start server
+uv run python oppman.py runserver
+
+# Stop server
+uv run python oppman.py stopserver
+```
+
+**Option B: Direct Command**
 
 ```bash
 uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
@@ -109,14 +157,14 @@ We initially tried to use FastAPI Users' built-in authentication, but encountere
 
 ### Admin Panel Authentication
 
-The admin panel uses session-based authentication similar to Django's admin interface.
+The admin panel uses session-based authentication similar to Django's admin interface. **Authentication now verifies users against the database** instead of using hardcoded credentials.
 
 #### Access Admin Panel
 
 1. **Visit**: http://localhost:8000/admin/
-2. **Login with**:
-   - Username: `admin@example.com`
-   - Password: `admin123`
+2. **Login with any superuser account**:
+   - Username: `admin@example.com` (or any other superuser email)
+   - Password: `admin123` (or the actual password for that user)
 
 #### Features
 
@@ -164,7 +212,15 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 
 ## Available Features
 
-### 1. **Admin Panel** (http://localhost:8000/admin/)
+### 1. **Management Tool** (`oppman.py`)
+- Complete database initialization with one command
+- Individual setup operations (database, users, products)
+- Development server management (start/stop with `--reload`)
+- Database backup and deletion with automatic backups
+- Comprehensive help system
+- Test data creation for development
+
+### 2. **Admin Panel** (http://localhost:8000/admin/)
 - Django-like admin interface
 - User management (create, edit, delete)
 - Product management (create, edit, delete)
@@ -259,8 +315,14 @@ The authentication system is modular:
 ### Reset Database
 
 ```bash
+# Option A: Using management tool (recommended)
+uv run python oppman.py delete
+uv run python oppman.py init
+
+# Option B: Manual reset
 rm test.db
-uv run python init_db.py
-uv run python create_superuser.py
-uv run python add_sample_products.py  # Optional: add sample data
+uv run python oppman.py db
+uv run python oppman.py superuser
+uv run python oppman.py users
+uv run python oppman.py products
 ```
