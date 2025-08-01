@@ -15,6 +15,7 @@ dependencies = [
     "pyjwt>=2.10.1",
     "sqladmin>=0.21.0",
     "sqlalchemy>=2.0.42",
+    "sqlmodel>=0.0.16",
     "uvicorn>=0.35.0",
 ]
 

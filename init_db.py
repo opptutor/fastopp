@@ -4,7 +4,7 @@
 import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 from db import DATABASE_URL
-from models import Base
+from sqlmodel import SQLModel
 
 
 async def init_db():
@@ -13,7 +13,7 @@ async def init_db():
 
     async with engine.begin() as conn:
         # Create all tables
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(SQLModel.metadata.create_all)
 
     await engine.dispose()
     print("✅ Database initialized successfully!")

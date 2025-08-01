@@ -34,7 +34,7 @@ flowchart TD
 | Development SQL Database | SQLite | SQLite |
 | Production SQL Database | PostgreSQL with pgvector | PostgreSQL with pgvector |
 | User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
-| Database Management | SQLAdmin + Template | Django Admin |
+| Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
 | Authentication | Custom JWT + Session Auth (with FastAPI Users password hashing) | Django Admin Auth |
 
 ## Project structure
@@ -45,7 +45,7 @@ flowchart TD
 ├── admin_auth.py           # SQLAdmin authentication backend
 ├── templates/index.html    # Jinja2 templates
 ├── db.py                   # Database configuration
-├── models.py               # SQLAlchemy models
+├── models.py               # SQLModel models
 ├── users.py                # FastAPI Users configuration
 ├── init_db.py              # Database initialization
 ├── create_superuser.py     # Superuser creation script
@@ -183,7 +183,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 - Active/inactive user status
 
 ### 4. **Database Integration**
-- SQLAlchemy ORM
+- SQLModel ORM (Pydantic + SQLAlchemy)
 - SQLite for development
 - Async database operations
 - Alembic migrations support

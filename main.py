@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.middleware.sessions import SessionMiddleware
 from sqladmin import Admin, ModelView
-from sqlalchemy import select
+from sqlmodel import select
 from db import async_engine, AsyncSessionLocal
 from models import User, Product
 from auth import create_user_token
@@ -75,12 +75,12 @@ admin = Admin(app, async_engine, authentication_backend=AdminAuth(secret_key="SE
 
 
 class UserAdmin(ModelView, model=User):
-    column_list = [User.id, User.email, User.is_active, User.is_superuser]
+    column_list = ["id", "email", "is_active", "is_superuser"]
 
 
 class ProductAdmin(ModelView, model=Product):
-    column_list = [Product.id, Product.name, Product.price, Product.category, Product.in_stock, Product.created_at]
-    column_searchable_list = [Product.name, Product.description, Product.category]
+    column_list = ["id", "name", "price", "category", "in_stock", "created_at"]
+    column_searchable_list = ["name", "description", "category"]
 
 
 admin.add_view(UserAdmin)

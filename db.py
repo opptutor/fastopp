@@ -1,6 +1,6 @@
 # db.py
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import declarative_base
+from sqlmodel import SQLModel
 
 DATABASE_URL = "sqlite+aiosqlite:///./test.db"  # or your desired filename
 
@@ -20,5 +20,4 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False
 )
 
-# Base class for models
-Base = declarative_base()
+# SQLModel will handle the base class
