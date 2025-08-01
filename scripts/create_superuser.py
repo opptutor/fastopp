@@ -1,5 +1,5 @@
 import asyncio
-from sqlalchemy import insert
+from sqlmodel import select
 from db import AsyncSessionLocal
 from models import User
 from fastapi_users.password import PasswordHelper
@@ -10,13 +10,23 @@ async def create_superuser():
         password_helper = PasswordHelper()
         password = "admin123"
         hashed_pw = password_helper.hash(password)
-        stmt = insert(User).values(
+        
+        # Check if superuser already exists
+        result = await session.execute(
+            select(User).where(User.email == "admin@example.com")
+        )
+        existing_user = result.scalar_one_or_none()
+        if existing_user:
+            print("⚠️  Superuser already exists: admin@example.com")
+            return
+            
+        user = User(
             email="admin@example.com",
             hashed_password=hashed_pw,
             is_active=True,
             is_superuser=True
         )
-        await session.execute(stmt)
+        session.add(user)
         await session.commit()
         print("✅ Superuser created: admin@example.com / admin123")
 

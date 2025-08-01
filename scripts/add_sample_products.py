@@ -2,7 +2,6 @@
 # add_sample_products.py - Add sample products to database
 # =========================
 import asyncio
-from sqlalchemy import insert
 from db import AsyncSessionLocal
 from models import Product
 
@@ -71,8 +70,8 @@ async def add_sample_products():
         ]
         
         for product_data in sample_products:
-            stmt = insert(Product).values(**product_data)
-            await session.execute(stmt)
+            product = Product(**product_data)
+            session.add(product)
         
         await session.commit()
         print("✅ Added sample products to database!")

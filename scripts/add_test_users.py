@@ -2,7 +2,6 @@
 # add_test_users.py - Add test users to database
 # =========================
 import asyncio
-from sqlalchemy import insert
 from db import AsyncSessionLocal
 from models import User
 from fastapi_users.password import PasswordHelper
@@ -44,8 +43,8 @@ async def add_test_users():
         ]
         
         for user_data in test_users:
-            stmt = insert(User).values(**user_data)
-            await session.execute(stmt)
+            user = User(**user_data)
+            session.add(user)
         
         await session.commit()
         print("✅ Added test users to database!")
