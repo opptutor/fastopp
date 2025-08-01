@@ -108,7 +108,7 @@ ENVIRONMENT=development
 
 ```bash
 # Complete setup with one command
-python oppman.py init
+uv run python oppman.py init
 ```
 
 This single command will:
@@ -124,23 +124,23 @@ If you prefer to understand each step:
 
 ```bash
 # Initialize migrations (first time only)
-python oppman.py migrate init
+uv run python oppman.py migrate init
 
 # Create initial migration
-python oppman.py migrate create "Initial migration"
+uv run python oppman.py migrate create "Initial migration"
 
 # Apply migrations
-python oppman.py migrate upgrade
+uv run python oppman.py migrate upgrade
 
 # Initialize database with sample data
-python oppman.py init
+uv run python oppman.py init
 ```
 
 ### 4. Start Development Server
 
 ```bash
 # Start the server
-python oppman.py runserver
+uv run python oppman.py runserver
 ```
 
 ### 5. Access the Application
@@ -158,146 +158,63 @@ Use these credentials to access the admin panel:
 - **Email**: `admin@example.com`
 - **Password**: `admin123`
 
-## 🔧 Environment Configuration
-
-The project uses environment variables for flexible configuration:
-
-### Development Setup (Default)
-
-```bash
-# .env
-DATABASE_URL=sqlite+aiosqlite:///./test.db
-SECRET_KEY=dev_secret_key_change_in_production_$(openssl rand -hex 32)
-ENVIRONMENT=development
-```
-
-### Production Setup (Optional)
-
-```bash
-# .env (production)
-DATABASE_URL=postgresql+asyncpg://user:password@localhost/fastopp_db
-SECRET_KEY=your_very_secure_production_secret_key_here
-ENVIRONMENT=production
-```
-
-### Check Environment Configuration
-
-```bash
-# Verify your environment setup
-python oppman.py env
-```
-
 ## 🛠️ Management Commands
 
 ### Database Operations
 
 ```bash
 # Initialize everything (database + superuser + users + products)
-python oppman.py init
+uv run python oppman.py init
 
 # Individual operations
-python oppman.py db              # Initialize database only
-python oppman.py superuser       # Create superuser only
-python oppman.py users           # Add test users only
-python oppman.py products        # Add sample products only
+uv run python oppman.py db              # Initialize database only
+uv run python oppman.py superuser       # Create superuser only
+uv run python oppman.py users           # Add test users only
+uv run python oppman.py products        # Add sample products only
 
 # Database management
-python oppman.py backup          # Backup database
-python oppman.py delete          # Delete database (with backup)
+uv run python oppman.py backup          # Backup database
+uv run python oppman.py delete          # Delete database (with backup)
 ```
 
 ### Server Management
 
 ```bash
 # Development server
-python oppman.py runserver       # Start development server
-python oppman.py stopserver      # Stop development server
+uv run python oppman.py runserver       # Start development server
+uv run python oppman.py stopserver      # Stop development server
 
 # Production server (optional)
-python oppman.py production      # Start production server
+uv run python oppman.py production      # Start production server
 ```
 
 ### Migration Management
 
 ```bash
 # Initialize migrations (first time only)
-python oppman.py migrate init
+uv run python oppman.py migrate init
 
 # Create new migration
-python oppman.py migrate create "Add new table"
+uv run python oppman.py migrate create "Add new table"
 
 # Apply migrations
-python oppman.py migrate upgrade
+uv run python oppman.py migrate upgrade
 
 # Check migration status
-python oppman.py migrate current
+uv run python oppman.py migrate current
 
 # View migration history
-python oppman.py migrate history
+uv run python oppman.py migrate history
 ```
 
 ### Environment Management
 
 ```bash
 # Check environment configuration
-python oppman.py env
+uv run python oppman.py env
 
 # Show all available commands
-python oppman.py help
-```
-
-## 🔐 Authentication System
-
-This FastAPI application includes a comprehensive authentication system with both web-based and API authentication. We use a **hybrid approach** that combines:
-
-- **[FastAPI Users](https://github.com/fastapi-users/fastapi-users)** for password hashing and user management
-- **Custom JWT authentication** for API access
-- **Custom session-based authentication** for the admin panel
-
-### Admin Panel Authentication
-
-The admin panel uses session-based authentication similar to Django's admin interface. **Authentication verifies users against the database** instead of using hardcoded credentials.
-
-#### Access Admin Panel
-
-1. **Visit**: http://localhost:8000/admin/
-2. **Login with any superuser account**:
-   - Username: `admin@example.com` (or any other superuser email)
-   - Password: `admin123` (or the actual password for that user)
-
-#### Features
-
-- ✅ **Session-based authentication**
-- ✅ **Secure password verification**
-- ✅ **Superuser permission checking**
-- ✅ **Database user lookup**
-- ✅ **User management interface**
-
-### API Authentication
-
-The application provides JWT-based authentication for API access.
-
-#### Get Authentication Token
-
-```bash
-curl -X POST http://localhost:8000/login \
-  -u "admin@example.com:admin123" \
-  -H "Content-Type: application/json"
-```
-
-**Response**:
-```json
-{
-  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-  "token_type": "bearer"
-}
-```
-
-#### Use Authentication Token
-
-```bash
-curl -X GET http://localhost:8000/admin/ \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+uv run python oppman.py help
 ```
 
 ## 📊 Test Data
@@ -320,72 +237,58 @@ The project uses Alembic for database migrations, providing Django-like migratio
 ### Migration Workflow
 
 1. **Add/Modify Models**: Edit `models.py` with your changes
-2. **Create Migration**: `python oppman.py migrate create "Description"`
+2. **Create Migration**: `uv run python oppman.py migrate create "Description"`
 3. **Review Migration**: Check the generated file in `alembic/versions/`
-4. **Apply Migration**: `python oppman.py migrate upgrade`
-5. **Verify**: `python oppman.py migrate current`
-
-### Migration Commands
-
-```bash
-# Initialize migrations (first time only)
-python oppman.py migrate init
-
-# Create a new migration
-python oppman.py migrate create "Add user profile table"
-
-# Apply all pending migrations
-python oppman.py migrate upgrade
-
-# Check current status
-python oppman.py migrate current
-
-# View migration history
-python oppman.py migrate history
-```
+4. **Apply Migration**: `uv run python oppman.py migrate upgrade`
+5. **Verify**: `uv run python oppman.py migrate current`
 
 ## 🚨 Troubleshooting
 
 ### Common Issues
 
 1. **"Alembic not found"**
+
    ```bash
    uv add alembic
    ```
 
 2. **"Alembic not initialized"**
    ```bash
-   python oppman.py migrate init
+   uv run python oppman.py migrate init
    ```
 
 3. **Environment issues**
-   ```bash
-   # Check environment configuration
-   python oppman.py env
-   ```
+ 
+     ```bash
+     # Check environment configuration
+     uv run python oppman.py env
+     ```
 
 4. **Database issues**
-   ```bash
-   # Backup and reset
-   python oppman.py backup
-   python oppman.py delete
-   python oppman.py init
-   ```
+ 
+     ```bash
+     # Backup and reset
+     uv run python oppman.py backup
+     uv run python oppman.py delete
+     uv run python oppman.py init
+     ```
 
 5. **"Module not found" errors**
+
    ```bash
    # Reinstall dependencies
    uv sync
    ```
 
 6. **Port already in use**
-   ```bash
-   # Stop any running servers
-   python oppman.py stopserver
-   
-   # Or use a different port
-   uv run uvicorn main:app --reload --port 8001
-   ```
+ 
+     ```bash
+     # Stop any running servers
+     uv run python oppman.py stopserver
+     
+     # Or use a different port
+     uv run uvicorn main:app --reload --port 8001
+     ```
 
 ### Quick Reset
 
@@ -393,28 +296,22 @@ If something goes wrong, you can reset everything:
 
 ```bash
 # Backup current database
-python oppman.py backup
+uv run python oppman.py backup
 
 # Delete and reinitialize
-python oppman.py delete
-python oppman.py init
+uv run python oppman.py delete
+uv run python oppman.py init
 
 # Verify setup
-python oppman.py env
+uv run python oppman.py env
 ```
-
-### Environment Variables
-
-- ✅ **Never commit `.env` files** to version control
-- ✅ **Use different secret keys** for development and production
-- ✅ **Use strong, random secret keys** in production
-- ✅ **Environment variables** keep credentials out of source code
 
 ## 📚 Documentation
 
 - [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
 - [Production vs Development](docs/production_vs_development.md) - Environment differences
 - [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
+- [Authentication System](docs/authentication.md) - Authentication and authorization details
 
 ## 🎯 Evaluation Focus
 
