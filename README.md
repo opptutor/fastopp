@@ -33,9 +33,9 @@ flowchart TD
 | Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
 | Development SQL Database | SQLite | SQLite |
 | Production SQL Database | PostgreSQL with pgvector | PostgreSQL with pgvector |
-| User Management | FastAPI Users | Django Admin |
+| User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
 | Database Management | SQLAdmin + Template | Django Admin |
-| Authentication | Custom JWT + Session Auth | Django Admin Auth |
+| Authentication | Custom JWT + Session Auth (with FastAPI Users password hashing) | Django Admin Auth |
 
 ## Project structure
 
@@ -86,7 +86,15 @@ uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ## Authentication System
 
-This FastAPI application includes a comprehensive authentication system with both web-based and API authentication.
+This FastAPI application includes a comprehensive authentication system with both web-based and API authentication. We use a **hybrid approach** that combines:
+
+- **[FastAPI Users](https://github.com/fastapi-users/fastapi-users)** for password hashing and user management
+- **Custom JWT authentication** for API access
+- **Custom session-based authentication** for the admin panel
+
+### Why This Approach?
+
+We initially tried to use FastAPI Users' built-in authentication, but encountered compatibility issues with version 14.0.1. Instead, we built a custom authentication system that leverages FastAPI Users' excellent password hashing and user management features while providing our own JWT and session authentication.
 
 ### Admin Panel Authentication
 
@@ -158,7 +166,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 
 ### 3. **User Management**
 - User registration and authentication
-- Password hashing with FastAPI Users
+- Password hashing with [FastAPI Users](https://github.com/fastapi-users/fastapi-users)
 - Superuser permissions
 - Active/inactive user status
 
@@ -170,9 +178,9 @@ curl -H "Authorization: Bearer YOUR_TOKEN_HERE" \
 
 ## Security Features
 
-- ✅ **JWT token authentication** for APIs
-- ✅ **Session-based authentication** for admin panel
-- ✅ **Password hashing** with Argon2
+- ✅ **JWT token authentication** for APIs (custom implementation)
+- ✅ **Session-based authentication** for admin panel (custom implementation)
+- ✅ **Password hashing** with Argon2 (via FastAPI Users)
 - ✅ **Superuser permission checking**
 - ✅ **Database user verification**
 - ✅ **Secure session management**
@@ -203,9 +211,10 @@ uv run ruff check auth.py
 
 The authentication system is modular:
 
-- **`auth.py`**: JWT token authentication
-- **`admin_auth.py`**: SQLAdmin authentication backend
+- **`auth.py`**: Custom JWT token authentication
+- **`admin_auth.py`**: Custom SQLAdmin authentication backend
 - **`main.py`**: Login endpoints and admin configuration
+- **`users.py`**: FastAPI Users configuration (for password hashing)
 
 ## Production Considerations
 
