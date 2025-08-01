@@ -50,3 +50,19 @@ flowchart TD
 ├── pyproject.toml
 └── uv.lock
 ```
+
+## Setup
+
+```text
+uv run python init_db.py
+uv run python create_superuser.py
+```
+
+## Checks
+
+```bash
+# run mypy and/or ruff on each file
+uv run mypy db.py
+# ruff is unrelated to mypy
+uv run ruff check db.py
+```
