@@ -25,6 +25,38 @@ flowchart TD
     A --> E[Django+FastAPI for LLM]
 ```
 
+## Screenshots
+
+### Interactive
+
+![interactive](docs/images/interactive.png)
+
+### Cards with Mouseover
+
+![cards](docs/images/cards.png)
+
+### Hero
+
+![hero](docs/images/hero.png)
+
+### Database Admin List
+
+![admin list](docs/images/admin.png)
+
+### Database Entry Edit
+
+![edit](docs/images/edit.png)
+
+### User Management
+
+![user management](docs/images/user_management.png)
+
+### User Authentication
+
+Admin panel is restricted to logged-in users.
+
+![authentication](docs/images/login.png)
+
 ## Components
 
 | Functional Concept| Component | Django Equivalent |

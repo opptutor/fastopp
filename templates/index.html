@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,7 +32,7 @@
                         <img src="{{ url_for('static', path='/images/oppkey_logo.jpg') }}" 
                              alt="Oppkey Logo" 
                              class="h-8 w-auto mr-3">
-                        <span class="text-xl font-bold text-gray-900">FastAPI Admin Demo</span>
+                        <span class="text-xl font-bold text-gray-900">FastOpp</span>
                     </div>
                     
                     <div class="flex items-center space-x-8">
@@ -49,7 +50,7 @@
                 <div class="text-center">
                     <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ title }}</h1>
                     <p class="text-xl text-gray-600 mb-8">
-                        FastAPI and Jinja2 are working correctly. Explore the features below.
+                        Oppkey's starter kit for FastAPI with modern admin tools and interactive demos.
                     </p>
                     
                     <div class="grid md:grid-cols-3 gap-8 mt-12">
@@ -111,7 +112,7 @@
         <!-- Footer -->
         <footer class="bg-gray-900 text-white py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <p>&copy; 2025 FastAPI Admin Demo. Built with FastAPI, Tailwind CSS, HTMX, and Alpine.js.</p>
+                <p>&copy; 2025 FastOpp. Built with FastAPI, Tailwind CSS, HTMX, and Alpine.js.</p>
             </div>
         </footer>
     </div>
