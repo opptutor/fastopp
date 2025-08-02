@@ -5,6 +5,7 @@ import os
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from starlette.middleware.sessions import SessionMiddleware
 from sqladmin import Admin, ModelView
@@ -26,6 +27,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 security = HTTPBasic()
 
@@ -33,6 +38,45 @@ security = HTTPBasic()
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "title": "Welcome to FastAPI Admin Demo"})
+
+
+@app.get("/design-demo", response_class=HTMLResponse)
+async def design_demo(request: Request):
+    return templates.TemplateResponse("design-demo.html", {"request": request, "title": "Design Demo"})
+
+
+@app.get("/ai-stats", response_class=HTMLResponse)
+async def ai_stats(request: Request):
+    """HTMX endpoint to return AI marketing statistics"""
+    import time
+    time.sleep(1)  # Simulate processing time
+    
+    stats = [
+        {"metric": "Content Generation Speed", "value": "10x Faster", "icon": "⚡"},
+        {"metric": "Campaign ROI", "value": "+340%", "icon": "📈"},
+        {"metric": "Time Saved", "value": "87%", "icon": "⏰"},
+        {"metric": "Engagement Rate", "value": "+280%", "icon": "🎯"}
+    ]
+    
+    return templates.TemplateResponse("partials/ai-stats.html", {
+        "request": request, 
+        "stats": stats
+    })
+
+
+@app.post("/marketing-demo", response_class=HTMLResponse)
+async def marketing_demo(request: Request):
+    """HTMX endpoint to handle marketing demo form submission"""
+    # In a real app, you'd parse form data properly
+    # For demo purposes, we'll simulate form processing
+    import time
+    time.sleep(1.5)  # Simulate processing time
+    
+    return templates.TemplateResponse("partials/demo-response.html", {
+        "request": request,
+        "success": True,
+        "message": "Thank you! Our AI team will contact you within 24 hours with a personalized marketing demo."
+    })
 
 
 @app.post("/login")

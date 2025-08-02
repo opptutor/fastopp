@@ -43,7 +43,14 @@ flowchart TD
 ├── main.py                 # FastAPI application with routes
 ├── auth.py                 # JWT authentication system
 ├── admin_auth.py           # SQLAdmin authentication backend
-├── templates/index.html    # Jinja2 templates
+├── templates/              # Jinja2 templates
+│   ├── index.html          # Homepage template
+│   └── design-demo.html    # Static files demo template
+├── static/                 # Static assets (images, CSS, JS)
+│   ├── images/             # Image files
+│   ├── css/                # Stylesheets
+│   ├── js/                 # JavaScript files
+│   └── README.md           # Static files documentation
 ├── db.py                   # Database configuration (uses environment variables)
 ├── models.py               # SQLModel models
 ├── users.py                # FastAPI Users configuration
@@ -66,6 +73,9 @@ flowchart TD
 ### Prerequisites
 
 - Python 3.12+
+  If Python 3.12+ is not on your Mac, consider [installing pyenv](https://youtu.be/1F2IK7CU76U?feature=shared)
+  and install the newest 3.12.x with pyenv. Although the latest stable Python is 3.13.5, we're using 3.12.x
+  right now for maximum package compatibility.
 - [uv](https://docs.astral.sh/uv/) package manager
 
 ### 1. Clone and Setup
