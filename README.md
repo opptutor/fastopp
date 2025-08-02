@@ -29,33 +29,33 @@ flowchart TD
 
 ### Interactive
 
-![interactive](docs/images/interactive.png)
+![interactive](docs/images/interactive.webp)
 
 ### Cards with Mouseover
 
-![cards](docs/images/cards.png)
+![cards](docs/images/cards.webp)
 
 ### Hero
 
-![hero](docs/images/hero.png)
+![hero](docs/images/hero.webp)
 
 ### Database Admin List
 
-![admin list](docs/images/admin.png)
+![admin list](docs/images/admin2.webp)
 
 ### Database Entry Edit
 
-![edit](docs/images/edit.png)
+![edit](docs/images/edit.webp)
 
 ### User Management
 
-![user management](docs/images/user_management.png)
+![user management](docs/images/user_management.webp)
 
 ### User Authentication
 
 Admin panel is restricted to logged-in users.
 
-![authentication](docs/images/login.png)
+![authentication](docs/images/login.webp)
 
 ## Components
 
