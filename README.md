@@ -32,7 +32,7 @@ flowchart TD
 | Production Web Server | FastAPI | NGINX  |
 | Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
 | Development SQL Database | SQLite | SQLite |
-| Production SQL Database | PostgreSQL with pgvector | PostgreSQL with pgvector |
+| Production SQL Database | PostgreSQL with pgvector | PostgreSQL + pgvector, asyncpg |
 | User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
 | Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
 | Authentication | Custom JWT + Session Auth (with database user verification and FastAPI Users password hashing) | Django Admin Auth |
