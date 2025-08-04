@@ -61,7 +61,7 @@ Admin panel is restricted to logged-in users.
 
 | Functional Concept| Component | Django Equivalent |
 | -- | -- | -- |
-| Production Web Server | FastAPI | NGINX  |
+| Production Web Server | FastAPI + uvicorn (for loads < 1,000 concurrent connections) | NGINX + Gunicorn |
 | Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
 | Development SQL Database | SQLite | SQLite |
 | Production SQL Database | PostgreSQL with pgvector | PostgreSQL + pgvector, asyncpg |
