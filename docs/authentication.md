@@ -95,53 +95,64 @@ The application comes with pre-loaded test data for authentication testing:
 ### Users
 
 #### **Superusers (Full Access)**
+
 - `admin@example.com` / `admin123`
 - `admin2@example.com` / `test123`
 
 #### **Marketing Users (Webinar Management)**
+
 - `john@example.com` / `test123`
 - `marketing@example.com` / `test123`
 
 #### **Sales Users (Assigned Webinars)**
+
 - `jane@example.com` / `test123`
 - `sales@example.com` / `test123`
 
 #### **Support Users (Products Only)**
+
 - `staff@example.com` / `test123`
 
 #### **Inactive Users**
+
 - `bob@example.com` / `test123` (inactive)
 
 ### Sample Data
 
 #### **Webinar Registrants (8 entries)**
+
 - Different companies and webinar topics
 - Various statuses (registered, attended, cancelled)
 - Assigned sales reps for testing permissions
 - Public/private visibility for permission testing
 
 #### **Products (8 entries)**
+
 - Various categories and prices
 - Stock status for inventory management
 
 ## Permission Testing Guide
 
 ### Test Marketing Permissions
+
 1. Login: `marketing@example.com` / `test123`
 2. Should see: Products + Webinar Registrants
 3. Can create/edit webinars
 
 ### Test Sales Permissions
+
 1. Login: `sales@example.com` / `test123`
 2. Should see: Products + Webinar Registrants (filtered)
 3. Can only see assigned registrants
 
 ### Test Support Permissions
+
 1. Login: `staff@example.com` / `test123`
 2. Should see: Products only
 3. No access to webinars or users
 
 ### Test Superuser Permissions
+
 1. Login: `admin@example.com` / `admin123`
 2. Should see: Users + Products + Webinar Registrants + Audit Logs
 3. Full access to everything
@@ -151,6 +162,7 @@ The application comes with pre-loaded test data for authentication testing:
 ### FastAPI Users Integration
 
 The application uses FastAPI Users for:
+
 - Password hashing and verification
 - User model management
 - Registration and login endpoints
@@ -158,6 +170,7 @@ The application uses FastAPI Users for:
 ### Custom JWT Authentication
 
 JWT tokens are used for:
+
 - API access authentication
 - Stateless authentication for external clients
 - Token-based session management
@@ -165,15 +178,17 @@ JWT tokens are used for:
 ### Session-Based Admin Authentication
 
 The admin panel uses:
+
 - Database-backed session storage
 - Secure cookie-based sessions
 - User permission verification against database records
 - Group-based permission checking
 - Model-specific access control
 
-### Advanced Permission System
+### Permission System
 
 The permission system implements:
+
 - **Group-based access control**: Users belong to groups with different permissions
 - **Model-specific permissions**: Different models have different access rules
 - **Action-based permissions**: Create, read, update, delete permissions
@@ -184,6 +199,7 @@ The permission system implements:
 ### Database Models
 
 #### **User Model**
+
 ```python
 class User(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -196,6 +212,7 @@ class User(SQLModel, table=True):
 ```
 
 #### **WebinarRegistrants Model**
+
 ```python
 class WebinarRegistrants(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -215,6 +232,7 @@ class WebinarRegistrants(SQLModel, table=True):
 ```
 
 #### **AuditLog Model**
+
 ```python
 class AuditLog(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -237,4 +255,4 @@ The permission system can be easily extended with:
 3. **Time-Based Permissions**: Permissions that expire
 4. **API Permissions**: Decorators for API endpoint permissions
 5. **Dynamic Permissions**: Load permissions from database
-6. **Hierarchical Permissions**: Permission inheritance system 
+6. **Hierarchical Permissions**: Permission inheritance system
