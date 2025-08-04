@@ -38,6 +38,7 @@
                     <div class="flex items-center space-x-8">
                         <a href="/" class="text-ai-blue font-medium">Home</a>
                         <a href="/design-demo" class="text-gray-600 hover:text-ai-blue transition-colors">AI Demo</a>
+                        <a href="/dashboard-demo" class="text-gray-600 hover:text-ai-blue transition-colors">Dashboard</a>
                         <a href="/admin/" class="text-gray-600 hover:text-ai-blue transition-colors">Admin</a>
                     </div>
                 </div>
@@ -53,7 +54,7 @@
                         Oppkey's starter kit for FastAPI with modern admin tools and interactive demos.
                     </p>
                     
-                    <div class="grid md:grid-cols-3 gap-8 mt-12">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                         <!-- Admin Panel Card -->
                         <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
                             <div class="w-16 h-16 bg-ai-blue rounded-lg flex items-center justify-center mb-6 mx-auto">
@@ -68,6 +69,23 @@
                             <a href="/admin/" 
                                class="inline-block bg-ai-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                                 Access Admin
+                            </a>
+                        </div>
+
+                        <!-- Dashboard Card -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                            <div class="w-16 h-16 bg-purple-500 rounded-lg flex items-center justify-center mb-6 mx-auto">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-900">Product Dashboard</h3>
+                            <p class="text-gray-600 mb-6">
+                                Real-time analytics and insights for marketing managers with interactive charts.
+                            </p>
+                            <a href="/dashboard-demo" 
+                               class="inline-block bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors">
+                                View Dashboard
                             </a>
                         </div>
 
