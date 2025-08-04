@@ -370,19 +370,19 @@ The goal is to assess whether FastAPI + pre-built admin tools can provide a Djan
 
 ### Do and Don't
 
-| Usable Functionality | Minimum Functionality |
-| -- | -- |
-| user management | create new user.  User cannot access admin functions |
-| create new database model for different data | edit model. migrate. access |
-| basic tailwind, HTMX, Alpine page | add new page to site. Must look good |
-| edit existing model | delete, new, edit through UI admin panel |
+| Usable Functionality | Use Admin Panel | Minimum Functionality |
+| -- | -- | -- |
+| Create, Update, Delete, Users | Yes | Verify only admin can delete users |
+| Create new database model for different data |  No | On your own project, create new model in Python code. migrate. access data in new page and admin panel |
+| Create new basic tailwind, HTMX, Alpine page | No | On your own project, add new page to `templates`. Connect to site. Must look good |
+| Add new record to existing model | Yes | Delete, new, edit  |
 
 #### Don't
 
-| Functionality Not Covered | Plan For Next Project |
-| -- | -- |
-| real-time status updates in colored bubbles | Yes with SSE |
-| streaming data from LLM | yes with LLM stream |
-| chat box | yes with LLM |
-| assign long-running task and do something else | yes with simulated delay |
-
+| Functionality Not Covered | Plan For Next Project | Technology Plan|
+| -- | -- | -- |
+| real-time status updates in colored bubbles | Yes |  SSE |
+| streaming data from LLM | Yes | LLM stream |
+| chat box | Yes | LLM |
+| assign long-running task and do something else | Yes | Simulated delay with sleep |
+| React or Flutter with API endpoint | No | Refactor logic code to support both API and template access |
