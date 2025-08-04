@@ -39,15 +39,19 @@ class AdminAuth(AuthenticationBackend):
             if not password_helper.verify_and_update(password_str, user.hashed_password):  # type: ignore
                 return False
             
-            # Check if user is active and is a superuser
-            if not user.is_active or not user.is_superuser:  # type: ignore
+            # Check if user is active and has admin access (superuser OR staff)
+            if not user.is_active or not (user.is_superuser or user.is_staff):  # type: ignore
                 return False
             
-            # Store user info in session
+            # Store user info in session with group and permissions
             request.session.update({
                 "admin": True,
                 "user_id": str(user.id),  # type: ignore
-                "user_email": user.email  # type: ignore
+                "user_email": user.email,  # type: ignore
+                "is_superuser": user.is_superuser,  # type: ignore
+                "is_staff": user.is_staff,  # type: ignore
+                "group": user.group,  # type: ignore
+                "can_manage_webinars": user.is_superuser or user.group in ["marketing", "sales"]  # type: ignore
             })
             return True
 

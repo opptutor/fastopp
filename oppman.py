@@ -20,6 +20,7 @@ try:
     from scripts.create_superuser import create_superuser
     from scripts.add_test_users import add_test_users
     from scripts.add_sample_products import add_sample_products
+    from scripts.add_sample_webinars import add_sample_webinars
     from scripts.migrate.cli import run_migrate_command, show_migration_help
     from scripts.check_env import check_environment
 except ImportError as e:
@@ -94,6 +95,13 @@ async def run_products():
     print("🔄 Adding sample products...")
     await add_sample_products()
     print("✅ Sample products creation complete")
+
+
+async def run_webinars():
+    """Add sample webinars"""
+    print("🔄 Adding sample webinars...")
+    await add_sample_webinars()
+    print("✅ Sample webinars creation complete")
 
 
 def run_server():
@@ -177,13 +185,14 @@ def run_production_server():
 
 
 async def run_full_init():
-    """Run complete initialization: init + superuser + users + products"""
+    """Run complete initialization: init + superuser + users + products + webinars"""
     print("🚀 Running full initialization...")
     
     await run_init()
     await run_superuser()
     await run_users()
     await run_products()
+    await run_webinars()
     
     print("✅ Full initialization complete!")
     print("\n📋 Summary:")
@@ -191,6 +200,7 @@ async def run_full_init():
     print("- Superuser created: admin@example.com / admin123")
     print("- Test users added (password: test123)")
     print("- Sample products added")
+    print("- Sample webinars added")
     print("\n🌐 Ready to start the application with: uv run uvicorn main:app --reload")
 
 
@@ -205,11 +215,12 @@ USAGE:
     python oppman.py <command> [options]
 
 COMMANDS:
-    init        Complete initialization (database + superuser + users + products)
+    init        Complete initialization (database + superuser + users + products + webinars)
     db          Initialize database only
     superuser   Create superuser only
     users       Add test users only
     products    Add sample products only
+    webinars    Add sample webinars only
     runserver   Start development server with uvicorn --reload
     stopserver  Stop development server
     production  Start production server with Gunicorn (no Nginx)
@@ -228,6 +239,7 @@ EXAMPLES:
     python oppman.py superuser
     python oppman.py users
     python oppman.py products
+    python oppman.py webinars
     
     # Start development server
     python oppman.py runserver
@@ -256,10 +268,21 @@ DEFAULT CREDENTIALS:
     Test Users: test123 (for all test users)
     
     Test Users Created:
-    - john@example.com (active, regular user)
-    - jane@example.com (active, regular user)
-    - bob@example.com (inactive, regular user)
-    - admin2@example.com (active, superuser)
+    - admin@example.com (superuser, admin)
+    - admin2@example.com (superuser, admin)
+    - john@example.com (staff, marketing)
+    - jane@example.com (staff, sales)
+    - staff@example.com (staff, support)
+    - marketing@example.com (staff, marketing)
+    - sales@example.com (staff, sales)
+    - bob@example.com (inactive)
+
+PERMISSION LEVELS:
+    - Superusers: Full admin access (users + products + webinars + audit)
+    - Marketing: Product management + webinar management
+    - Sales: Product management + assigned webinar viewing
+    - Support: Product management only
+    - Regular users: No admin access
 
 DATABASE:
     - Development: SQLite (test.db)
@@ -367,6 +390,8 @@ Examples:
             await run_users()
         elif args.command == "products":
             await run_products()
+        elif args.command == "webinars":
+            await run_webinars()
     
     # Run the async command
     asyncio.run(run_command())

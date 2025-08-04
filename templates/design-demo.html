@@ -31,48 +31,7 @@
     </script>
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg" x-data="{ mobileMenuOpen: false }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <img src="{{ url_for('static', path='/images/oppkey_logo.jpg') }}" 
-                         alt="Oppkey Logo" 
-                         class="h-8 w-auto mr-3">
-                    <span class="text-xl font-bold text-gray-900">FastOpp</span>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-gray-600 hover:text-ai-blue transition-colors">Home</a>
-                    <a href="/design-demo" class="text-ai-blue font-medium">AI Demo</a>
-                    <a href="/admin/" class="text-gray-600 hover:text-ai-blue transition-colors">Admin</a>
-                </div>
-                
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" 
-                            class="text-gray-600 hover:text-ai-blue">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Mobile menu -->
-            <div x-show="mobileMenuOpen" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 transform -translate-y-2"
-                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                 class="md:hidden">
-                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    <a href="/" class="block px-3 py-2 text-gray-600 hover:text-ai-blue">Home</a>
-                    <a href="/design-demo" class="block px-3 py-2 text-ai-blue font-medium">AI Demo</a>
-                    <a href="/admin/" class="block px-3 py-2 text-gray-600 hover:text-ai-blue">Admin</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    {% include 'partials/header.html' %}
 
     <!-- Hero Section -->
     <section class="relative bg-gradient-to-br from-ai-blue to-ai-purple text-white py-20">
@@ -217,7 +176,7 @@
     <section class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-4xl font-bold text-center mb-16 text-gray-900">
-                Interactive AI Demo
+                Interactive Design Demo
             </h2>
             
             <div class="grid md:grid-cols-2 gap-12 items-center">
@@ -323,7 +282,7 @@
                     <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
                     <ul class="space-y-2 text-gray-400">
                         <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
-                        <li><a href="/design-demo" class="hover:text-white transition-colors">AI Demo</a></li>
+                        <li><a href="/design-demo" class="hover:text-white transition-colors">Design Demo</a></li>
                         <li><a href="/admin/" class="hover:text-white transition-colors">Admin</a></li>
                     </ul>
                 </div>

@@ -37,17 +37,17 @@ security = HTTPBasic()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "title": "Welcome to FastOpp"})
+    return templates.TemplateResponse("index.html", {"request": request, "title": "Welcome to FastOpp", "current_page": "home"})
 
 
 @app.get("/design-demo", response_class=HTMLResponse)
 async def design_demo(request: Request):
-    return templates.TemplateResponse("design-demo.html", {"request": request, "title": "FastOpp Design Demo"})
+    return templates.TemplateResponse("design-demo.html", {"request": request, "title": "FastOpp Design Demo", "current_page": "design-demo"})
 
 
 @app.get("/dashboard-demo", response_class=HTMLResponse)
 async def dashboard_demo(request: Request):
-    return templates.TemplateResponse("dashboard-demo.html", {"request": request, "title": "Product Dashboard Demo"})
+    return templates.TemplateResponse("dashboard-demo.html", {"request": request, "title": "Product Dashboard Demo", "current_page": "dashboard-demo"})
 
 
 @app.get("/api/products")
