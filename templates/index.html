@@ -24,26 +24,7 @@
 </head>
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
-        <!-- Navigation -->
-        <nav class="bg-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <img src="{{ url_for('static', path='/images/oppkey_logo.jpg') }}" 
-                             alt="Oppkey Logo" 
-                             class="h-8 w-auto mr-3">
-                        <span class="text-xl font-bold text-gray-900">FastOpp</span>
-                    </div>
-                    
-                    <div class="flex items-center space-x-8">
-                        <a href="/" class="text-ai-blue font-medium">Home</a>
-                        <a href="/design-demo" class="text-gray-600 hover:text-ai-blue transition-colors">AI Demo</a>
-                        <a href="/dashboard-demo" class="text-gray-600 hover:text-ai-blue transition-colors">Dashboard</a>
-                        <a href="/admin/" class="text-gray-600 hover:text-ai-blue transition-colors">Admin</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        {% include 'partials/header.html' %}
 
         <!-- Main Content -->
         <main class="flex-grow">
@@ -56,50 +37,56 @@
                     
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                         <!-- Admin Panel Card -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-                            <div class="w-16 h-16 bg-ai-blue rounded-lg flex items-center justify-center mb-6 mx-auto">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                                </svg>
+                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="flex-1">
+                                <div class="w-16 h-16 bg-ai-blue rounded-lg flex items-center justify-center mb-6 mx-auto">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-4 text-gray-900">Admin Panel</h3>
+                                <p class="text-gray-600 mb-6">
+                                    Manage users, products, and data with the built-in admin interface.
+                                </p>
                             </div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-900">Admin Panel</h3>
-                            <p class="text-gray-600 mb-6">
-                                Manage users, products, and data with the built-in admin interface.
-                            </p>
                             <a href="/admin/" 
                                class="inline-block bg-ai-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
                                 Access Admin
                             </a>
                         </div>
 
-                        <!-- Dashboard Card -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-                            <div class="w-16 h-16 bg-purple-500 rounded-lg flex items-center justify-center mb-6 mx-auto">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
+                        <!-- Database Demo Card -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="flex-1">
+                                <div class="w-16 h-16 bg-purple-500 rounded-lg flex items-center justify-center mb-6 mx-auto">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-4 text-gray-900">Database Demo</h3>
+                                <p class="text-gray-600 mb-6">
+                                    Real-time analytics and insights for marketing managers with interactive charts.
+                                </p>
                             </div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-900">Product Dashboard</h3>
-                            <p class="text-gray-600 mb-6">
-                                Real-time analytics and insights for marketing managers with interactive charts.
-                            </p>
                             <a href="/dashboard-demo" 
                                class="inline-block bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors">
-                                View Dashboard
+                                View Database Demo
                             </a>
                         </div>
 
-                        <!-- AI Demo Card -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-                            <div class="w-16 h-16 bg-gradient-to-br from-ai-blue to-ai-purple rounded-lg flex items-center justify-center mb-6 mx-auto">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                </svg>
+                        <!-- Design Demo Card -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="flex-1">
+                                <div class="w-16 h-16 bg-gradient-to-br from-ai-blue to-ai-purple rounded-lg flex items-center justify-center mb-6 mx-auto">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-4 text-gray-900">Design Demo</h3>
+                                <p class="text-gray-600 mb-6">
+                                    See Tailwind CSS, HTMX, and Alpine.js in action with an interactive AI marketing demo.
+                                </p>
                             </div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-900">AI Marketing Demo</h3>
-                            <p class="text-gray-600 mb-6">
-                                See Tailwind CSS, HTMX, and Alpine.js in action with an interactive AI marketing demo.
-                            </p>
                             <a href="/design-demo" 
                                class="inline-block bg-gradient-to-r from-ai-blue to-ai-purple text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all">
                                 View Demo
@@ -107,16 +94,18 @@
                         </div>
 
                         <!-- API Docs Card -->
-                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-                            <div class="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mb-6 mx-auto">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                        <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow flex flex-col">
+                            <div class="flex-1">
+                                <div class="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mb-6 mx-auto">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-4 text-gray-900">API Documentation</h3>
+                                <p class="text-gray-600 mb-6">
+                                    Explore the FastAPI auto-generated documentation and test endpoints.
+                                </p>
                             </div>
-                            <h3 class="text-xl font-semibold mb-4 text-gray-900">API Documentation</h3>
-                            <p class="text-gray-600 mb-6">
-                                Explore the FastAPI auto-generated documentation and test endpoints.
-                            </p>
                             <a href="/docs" 
                                class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors">
                                 View Docs
