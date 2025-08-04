@@ -57,31 +57,35 @@ async def get_products():
         # Get all products
         result = await session.execute(select(Product))
         products = result.scalars().all()
-        
+
         # Get category statistics
         category_stats = await session.execute(
-            select(Product.category, func.count(Product.id).label('count'))
+            select(Product.category, func.count(Product.id).label('count'))  # type: ignore
             .group_by(Product.category)
         )
         categories = category_stats.all()
-        
+
         # Get price statistics
         price_stats = await session.execute(
             select(
                 func.avg(Product.price).label('avg_price'),
                 func.min(Product.price).label('min_price'),
                 func.max(Product.price).label('max_price'),
-                func.count(Product.id).label('total_products')
+                func.count(Product.id).label('total_products')  # type: ignore
             )
         )
         stats = price_stats.first()
-        
+
         # Get stock statistics
         stock_stats = await session.execute(
             select(
-                func.count(Product.id).label('total'),
-                func.sum(case((Product.in_stock.is_(True), 1), else_=0)).label('in_stock'),
-                func.sum(case((Product.in_stock.is_(False), 1), else_=0)).label('out_of_stock')
+                func.count(Product.id).label('total'),  # type: ignore
+                func.sum(case(
+                    (Product.in_stock.is_(True), 1),  # type: ignore
+                    else_=0)).label('in_stock'),
+                func.sum(case(
+                    (Product.in_stock.is_(False), 1),  # type: ignore
+                    else_=0)).label('out_of_stock')  # type: ignore
             )
         )
         stock = stock_stats.first()
@@ -93,13 +97,13 @@ async def get_products():
             "max_price": float(stats.max_price) if stats and stats.max_price is not None else 0,
             "total_products": stats.total_products if stats else 0
         }
-        
+
         stock_data = {
             "total": stock.total if stock else 0,
             "in_stock": stock.in_stock if stock else 0,
             "out_of_stock": stock.out_of_stock if stock else 0
         }
-        
+
         return JSONResponse({
             "products": [
                 {
@@ -127,16 +131,16 @@ async def ai_stats(request: Request):
     """HTMX endpoint to return AI marketing statistics"""
     import time
     time.sleep(1)  # Simulate processing time
-    
+
     stats = [
         {"metric": "Content Generation Speed", "value": "10x Faster", "icon": "⚡"},
         {"metric": "Campaign ROI", "value": "+340%", "icon": "📈"},
         {"metric": "Time Saved", "value": "87%", "icon": "⏰"},
         {"metric": "Engagement Rate", "value": "+280%", "icon": "🎯"}
     ]
-    
+
     return templates.TemplateResponse("partials/ai-stats.html", {
-        "request": request, 
+        "request": request,
         "stats": stats
     })
 
@@ -148,7 +152,7 @@ async def marketing_demo(request: Request):
     # For demo purposes, we'll simulate form processing
     import time
     time.sleep(1.5)  # Simulate processing time
-    
+
     return templates.TemplateResponse("partials/demo-response.html", {
         "request": request,
         "success": True,
@@ -164,14 +168,14 @@ async def login(credentials: HTTPBasicCredentials = Depends(security)):
             select(User).where(User.email == credentials.username)
         )
         user = result.scalar_one_or_none()
-        
+
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Basic"},
             )
-        
+
         password_helper = PasswordHelper()
         if not password_helper.verify_and_update(credentials.password, user.hashed_password):
             raise HTTPException(
@@ -179,27 +183,23 @@ async def login(credentials: HTTPBasicCredentials = Depends(security)):
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Basic"},
             )
-        
+
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Inactive user",
                 headers={"WWW-Authenticate": "Basic"},
             )
-        
+
         if not user.is_superuser:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not enough permissions"
             )
-        
+
         token = create_user_token(user)
         return {"access_token": token, "token_type": "bearer"}
 
-
-# Type warnings are expected with FastAPI Users async setup
-# app.include_router(fastapi_users.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"])  # type: ignore
-# app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])  # type: ignore
 
 # Setup admin interface
 setup_admin(app, SECRET_KEY)
