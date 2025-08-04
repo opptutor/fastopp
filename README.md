@@ -360,10 +360,29 @@ uv run python oppman.py env
 This setup allows your team to quickly evaluate:
 
 1. **FastAPI Admin Interface** - Compare with Django Admin
-2. **Authentication System** - JWT + Session-based auth
-3. **Database Management** - SQLModel + Alembic migrations
-4. **Development Experience** - Environment variables, management commands
-5. **Production Readiness** - PostgreSQL, Gunicorn, environment config
+2. **Authentication System** - JWT + Session-based auth plus FastAPI Users' PasswordHelper
+3. **Database Management** - [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic migrations](https://alembic.sqlalchemy.org/en/latest/)
+4. **User Management** - [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/)
+5. **Development Experience** - Environment variables, management commands
+6. **Production Readiness** - PostgreSQL, Gunicorn, environment config
 
 The goal is to assess whether FastAPI + pre-built admin tools can provide a Django-like development experience for your developer team.
+
+### Do and Don't
+
+| Usable Functionality | Minimum Functionality |
+| -- | -- |
+| user management | create new user.  User cannot access admin functions |
+| create new database model for different data | edit model. migrate. access |
+| basic tailwind, HTMX, Alpine page | add new page to site. Must look good |
+| edit existing model | delete, new, edit through UI admin panel |
+
+#### Don't
+
+| Functionality Not Covered | Plan For Next Project |
+| -- | -- |
+| real-time status updates in colored bubbles | Yes with SSE |
+| streaming data from LLM | yes with LLM stream |
+| chat box | yes with LLM |
+| assign long-running task and do something else | yes with simulated delay |
 
