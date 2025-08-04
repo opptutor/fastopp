@@ -115,7 +115,7 @@ Admin panel is restricted to logged-in users.
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd fastapi_d
+cd fastopp
 
 # Install dependencies
 uv sync
