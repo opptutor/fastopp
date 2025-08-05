@@ -380,14 +380,19 @@ This setup allows your team to quickly evaluate:
 
 The goal is to assess whether FastAPI + pre-built admin tools can provide a Django-like development experience for your developer team.
 
-### Do
+### Do With Admin Panel
 
-| Usable Functionality | Use Admin Panel | Minimum Functionality |
-| -- | -- | -- |
+
 | Create, Update, Delete, Users | Yes | Verify only admin can delete users |
-| Create new database model for different data |  No | On your own project, create new model in Python code. migrate. access data in new page and admin panel |
-| Create new basic tailwind, HTMX, Alpine page | No | On your own project, add new page to `templates`. Connect to site. Must look good |
 | Add new record to existing model | Yes | Delete, new, edit  |
+
+### Do With Code Editor
+
+| Usable Functionality | Database Test | Minimum Functionality |
+| -- | -- | -- |
+| Create new database model for different data |  Access through SQL Admin | On your own project, create new model in Python code. migrate. access data in new page and admin panel |
+| Create new page for design testing. Basic with tailwind, HTMX, Alpine.  | Do not use database | On your own project, add new page to `templates`. Connect to site. Must look good |
+| Create new Page for data access.  Does not need to look good.  | Code must pass data to page | On your own project, add new page to `templates`. Connect to site. |
 
 #### Don't
 
