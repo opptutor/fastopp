@@ -59,6 +59,14 @@ Admin panel is restricted to logged-in users.
 
 ![authentication](docs/images/login.webp)
 
+### Statistics Hero Card
+
+![webinar top](docs/images/webinar_top.webp)
+
+### People Hero Card
+
+![webinar people](docs/images/webinar_people.webp)
+
 ## Components
 
 | Functional Concept| Component | Django Equivalent |
