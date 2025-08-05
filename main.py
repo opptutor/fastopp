@@ -6,6 +6,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, UploadFile, File, Form
+from uuid import UUID
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -327,9 +328,24 @@ async def upload_photo(
     # Update database
     photo_url = f"/static/uploads/photos/{unique_filename}"
     
+    # Convert string to UUID
+    try:
+        registrant_uuid = UUID(registrant_id)
+    except ValueError:
+        # Clean up file if UUID is invalid
+        try:
+            file_path.unlink()
+        except Exception:
+            pass
+        return HTMLResponse(
+            '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+            'Error: Invalid registrant ID</div>',
+            status_code=400
+        )
+    
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(WebinarRegistrants).where(WebinarRegistrants.id == registrant_id)
+            select(WebinarRegistrants).where(WebinarRegistrants.id == registrant_uuid)
         )
         registrant = result.scalar_one_or_none()
         
@@ -407,43 +423,129 @@ async def get_webinar_attendees():
         })
 
 
-@app.delete("/delete-photo/{registrant_id}")
-async def delete_photo(registrant_id: str, current_user: User = Depends(get_current_staff_or_admin_from_cookies)):
-    """Delete a photo for a webinar registrant"""
-    async with AsyncSessionLocal() as session:
-        result = await session.execute(
-            select(WebinarRegistrants).where(WebinarRegistrants.id == registrant_id)
-        )
-        registrant = result.scalar_one_or_none()
+@app.post("/update-notes/{registrant_id}")
+async def update_notes(
+    registrant_id: str,
+    notes: str = Form(...)
+):
+    """Update notes for a webinar registrant"""
+    try:
+        print(f"Updating notes for registrant {registrant_id}: {notes}")
         
-        if not registrant:
-            return HTMLResponse(
-                '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
-                'Error: Registrant not found</div>',
-                status_code=404
-            )
-        
-        if not registrant.photo_url:
-            return HTMLResponse(
-                '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
-                'Error: No photo found for this registrant</div>',
-                status_code=404
-            )
-        
-        # Delete file from filesystem
-        photo_path = Path("static") / registrant.photo_url.lstrip("/static/")
+        # Convert string to UUID
         try:
-            if photo_path.exists():
-                photo_path.unlink()
-        except Exception as e:
-            # Log error but don't fail the request
-            print(f"Failed to delete file {photo_path}: {e}")
+            registrant_uuid = UUID(registrant_id)
+        except ValueError:
+            return HTMLResponse(
+                '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+                'Error: Invalid registrant ID</div>',
+                status_code=400
+            )
         
-        # Update database
-        registrant.photo_url = None
-        await session.commit()
-    
-    return HTMLResponse(
-        '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">'
-        'Photo deleted successfully!</div>'
-    )
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(WebinarRegistrants).where(WebinarRegistrants.id == registrant_uuid)
+            )
+            registrant = result.scalar_one_or_none()
+            
+            if not registrant:
+                print(f"Registrant {registrant_id} not found")
+                return HTMLResponse(
+                    '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+                    'Error: Registrant not found</div>',
+                    status_code=404
+                )
+            
+            print(f"Found registrant: {registrant.name}")
+            
+            # Update database
+            registrant.notes = notes
+            await session.commit()
+            
+            print("Notes updated successfully")
+        
+        return HTMLResponse(
+            '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">'
+            'Notes updated successfully!</div>'
+        )
+    except Exception as e:
+        print(f"Error updating notes: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return HTMLResponse(
+            f'<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+            f'Error updating notes: {str(e)}</div>',
+            status_code=500
+        )
+
+
+@app.delete("/delete-photo/{registrant_id}")
+async def delete_photo(registrant_id: str):
+    """Delete a photo for a webinar registrant"""
+    try:
+        print(f"Deleting photo for registrant {registrant_id}")
+        
+        # Convert string to UUID
+        try:
+            registrant_uuid = UUID(registrant_id)
+        except ValueError:
+            return HTMLResponse(
+                '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+                'Error: Invalid registrant ID</div>',
+                status_code=400
+            )
+        
+        async with AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(WebinarRegistrants).where(WebinarRegistrants.id == registrant_uuid)
+            )
+            registrant = result.scalar_one_or_none()
+            
+            if not registrant:
+                print(f"Registrant {registrant_id} not found")
+                return HTMLResponse(
+                    '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+                    'Error: Registrant not found</div>',
+                    status_code=404
+                )
+            
+            print(f"Found registrant: {registrant.name}")
+            
+            if not registrant.photo_url:
+                print("No photo URL found")
+                return HTMLResponse(
+                    '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+                    'Error: No photo found for this registrant</div>',
+                    status_code=404
+                )
+            
+            # Delete file from filesystem
+            photo_path = Path("static") / registrant.photo_url.lstrip("/static/")
+            try:
+                if photo_path.exists():
+                    photo_path.unlink()
+                    print(f"Deleted file: {photo_path}")
+                else:
+                    print(f"File not found: {photo_path}")
+            except Exception as e:
+                # Log error but don't fail the request
+                print(f"Failed to delete file {photo_path}: {e}")
+            
+            # Update database
+            registrant.photo_url = None
+            await session.commit()
+            print("Photo deleted successfully from database")
+        
+        return HTMLResponse(
+            '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">'
+            'Photo deleted successfully!</div>'
+        )
+    except Exception as e:
+        print(f"Error deleting photo: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return HTMLResponse(
+            f'<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">'
+            f'Error deleting photo: {str(e)}</div>',
+            status_code=500
+        )
