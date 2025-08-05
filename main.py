@@ -68,6 +68,16 @@ async def webinar_registrants(request: Request, current_user: User = Depends(get
     })
 
 
+@app.get("/webinar-demo", response_class=HTMLResponse)
+async def webinar_demo(request: Request):
+    """Marketing page showcasing webinar attendees and community"""
+    return templates.TemplateResponse("webinar-demo.html", {
+        "request": request, 
+        "title": "Webinar Demo",
+        "current_page": "webinar-demo"
+    })
+
+
 @app.get("/api/products")
 async def get_products():
     """API endpoint to fetch product data for the dashboard"""
@@ -362,7 +372,35 @@ async def get_registrants(current_user: User = Depends(get_current_staff_or_admi
                     "webinar_date": registrant.webinar_date.isoformat(),
                     "status": registrant.status,
                     "photo_url": registrant.photo_url,
+                    "notes": registrant.notes,
                     "registration_date": registrant.registration_date.isoformat()
+                }
+                for registrant in registrants
+            ]
+        })
+
+
+@app.get("/webinar-attendees")
+async def get_webinar_attendees():
+    """Get webinar attendees for the marketing demo page"""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(WebinarRegistrants))
+        registrants = result.scalars().all()
+        
+        return JSONResponse({
+            "attendees": [
+                {
+                    "id": str(registrant.id),
+                    "name": registrant.name,
+                    "email": registrant.email,
+                    "company": registrant.company,
+                    "webinar_title": registrant.webinar_title,
+                    "webinar_date": registrant.webinar_date.isoformat(),
+                    "status": registrant.status,
+                    "group": registrant.group,
+                    "notes": registrant.notes,
+                    "photo_url": registrant.photo_url,
+                    "created_at": registrant.created_at.isoformat()
                 }
                 for registrant in registrants
             ]

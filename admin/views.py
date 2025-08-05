@@ -36,8 +36,8 @@ class ProductAdmin(ModelView, model=Product):
 
 
 class WebinarRegistrantsAdmin(ModelView, model=WebinarRegistrants):
-    column_list = ["name", "email", "company", "webinar_title", "webinar_date", "status", "group"]
-    column_searchable_list = ["name", "email", "company", "webinar_title"]
+    column_list = ["name", "email", "company", "webinar_title", "webinar_date", "status", "group", "notes"]
+    column_searchable_list = ["name", "email", "company", "webinar_title", "notes"]
     
     def is_accessible(self, request: Any) -> bool:
         """Webinar managers and superusers can access registrants"""
