@@ -205,7 +205,7 @@ async def login_form(request: Request):
     form = await request.form()
     username = form.get("username")
     password = form.get("password")
-    
+
     if not username or not password:
         return templates.TemplateResponse("login.html", {
             "request": request,

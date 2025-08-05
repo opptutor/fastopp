@@ -88,13 +88,14 @@ async def clear_and_add_registrants():
             # Copy sample photo if it exists
             photo_url = None
             photo_filename = registrant_data.pop('photo_filename')
+            assert isinstance(photo_filename, str)
             sample_photo_path = sample_photos_dir / photo_filename
-            
+
             if sample_photo_path.exists():
                 # Generate unique filename for the photo
                 unique_filename = f"{uuid.uuid4()}_{photo_filename}"
                 photo_dest_path = photos_dir / unique_filename
-                
+
                 # Copy the sample photo
                 shutil.copy2(sample_photo_path, photo_dest_path)
                 photo_url = f"/static/uploads/photos/{unique_filename}"
