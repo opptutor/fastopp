@@ -21,6 +21,11 @@ try:
     from scripts.add_test_users import add_test_users
     from scripts.add_sample_products import add_sample_products
     from scripts.add_sample_webinars import add_sample_webinars
+    from scripts.add_sample_webinar_registrants import add_sample_registrants
+    from scripts.clear_and_add_registrants import clear_and_add_registrants
+    from scripts.download_sample_photos import download_sample_photos
+    from scripts.check_users import check_users
+    from scripts.test_auth import test_auth
     from scripts.migrate.cli import run_migrate_command, show_migration_help
     from scripts.check_env import check_environment
 except ImportError as e:
@@ -104,6 +109,41 @@ async def run_webinars():
     print("✅ Sample webinars creation complete")
 
 
+async def run_download_photos():
+    """Download sample photos for webinar registrants"""
+    print("🔄 Downloading sample photos...")
+    download_sample_photos()
+    print("✅ Sample photos download complete")
+
+
+async def run_registrants():
+    """Add sample webinar registrants with photos"""
+    print("🔄 Adding sample webinar registrants...")
+    await add_sample_registrants()
+    print("✅ Sample webinar registrants creation complete")
+
+
+async def run_clear_registrants():
+    """Clear and add fresh webinar registrants with photos"""
+    print("🔄 Clearing and adding fresh webinar registrants...")
+    await clear_and_add_registrants()
+    print("✅ Fresh webinar registrants creation complete")
+
+
+async def run_check_users():
+    """Check existing users and their permissions"""
+    print("🔄 Checking users...")
+    await check_users()
+    print("✅ User check complete")
+
+
+async def run_test_auth():
+    """Test the authentication system"""
+    print("🔄 Testing authentication system...")
+    await test_auth()
+    print("✅ Authentication test complete")
+
+
 def run_server():
     """Start the development server with uvicorn"""
     print("🚀 Starting development server...")
@@ -185,7 +225,7 @@ def run_production_server():
 
 
 async def run_full_init():
-    """Run complete initialization: init + superuser + users + products + webinars"""
+    """Run complete initialization: init + superuser + users + products + webinars + registrants"""
     print("🚀 Running full initialization...")
     
     await run_init()
@@ -193,6 +233,9 @@ async def run_full_init():
     await run_users()
     await run_products()
     await run_webinars()
+    await run_download_photos()
+    await run_registrants()
+    await run_clear_registrants()
     
     print("✅ Full initialization complete!")
     print("\n📋 Summary:")
@@ -201,7 +244,10 @@ async def run_full_init():
     print("- Test users added (password: test123)")
     print("- Sample products added")
     print("- Sample webinars added")
+    print("- Sample photos downloaded")
+    print("- Webinar registrants added with photos")
     print("\n🌐 Ready to start the application with: uv run uvicorn main:app --reload")
+    print("🔐 Login to webinar registrants: http://localhost:8000/webinar-registrants")
 
 
 def show_help():
@@ -215,12 +261,17 @@ USAGE:
     python oppman.py <command> [options]
 
 COMMANDS:
-    init        Complete initialization (database + superuser + users + products + webinars)
+    init        Complete initialization (database + superuser + users + products + webinars + registrants)
     db          Initialize database only
     superuser   Create superuser only
     users       Add test users only
     products    Add sample products only
     webinars    Add sample webinars only
+    download_photos  Download sample photos for webinar registrants
+    registrants Add sample webinar registrants with photos
+    clear_registrants Clear and add fresh webinar registrants with photos
+    check_users Check existing users and their permissions
+    test_auth   Test the authentication system
     runserver   Start development server with uvicorn --reload
     stopserver  Stop development server
     production  Start production server with Gunicorn (no Nginx)
@@ -240,6 +291,11 @@ EXAMPLES:
     python oppman.py users
     python oppman.py products
     python oppman.py webinars
+    python oppman.py download_photos
+    python oppman.py registrants
+    python oppman.py clear_registrants
+    python oppman.py check_users
+    python oppman.py test_auth
     
     # Start development server
     python oppman.py runserver
@@ -284,6 +340,13 @@ PERMISSION LEVELS:
     - Support: Product management only
     - Regular users: No admin access
 
+WEBINAR REGISTRANTS:
+    - Access: http://localhost:8000/webinar-registrants
+    - Login required: Staff or admin access
+    - Features: Photo upload, registrant management
+    - Sample data: 5 registrants with professional photos
+    - Commands: download_photos, registrants, clear_registrants
+
 DATABASE:
     - Development: SQLite (test.db)
     - Backup format: test.db.YYYYMMDD_HHMMSS
@@ -292,6 +355,7 @@ SERVER:
     - Development server: http://localhost:8000
     - Admin panel: http://localhost:8000/admin/
     - API docs: http://localhost:8000/docs
+    - Webinar registrants: http://localhost:8000/webinar-registrants
     """
     print(help_text)
 
@@ -313,7 +377,8 @@ Examples:
         "command",
         nargs="?",
         choices=[
-            "init", "db", "superuser", "users", "products", 
+            "init", "db", "superuser", "users", "products", "webinars",
+            "download_photos", "registrants", "clear_registrants", "check_users", "test_auth",
             "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help"
         ],
         help="Command to execute"
@@ -392,6 +457,16 @@ Examples:
             await run_products()
         elif args.command == "webinars":
             await run_webinars()
+        elif args.command == "download_photos":
+            await run_download_photos()
+        elif args.command == "registrants":
+            await run_registrants()
+        elif args.command == "clear_registrants":
+            await run_clear_registrants()
+        elif args.command == "check_users":
+            await run_check_users()
+        elif args.command == "test_auth":
+            await run_test_auth()
     
     # Run the async command
     asyncio.run(run_command())

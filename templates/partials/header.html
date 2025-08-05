@@ -16,8 +16,10 @@
                    class="{% if current_page == 'design-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Design Demo</a>
                 <a href="/dashboard-demo" 
                    class="{% if current_page == 'dashboard-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Database Demo</a>
+                <a href="/webinar-demo" 
+                   class="{% if current_page == 'webinar-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Webinar Demo</a>
                 <a href="/webinar-registrants" 
-                   class="{% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Webinar Registrants</a>
+                   class="{% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Webinar Manage</a>
                 <a href="/admin/" 
                    class="{% if current_page == 'admin' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Admin</a>
                 {% if request.cookies.get('access_token') %}
@@ -48,8 +50,10 @@
                    class="block px-3 py-2 {% if current_page == 'design-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Design Demo</a>
                 <a href="/dashboard-demo" 
                    class="block px-3 py-2 {% if current_page == 'dashboard-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Database Demo</a>
+                <a href="/webinar-demo" 
+                   class="block px-3 py-2 {% if current_page == 'webinar-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Webinar Demo</a>
                 <a href="/webinar-registrants" 
-                   class="block px-3 py-2 {% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Webinar Registrants</a>
+                   class="block px-3 py-2 {% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Webinar Manage</a>
                 <a href="/admin/" 
                    class="block px-3 py-2 {% if current_page == 'admin' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Admin</a>
                 {% if request.cookies.get('access_token') %}

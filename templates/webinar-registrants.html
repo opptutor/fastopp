@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webinar Registrants - FastOpp</title>
+    <title>Webinar Manage - FastOpp</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -29,7 +29,7 @@
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="webinarRegistrants()">
                 <header class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Registrants</h1>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Manage</h1>
                     <p class="text-gray-600">Manage webinar attendees and their photos</p>
                 </header>
 
@@ -165,6 +165,7 @@
                                         <p class="text-sm text-gray-600"><strong>Webinar:</strong> ${registrant.webinar_title}</p>
                                         <p class="text-sm text-gray-600"><strong>Status:</strong> ${registrant.status}</p>
                                         <p class="text-sm text-gray-600"><strong>ID:</strong> ${registrant.id}</p>
+                                        <p class="text-sm text-gray-600"><strong>Notes:</strong> ${registrant.notes || 'No notes'}</p>
                                         <div class="mt-2">
                                             ${actionsHtml}
                                         </div>
