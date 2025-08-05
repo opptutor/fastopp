@@ -29,6 +29,8 @@ flowchart TD
 
 ### Interactive
 
+![home](docs/images/home.webp)
+
 ![interactive](docs/images/interactive.webp)
 
 ### Cards with Mouseover
@@ -41,7 +43,7 @@ flowchart TD
 
 ### Database Admin List
 
-![admin list](docs/images/admin2.webp)
+![admin list](docs/images/admin.webp)
 
 ### Database Entry Edit
 
@@ -154,6 +156,7 @@ uv run python oppman.py init
 ```
 
 This single command will:
+
 - Initialize migrations
 - Create initial migration
 - Apply migrations
@@ -295,6 +298,7 @@ The project uses Alembic for database migrations, providing Django-like migratio
    ```
 
 2. **"Alembic not initialized"**
+
    ```bash
    uv run python oppman.py migrate init
    ```
