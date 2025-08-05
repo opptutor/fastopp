@@ -368,7 +368,7 @@ This setup allows your team to quickly evaluate:
 
 The goal is to assess whether FastAPI + pre-built admin tools can provide a Django-like development experience for your developer team.
 
-### Do and Don't
+### Do
 
 | Usable Functionality | Use Admin Panel | Minimum Functionality |
 | -- | -- | -- |
