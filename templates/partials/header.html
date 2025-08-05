@@ -16,8 +16,14 @@
                    class="{% if current_page == 'design-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Design Demo</a>
                 <a href="/dashboard-demo" 
                    class="{% if current_page == 'dashboard-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Database Demo</a>
+                <a href="/webinar-registrants" 
+                   class="{% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Webinar Registrants</a>
                 <a href="/admin/" 
                    class="{% if current_page == 'admin' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue transition-colors{% endif %}">Admin</a>
+                {% if request.cookies.get('access_token') %}
+                <a href="/logout" 
+                   class="text-red-600 hover:text-red-700 transition-colors">Logout</a>
+                {% endif %}
             </div>
             
             <!-- Mobile menu button -->
@@ -42,8 +48,14 @@
                    class="block px-3 py-2 {% if current_page == 'design-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Design Demo</a>
                 <a href="/dashboard-demo" 
                    class="block px-3 py-2 {% if current_page == 'dashboard-demo' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Database Demo</a>
+                <a href="/webinar-registrants" 
+                   class="block px-3 py-2 {% if current_page == 'webinar-registrants' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Webinar Registrants</a>
                 <a href="/admin/" 
                    class="block px-3 py-2 {% if current_page == 'admin' %}text-ai-blue font-medium{% else %}text-gray-600 hover:text-ai-blue{% endif %}">Admin</a>
+                {% if request.cookies.get('access_token') %}
+                <a href="/logout" 
+                   class="block px-3 py-2 text-red-600 hover:text-red-700">Logout</a>
+                {% endif %}
             </div>
         </div>
     </div>

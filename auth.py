@@ -2,8 +2,9 @@
 # auth.py - Custom authentication for admin panel
 # =========================
 import jwt
+import uuid
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from sqlalchemy import select
@@ -58,8 +59,18 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    # Convert string user_id to UUID
+    try:
+        user_uuid = uuid.UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user ID format",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     async with AsyncSessionLocal() as session:
-        result = await session.execute(select(User).where(User.id == user_id))
+        result = await session.execute(select(User).where(User.id == user_uuid))
         user = result.scalar_one_or_none()
         
         if user is None:
@@ -89,9 +100,87 @@ async def get_current_superuser(current_user: User = Depends(get_current_user)):
     return current_user
 
 
+async def get_current_staff_or_admin(current_user: User = Depends(get_current_user)):
+    """Get current authenticated user with staff or admin permissions"""
+    if not (current_user.is_staff or current_user.is_superuser):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions - staff or admin access required"
+        )
+    return current_user
+
+
 def create_user_token(user: User):
     """Create token for user"""
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     return create_access_token(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     ) 
+
+
+async def get_current_user_from_cookies(request: Request):
+    """Get current authenticated user from cookies"""
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    payload = verify_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    user_id: str = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Convert string user_id to UUID
+    try:
+        user_uuid = uuid.UUID(user_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user ID format",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(User).where(User.id == user_uuid))
+        user = result.scalar_one_or_none()
+        
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        if not user.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Inactive user",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        return user
+
+
+async def get_current_staff_or_admin_from_cookies(request: Request):
+    """Get current authenticated user with staff or admin permissions from cookies"""
+    user = await get_current_user_from_cookies(request)
+    if not (user.is_staff or user.is_superuser):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions - staff or admin access required"
+        )
+    return user 

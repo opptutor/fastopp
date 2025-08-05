@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webinar Registrants - FastOpp</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ai-blue': '#3B82F6',
+                        'ai-purple': '#8B5CF6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="min-h-screen flex flex-col">
+        {% include 'partials/header.html' %}
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="webinarRegistrants()">
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Registrants</h1>
+                    <p class="text-gray-600">Manage webinar attendees and their photos</p>
+                </header>
+
+                <!-- Upload Form -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Upload Photo for Registrant</h3>
+                    <form hx-post="/upload-photo" hx-encoding="multipart/form-data" hx-target="#uploadResult" 
+                          class="space-y-4" x-data="{ registrantId: '', description: '' }" 
+                          x-on:submit="if(registrantId) $el.setAttribute('hx-post', `/upload-photo/${registrantId}`)">
+                        <div>
+                            <label for="registrantId" class="block text-sm font-medium text-gray-700 mb-1">
+                                Registrant ID:
+                            </label>
+                            <input type="text" id="registrantId" name="registrantId" required
+                                   x-model="registrantId"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="photo" class="block text-sm font-medium text-gray-700 mb-1">
+                                Photo:
+                            </label>
+                            <input type="file" id="photo" name="photo" accept="image/*" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+                                Description (optional):
+                            </label>
+                            <input type="text" id="description" name="description"
+                                   x-model="description"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <button type="submit" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
+                            Upload Photo
+                        </button>
+                    </form>
+                    <div id="uploadResult" class="mt-4"></div>
+                </div>
+
+                <!-- Registrants List -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">All Registrants</h3>
+                    <div id="registrantsContainer" 
+                         hx-get="/registrants" 
+                         hx-trigger="load, uploadComplete from:body"
+                         hx-target="this"
+                         hx-swap="innerHTML">
+                        <!-- Registrants will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function webinarRegistrants() {
+            return {
+                init() {
+                    // Listen for upload completion
+                    document.body.addEventListener('uploadComplete', () => {
+                        // Trigger reload of registrants list
+                        htmx.trigger('#registrantsContainer', 'uploadComplete');
+                    });
+                }
+            }
+        }
+
+        // Handle successful upload
+        document.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.elt.tagName === 'FORM' && evt.detail.pathInfo.requestPath.includes('/upload-photo')) {
+                if (evt.detail.successful) {
+                    // Clear form
+                    evt.detail.elt.reset();
+                    // Trigger reload of registrants
+                    htmx.trigger(document.body, 'uploadComplete');
+                }
+            }
+        });
+    </script>
+
+    <!-- Template for registrants list -->
+    <template id="registrants-template">
+        <div class="space-y-4">
+            <div class="registrant-card bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <div class="flex items-center space-x-4">
+                    <div class="registrant-photo-container">
+                        <!-- Photo will be inserted here -->
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-lg font-semibold text-gray-900 registrant-name"></h4>
+                        <p class="text-sm text-gray-600"><strong>Email:</strong> <span class="registrant-email"></span></p>
+                        <p class="text-sm text-gray-600"><strong>Company:</strong> <span class="registrant-company"></span></p>
+                        <p class="text-sm text-gray-600"><strong>Webinar:</strong> <span class="registrant-webinar"></span></p>
+                        <p class="text-sm text-gray-600"><strong>Status:</strong> <span class="registrant-status"></span></p>
+                        <p class="text-sm text-gray-600"><strong>ID:</strong> <span class="registrant-id"></span></p>
+                        <div class="registrant-actions mt-2">
+                            <!-- Actions will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Custom HTMX response handler for registrants
+        htmx.on('htmx:afterRequest', function(evt) {
+            if (evt.detail.pathInfo.requestPath === '/registrants') {
+                const response = JSON.parse(evt.detail.xhr.responseText);
+                const container = evt.detail.target;
+                
+                if (response.registrants && response.registrants.length > 0) {
+                    container.innerHTML = response.registrants.map(registrant => {
+                        const photoHtml = registrant.photo_url 
+                            ? `<img src="${registrant.photo_url}" alt="Photo" class="w-24 h-24 object-cover rounded-full border-3 border-blue-500">`
+                            : `<div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-2xl">👤</div>`;
+                        
+                        const actionsHtml = registrant.photo_url 
+                            ? `<button onclick="deletePhoto('${registrant.id}')" class="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded transition duration-200">Delete Photo</button>`
+                            : '<span class="text-gray-500 text-sm">No photo uploaded</span>';
+                        
+                        return `
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                                <div class="flex items-center space-x-4">
+                                    <div class="registrant-photo-container">
+                                        ${photoHtml}
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="text-lg font-semibold text-gray-900">${registrant.name}</h4>
+                                        <p class="text-sm text-gray-600"><strong>Email:</strong> ${registrant.email}</p>
+                                        <p class="text-sm text-gray-600"><strong>Company:</strong> ${registrant.company || 'N/A'}</p>
+                                        <p class="text-sm text-gray-600"><strong>Webinar:</strong> ${registrant.webinar_title}</p>
+                                        <p class="text-sm text-gray-600"><strong>Status:</strong> ${registrant.status}</p>
+                                        <p class="text-sm text-gray-600"><strong>ID:</strong> ${registrant.id}</p>
+                                        <div class="mt-2">
+                                            ${actionsHtml}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = '<p class="text-gray-500 text-center py-8">No registrants found</p>';
+                }
+            }
+        });
+
+        // Delete photo function
+        function deletePhoto(registrantId) {
+            if (!confirm('Are you sure you want to delete this photo?')) {
+                return;
+            }
+            
+            htmx.ajax('DELETE', `/delete-photo/${registrantId}`, {
+                target: '#deleteResult',
+                swap: 'innerHTML'
+            }).then(() => {
+                // Reload registrants list
+                htmx.trigger('#registrantsContainer', 'uploadComplete');
+            }).catch(error => {
+                alert(`Error: ${error.message}`);
+            });
+        }
+    </script>
+
+    <!-- Hidden div for delete results -->
+    <div id="deleteResult" class="hidden"></div>
+</body>
+</html> 

@@ -47,6 +47,7 @@ class WebinarRegistrants(SQLModel, table=True):
     group: Optional[str] = Field(default=None)  # marketing, sales, support
     is_public: bool = Field(default=True)  # Whether this registration is visible to all
     notes: Optional[str] = Field(default=None, nullable=True)
+    photo_url: Optional[str] = Field(default=None, nullable=True)  # Path to uploaded photo
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
