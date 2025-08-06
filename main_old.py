@@ -3,8 +3,6 @@
 # =========================
 import os
 import uuid
-import json
-import aiohttp
 from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, UploadFile, File, Form
@@ -78,16 +76,6 @@ async def webinar_demo(request: Request):
         "request": request, 
         "title": "Webinar Demo",
         "current_page": "webinar-demo"
-    })
-
-
-@app.get("/ai-demo", response_class=HTMLResponse)
-async def ai_demo(request: Request):
-    """AI Chat demo page with Llama 3.3 70B integration"""
-    return templates.TemplateResponse("ai-demo.html", {
-        "request": request, 
-        "title": "AI Chat Demo",
-        "current_page": "ai-demo"
     })
 
 
@@ -561,70 +549,3 @@ async def delete_photo(registrant_id: str):
             f'Error deleting photo: {str(e)}</div>',
             status_code=500
         )
-
-
-@app.post("/api/chat")
-async def chat_with_llama(request: Request):
-    """Chat endpoint using OpenRouter API with Llama 3.3 70B"""
-    try:
-        # Get the request body
-        body = await request.json()
-        user_message = body.get("message", "")
-        
-        if not user_message:
-            raise HTTPException(status_code=400, detail="Message is required")
-        
-        # Get API key from environment
-        api_key = os.getenv("OPENROUTER_API_KEY")
-        if not api_key:
-            raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
-        
-        # Prepare the request to OpenRouter
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://fastopp.local",  # Replace with your domain
-            "X-Title": "FastOpp AI Demo"
-        }
-        
-        payload = {
-            "model": "meta-llama/llama-3.3-70b-instruct:free",
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are a helpful AI assistant. Provide clear, concise, and accurate responses. Be friendly and engaging in your communication style."
-                },
-                {
-                    "role": "user",
-                    "content": user_message
-                }
-            ],
-            "temperature": 0.7,
-            "max_tokens": 1000
-        }
-        
-        # Make request to OpenRouter
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=payload
-            ) as response:
-                if response.status != 200:
-                    error_text = await response.text()
-                    raise HTTPException(status_code=500, detail=f"OpenRouter API error: {error_text}")
-                
-                result = await response.json()
-                
-                # Extract the assistant's response
-                assistant_message = result.get("choices", [{}])[0].get("message", {}).get("content", "")
-                
-                return {
-                    "response": assistant_message,
-                    "model": "meta-llama/llama-3.3-70b-instruct:free"
-                }
-                
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid JSON")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

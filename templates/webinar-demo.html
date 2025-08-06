@@ -173,7 +173,7 @@
                 },
                 loadAttendeeCounts() {
                     console.log('Loading attendee counts...');
-                    fetch('/webinar-attendees')
+                    fetch('/api/webinar-attendees')
                         .then(response => {
                             console.log('Response status:', response.status);
                             return response.json();

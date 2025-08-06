@@ -16,6 +16,8 @@ our own admin tools.
 The tools could be a step in the process to evaluate FastAPI
 or where Oppkey ends up.
 
+**Recent Improvement**: The codebase has been refactored to follow a Model-View-Service (MVS) architecture, improving maintainability and separation of concerns. See [Architecture Overview](docs/ARCHITECTURE.md) for details.
+
 ```mermaid
 flowchart TD
     A[FastOpp Assessment]
@@ -82,32 +84,44 @@ Admin panel is restricted to logged-in users.
 ## Project structure
 
 ```text
-├── main.py                 # FastAPI application with routes
-├── auth.py                 # JWT authentication system
-├── admin_auth.py           # SQLAdmin authentication backend
-├── templates/              # Jinja2 templates
-│   ├── index.html          # Homepage template
-│   └── design-demo.html    # Static files demo template
-├── static/                 # Static assets (images, CSS, JS)
-│   ├── images/             # Image files
-│   ├── css/                # Stylesheets
-│   ├── js/                 # JavaScript files
-│   └── README.md           # Static files documentation
-├── db.py                   # Database configuration (uses environment variables)
-├── models.py               # SQLModel models
-├── users.py                # FastAPI Users configuration
-├── oppman.py               # Management tool for database operations
-├── scripts/                # Database setup scripts
-│   ├── init_db.py          # Database initialization
+├── main.py                 # FastAPI application with MVS architecture
+├── main_old.py             # Original monolithic file (kept for reference)
+├── routes/                 # Route handlers (View layer)
+│   ├── pages.py           # HTML page rendering routes
+│   ├── auth.py            # Authentication routes
+│   ├── api.py             # JSON API endpoints
+│   └── webinar.py         # Webinar management routes
+├── services/              # Business logic (Service layer)
+│   ├── product_service.py # Product-related operations
+│   └── webinar_service.py # Webinar registrant operations
+├── auth.py                # JWT authentication system
+├── admin_auth.py          # SQLAdmin authentication backend
+├── templates/             # Jinja2 templates
+│   ├── index.html         # Homepage template
+│   └── design-demo.html   # Static files demo template
+├── static/                # Static assets (images, CSS, JS)
+│   ├── images/            # Image files
+│   ├── css/               # Stylesheets
+│   ├── js/                # JavaScript files
+│   └── README.md          # Static files documentation
+├── db.py                  # Database configuration (uses environment variables)
+├── models.py              # SQLModel models (Model layer)
+├── users.py               # FastAPI Users configuration
+├── oppman.py              # Management tool for database operations
+├── scripts/               # Database setup scripts
+│   ├── init_db.py         # Database initialization
 │   ├── create_superuser.py # Superuser creation script
-│   ├── add_test_users.py   # Test users creation script
+│   ├── add_test_users.py  # Test users creation script
 │   ├── add_sample_products.py # Sample product data script
-│   ├── check_env.py        # Environment configuration checker
-│   └── migrate/            # Database migration management
-├── test.db                 # SQLite database (auto-created)
-├── .env                    # Environment variables (create this)
-├── pyproject.toml          # Project dependencies
-└── uv.lock                 # Lock file
+│   ├── check_env.py       # Environment configuration checker
+│   └── migrate/           # Database migration management
+├── docs/                  # Documentation
+│   ├── ARCHITECTURE.md    # MVS Architecture documentation
+│   └── images/            # Screenshots and documentation images
+├── test.db                # SQLite database (auto-created)
+├── .env                   # Environment variables (create this)
+├── pyproject.toml         # Project dependencies
+└── uv.lock                # Lock file
 ```
 
 ## 🚀 Quick Start (For Team Members)
@@ -362,6 +376,7 @@ uv run python oppman.py env
 
 ## 📚 Documentation
 
+- [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
 - [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
 - [Production vs Development](docs/production_vs_development.md) - Environment differences
 - [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
