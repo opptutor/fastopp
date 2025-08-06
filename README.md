@@ -152,12 +152,20 @@ uv add python-dotenv
 
 Create a `.env` file in your project root:
 
+**Required Environment Variables:**
+
+- `DATABASE_URL`: Database connection string
+- `SECRET_KEY`: Secret key for JWT tokens and session management
+- `ENVIRONMENT`: Set to "development" for development mode
+- `OPENROUTER_API_KEY`: API key for OpenRouter (required for AI demo features)
+
 ```bash
 # Create environment file with secure defaults
 cat > .env << EOF
 DATABASE_URL=sqlite+aiosqlite:///./test.db
 SECRET_KEY=dev_secret_key_$(openssl rand -hex 32)
 ENVIRONMENT=development
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
 ```
 
@@ -168,6 +176,7 @@ EOF
 DATABASE_URL=sqlite+aiosqlite:///./test.db
 SECRET_KEY=dev_secret_key_change_in_production_$(openssl rand -hex 32)
 ENVIRONMENT=development
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 ### 3. One-Command Setup
