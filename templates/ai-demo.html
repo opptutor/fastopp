@@ -101,11 +101,11 @@
     <section class="relative bg-gradient-to-br from-ai-blue to-ai-purple text-white py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h1 class="text-5xl font-bold mb-6"> Chat UI Demo</h1>
+                <h1 class="text-5xl font-bold mb-6"> Introspective Chat UI Demo</h1>
                 <p class="text-xl mb-8 text-blue-100">
-                    Demonstration of 
-                    HTMX, Alpine.js, and Tailwind CSS to build a simple chat interface
-                    without Internet search or chat history.
+                    Just the LLM, plain and simple. Avoid the hassle and stress of hectic information from
+                     Internet search
+                    or chat history. 
                 </p>
                 
                 <!-- Model Info -->
@@ -113,7 +113,7 @@
                     <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
                     </svg>
-                    <span class="text-lg font-semibold">Meta Llama 3.3 70B Instruct (Free)</span>
+                    <span class="text-lg font-semibold">You can see the entire world in a single tatami mat</span>
                 </div>
             </div>
         </div>
@@ -135,7 +135,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-white font-semibold text-lg">AI Assistant</h3>
+                                <h3 class="text-white font-semibold text-lg">Single Tatami Mat AI</h3>
                                 <p class="text-blue-100 text-sm">Powered by Llama 3.3 70B</p>
                             </div>
                         </div>
@@ -165,10 +165,10 @@
                     <!-- Welcome Message -->
                     <div class="chat chat-start">
                         <div class="chat-bubble bg-gradient-to-r from-blue-100 to-purple-100 text-gray-800 border border-blue-200">
-                            <p>👋 Hello! I'm your AI assistant powered by Llama 3.3 70B. How can I help you today?</p>
+                            <p>👋 Hello! I'm Midori, powered by Llama 3.3 70B. How can I help you today?</p>
                             <p class="text-xs opacity-70 mt-2">Just type your message below to start chatting!</p>
                         </div>
-                        <div class="chat-footer opacity-50">AI Assistant</div>
+                        <div class="chat-footer opacity-50">Midori</div>
                     </div>
                     
                     <!-- Dynamic Messages -->
@@ -179,7 +179,7 @@
                                 <div x-html="formatMessage(message.content)"></div>
                             </div>
                             <div class="chat-footer opacity-50" 
-                                 x-text="message.role === 'user' ? 'You' : 'AI Assistant'"></div>
+                                 x-text="message.role === 'user' ? 'You' : 'Midori'"></div>
                         </div>
                     </template>
                     
@@ -188,10 +188,10 @@
                         <div class="chat-bubble bg-gradient-to-r from-blue-100 to-purple-100 text-gray-800 border border-blue-200">
                             <div class="flex items-center space-x-2">
                                 <span class="loading loading-dots loading-sm"></span>
-                                <span class="text-sm">AI is thinking...</span>
+                                <span class="text-sm">Midori is thinking...</span>
                             </div>
                         </div>
-                        <div class="chat-footer opacity-50">AI Assistant</div>
+                        <div class="chat-footer opacity-50">Midori</div>
                     </div>
                 </div>
                 
@@ -225,10 +225,10 @@
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-4xl font-bold text-center mb-16 text-gray-900">
-                Powered by Modern Web Technologies
+                Demonstration of Modern Web Technologies
             </h2>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- HTMX Feature -->
                 <div class="group" x-data="{ hovered: false }" 
                      @mouseenter="hovered = true" 
@@ -265,6 +265,24 @@
                     </div>
                 </div>
 
+                <!-- DaisyUI Feature -->
+                <div class="group" x-data="{ hovered: false }" 
+                     @mouseenter="hovered = true" 
+                     @mouseleave="hovered = false">
+                    <div class="bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-xl transition-all duration-300"
+                         :class="hovered ? 'shadow-xl scale-105' : 'shadow-lg'">
+                        <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">DaisyUI Components</h3>
+                        <p class="text-gray-600">
+                            Professional chat bubbles, buttons, and form elements with built-in theming and responsive design.
+                        </p>
+                    </div>
+                </div>
+
                 <!-- Tailwind Feature -->
                 <div class="group" x-data="{ hovered: false }" 
                      @mouseenter="hovered = true" 
@@ -291,7 +309,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <p class="text-gray-400">
-                    Built with ❤️ using FastAPI, HTMX, Alpine.js, and Tailwind CSS
+                    Built with ❤️ using FastAPI, HTMX, Alpine.js, DaisyUI, and Tailwind CSS
                 </p>
                 <p class="text-gray-500 text-sm mt-2">
                     Powered by Meta Llama 3.3 70B via OpenRouter API
