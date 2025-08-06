@@ -163,7 +163,7 @@
 
         // Load registrants function
         function loadRegistrants() {
-            fetch('/registrants')
+            fetch('/api/registrants')
                 .then(response => response.json())
                 .then(data => {
                     allRegistrants = data.registrants; // Store all registrants
