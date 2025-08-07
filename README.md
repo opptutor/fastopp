@@ -9,20 +9,30 @@ Although both Django and Flask can absolutely be used for these
 applications and are great in many, many ways, there are often rough patches during
 development.
 
-Although FastAPI has advantages in future-proof architecture, it is
-difficult to use, especially for developers familiar with Django.
+Although FastAPI has advantages in future-proof architecture, it can
+have a steep learning curve for people, especially for developers familiar with Django.
 
-## Screenshots
+FastOpp provides an opinionated framework for FastAPI with the following features:
 
-### Interactive
+* admin panel similar to Django
+* admin panel example with custom styling
+* Django-style HTML templates with modern UI components
+  * Replaceable style templates to get started
+* API endpoints to connect to other frontend frameworks
+  * auto-generated documentation for API endpoints
+  * designed to connect to Flutter and React in the future, but we do not have examples
+
+## Screenshots of Included Design Examples
+
+### Clickable Cards with Mouseover
 
 ![home](docs/images/home.webp)
 
-![interactive](docs/images/interactive.webp)
-
-### Cards with Mouseover
-
 ![cards](docs/images/cards.webp)
+
+### Change Images Without Page Reload
+
+![interactive](docs/images/interactive.webp)
 
 ### Hero
 
@@ -54,7 +64,7 @@ Admin panel is restricted to logged-in users.
 
 ![webinar people](docs/images/webinar_people.webp)
 
-### AI Chat
+### AI Chat with Cloud-Based LLM
 
 ![AI Chat](docs/images/ai_chat.webp)
 
