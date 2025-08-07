@@ -126,6 +126,7 @@
                 messages: [],
                 inputMessage: '',
                 isLoading: false,
+                currentStreamingMessage: null,
                 formatMessage(content) {
                     // Content is already HTML from server-side markdown processing
                     return content;
@@ -143,29 +144,107 @@
                     this.inputMessage = '';
                     this.isLoading = true;
                     
-                    fetch('/api/chat', {
+                    // Create a new assistant message for streaming
+                    this.currentStreamingMessage = {
+                        role: 'assistant',
+                        content: '',
+                        rawContent: '', // Store raw content for proper formatting
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    this.messages.push(this.currentStreamingMessage);
+                    
+                    // Use fetch with streaming for better compatibility
+                    fetch('/api/chat/stream', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ message: userMessage })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        this.messages.push({
-                            role: 'assistant',
-                            content: data.response,
-                            timestamp: new Date().toLocaleTimeString()
-                        });
-                        this.isLoading = false;
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+                        let buffer = '';
+                        let currentEvent = null;
+                        let currentData = '';
+                        
+                        // Capture the reference to currentStreamingMessage
+                        const streamingMessage = this.currentStreamingMessage;
+                        
+                        const readStream = () => {
+                            return reader.read().then(({ done, value }) => {
+                                if (done) {
+                                    this.isLoading = false;
+                                    this.currentStreamingMessage = null;
+                                    return;
+                                }
+                                
+                                buffer += decoder.decode(value, { stream: true });
+                                const lines = buffer.split('\n');
+                                
+                                // Keep the last line in buffer if it's incomplete
+                                buffer = lines.pop() || '';
+                                
+                                for (const line of lines) {
+                                    const trimmedLine = line.trim();
+                                    if (!trimmedLine) continue; // Skip empty lines
+                                    
+                                    if (trimmedLine.startsWith('event: ')) {
+                                        // Save the current event if we have data
+                                        if (currentEvent && currentData) {
+                                            processEvent(currentEvent, currentData);
+                                        }
+                                        currentEvent = trimmedLine.slice(7);
+                                        currentData = '';
+                                    } else if (trimmedLine.startsWith('data: ')) {
+                                        currentData += trimmedLine.slice(6);
+                                    }
+                                }
+                                
+                                // Process any remaining event
+                                if (currentEvent && currentData) {
+                                    processEvent(currentEvent, currentData);
+                                }
+                                
+                                return readStream();
+                            });
+                        }
+                        
+                        const processEvent = (eventType, dataStr) => {
+                            if (eventType === 'message') {
+                                try {
+                                    const data = JSON.parse(dataStr);
+                                    if (data && data.content && streamingMessage) {
+                                        // Server sends pre-formatted HTML content
+                                        streamingMessage.content = data.content;
+                                        streamingMessage.rawContent = data.raw_content || data.content;
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing SSE data:', e, 'Data:', dataStr);
+                                }
+                            } else if (eventType === 'complete') {
+                                this.isLoading = false;
+                                this.currentStreamingMessage = null;
+                            } else if (eventType === 'error') {
+                                if (streamingMessage) {
+                                    streamingMessage.content = 'Sorry, I encountered an error. Please try again.';
+                                }
+                                this.isLoading = false;
+                                this.currentStreamingMessage = null;
+                            }
+                        }
+                        
+                        return readStream();
                     })
                     .catch(error => {
-                        this.messages.push({
-                            role: 'assistant',
-                            content: 'Sorry, I encountered an error. Please try again.',
-                            timestamp: new Date().toLocaleTimeString()
-                        });
+                        console.error('Error:', error);
+                        this.currentStreamingMessage.content = 'Sorry, I encountered an error. Please try again.';
                         this.isLoading = false;
+                        this.currentStreamingMessage = null;
                     });
                 }
             }
@@ -262,11 +341,22 @@
                     </template>
                     
                     <!-- Loading Indicator -->
-                    <div x-show="isLoading" class="chat chat-start">
+                    <div x-show="isLoading && !currentStreamingMessage" class="chat chat-start">
                         <div class="chat-bubble bg-gradient-to-r from-blue-100 to-purple-100 text-gray-800 border border-blue-200">
                             <div class="flex items-center space-x-2">
                                 <span class="loading loading-dots loading-sm"></span>
                                 <span class="text-sm">Midori is thinking...</span>
+                            </div>
+                        </div>
+                        <div class="chat-footer opacity-50">Midori</div>
+                    </div>
+                    
+                    <!-- Streaming Indicator -->
+                    <div x-show="isLoading && currentStreamingMessage" class="chat chat-start">
+                        <div class="chat-bubble bg-gradient-to-r from-blue-100 to-purple-100 text-gray-800 border border-blue-200">
+                            <div class="flex items-center space-x-2">
+                                <span class="loading loading-dots loading-sm"></span>
+                                <span class="text-sm">Midori is responding...</span>
                             </div>
                         </div>
                         <div class="chat-footer opacity-50">Midori</div>
