@@ -1,7 +1,16 @@
 # FastOpp
 
 FastAPI Oppkey starter package using pre-built admin
-components to give FastAPI functionality comparable to Django.
+components to give FastAPI functionality comparable to Django
+for AI-first applications.
+
+Django and Flask are not designed for optimized async LLM applications.
+Although both Django and Flask can absolutely be used for these
+applications and are great in many, many ways, there are often rough patches during
+development.
+
+Although FastAPI has advantages in future-proof architecture, it is
+difficult to use, especially for developers familiar with Django.
 
 ## Screenshots
 
@@ -48,109 +57,6 @@ Admin panel is restricted to logged-in users.
 ### AI Chat
 
 ![AI Chat](docs/images/ai_chat.webp)
-
-## Components
-
-| Functional Concept| Component | Django Equivalent |
-| -- | -- | -- |
-| Production Web Server | FastAPI + uvicorn (for loads < 1,000 concurrent connections) | NGINX + Gunicorn |
-| Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
-| Development SQL Database | SQLite | SQLite |
-| Production SQL Database | PostgreSQL with pgvector | PostgreSQL + pgvector, asyncpg |
-| User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
-| Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
-| Authentication | Custom JWT + Session Auth (with database user verification and FastAPI Users password hashing) | Django Admin Auth |
-
-## Project structure
-
-```text
-├── main.py                 # FastAPI application with MVS architecture
-├── routes/                 # Route handlers (View layer)
-│   ├── pages.py           # HTML page rendering routes
-│   ├── auth.py            # Authentication routes
-│   ├── api.py             # JSON API endpoints
-│   ├── chat.py            # Chat functionality routes
-│   └── webinar.py         # Webinar management routes
-├── services/              # Business logic (Service layer)
-│   ├── product_service.py # Product-related operations
-│   ├── webinar_service.py # Webinar registrant operations
-│   └── chat_service.py    # Chat functionality operations
-├── auth.py                # JWT authentication system
-├── admin_auth.py          # SQLAdmin authentication backend
-├── admin/                 # Admin interface configuration
-│   ├── views.py           # Admin view definitions
-│   └── setup.py           # Admin interface setup
-├── templates/             # Jinja2 templates
-│   ├── index.html         # Homepage template
-│   ├── login.html         # Login page template
-│   ├── design-demo.html   # Static files demo template
-│   ├── dashboard-demo.html # Dashboard demo template
-│   ├── ai-demo.html       # AI demo template
-│   ├── webinar-demo.html  # Webinar demo template
-│   ├── webinar-registrants.html # Webinar registrants template
-│   └── partials/          # Template partials
-│       ├── header.html    # Header partial
-│       ├── ai-stats.html  # AI statistics partial
-│       └── demo-response.html # Demo response partial
-├── static/                # Static assets (images, CSS, JS)
-│   ├── images/            # Image files
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript files
-│   ├── favicon.ico        # Site favicon
-│   ├── uploads/           # File uploads directory
-│   │   ├── photos/        # User uploaded photos
-│   │   └── sample_photos/ # Sample photo files
-│   └── README.md          # Static files documentation
-├── db.py                  # Database configuration (uses environment variables)
-├── models.py              # SQLModel models (Model layer)
-├── users.py               # FastAPI Users configuration
-├── oppman.py              # Management tool for database operations
-├── alembic/               # Database migrations
-│   ├── env.py             # Alembic environment configuration
-│   ├── script.py.mako     # Migration template
-│   ├── README             # Migration documentation
-│   └── versions/          # Migration files
-│       ├── 8e825dae1884_initial_migration.py
-│       ├── 6ec04a33369d_add_is_staff_field_to_user_model.py
-│       ├── fca21b76a184_add_photo_url_to_webinar_registrants.py
-│       ├── 0333e16b1b9d_add_notes_field_to_webinar_registrants.py
-│       └── 714ef079d138_merge_heads.py
-├── alembic.ini            # Alembic configuration
-├── scripts/               # Database setup scripts
-│   ├── init_db.py         # Database initialization
-│   ├── create_superuser.py # Superuser creation script
-│   ├── add_test_users.py  # Test users creation script
-│   ├── add_sample_products.py # Sample product data script
-│   ├── add_sample_webinars.py # Sample webinar data script
-│   ├── add_sample_webinar_registrants.py # Sample registrant data script
-│   ├── clear_and_add_registrants.py # Clear and add registrants script
-│   ├── download_sample_photos.py # Download sample photos script
-│   ├── check_env.py       # Environment configuration checker
-│   ├── check_users.py     # User verification script
-│   ├── test_auth.py       # Authentication testing script
-│   ├── production_start.py # Production startup script
-│   └── migrate/           # Database migration management
-├── docs/                  # Documentation
-│   ├── ARCHITECTURE.md    # MVS Architecture documentation
-│   ├── authentication.md  # Authentication documentation
-│   ├── call_for_volunteers.md # Volunteer documentation
-│   ├── file_upload.md     # File upload documentation
-│   ├── image_storage.md   # Image storage documentation
-│   ├── MIGRATION_GUIDE.md # Migration guide
-│   ├── oppkey_development_plans.md # Development plans
-│   ├── postgresql_install.md # PostgreSQL installation guide
-│   ├── production_vs_development.md # Environment differences
-│   └── images/            # Screenshots and documentation images
-├── test_ai_demo.py        # AI demo testing script
-├── test_formatting.py     # Formatting testing script
-├── test.db                # SQLite database (auto-created)
-├── test.db.20250805_131918 # Database backup
-├── .env                   # Environment variables (create this)
-├── .gitignore             # Git ignore file
-├── .python-version        # Python version specification
-├── pyproject.toml         # Project dependencies
-└── uv.lock                # Lock file
-```
 
 ## 🚀 Quick Start (For Team Members)
 
