@@ -50,6 +50,16 @@ async def webinar_demo(request: Request):
     })
 
 
+@router.get("/ai-demo", response_class=HTMLResponse)
+async def ai_demo(request: Request):
+    """AI Chat demo page with Llama 3.3 70B integration"""
+    return templates.TemplateResponse("ai-demo.html", {
+        "request": request,
+        "title": "AI Chat Demo",
+        "current_page": "ai-demo"
+    })
+
+
 @router.get("/ai-stats", response_class=HTMLResponse)
 async def ai_stats(request: Request):
     """HTMX endpoint to return AI marketing statistics"""
