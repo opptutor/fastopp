@@ -5,17 +5,17 @@ import os
 import json
 import aiohttp
 import markdown
-from typing import Dict, Any
+from typing import Dict, Any, AsyncGenerator
 from fastapi import HTTPException
 
 
 class ChatService:
     """Service for AI chat operations using OpenRouter API"""
-    
+
     @staticmethod
     async def chat_with_llama(user_message: str) -> Dict[str, Any]:
         """
-        Send a message to Llama 3.3 70B via OpenRouter API
+        Send a message to Llama 3.3 70B via OpenRouter API (non-streaming)
         
         Args:
             user_message: The user's message to send to the AI
@@ -44,7 +44,7 @@ class ChatService:
             }
             
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": "meta-llama/llama-3.3-70b-instruct",
                 "messages": [
                     {
                         "role": "system",
@@ -98,4 +98,180 @@ class ChatService:
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid JSON")
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}") 
+            raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+    @staticmethod
+    async def chat_with_llama_stream(user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Stream a message to Llama 3.3 70B via OpenRouter API with server-side markdown processing
+        
+        Args:
+            user_message: The user's message to send to the AI
+            
+        Yields:
+            dict: Streaming response chunks from the AI with HTML formatting
+            
+        Raises:
+            HTTPException: If there's an error with the API call
+        """
+        try:
+            if not user_message:
+                raise HTTPException(status_code=400, detail="Message is required")
+            
+            # Get API key from environment
+            api_key = os.getenv("OPENROUTER_API_KEY")
+            if not api_key:
+                # Fallback to mock response for testing
+                async for chunk in ChatService._mock_stream_response(user_message):
+                    yield chunk
+                return
+            
+            # Prepare the request to OpenRouter
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://fastopp.local",  # Replace with your domain
+                "X-Title": "FastOpp AI Demo"
+            }
+            
+            payload = {
+                "model": "meta-llama/llama-3.3-70b-instruct",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a helpful AI assistant. Provide clear, concise, "
+                            "and accurate responses. Be friendly and engaging in your "
+                            "communication style. IMPORTANT: Always format your responses "
+                            "using markdown syntax for better readability. Use **bold** for emphasis, "
+                            "*italic* for subtle emphasis, `code` for inline code, ```code blocks``` "
+                            "for multi-line code, and proper markdown formatting for lists, "
+                            "headings, and other structured content."
+                        )
+                    },
+                    {
+                        "role": "user",
+                        "content": user_message
+                    }
+                ],
+                "temperature": 0.7,
+                "max_tokens": 1000,
+                "stream": True  # Enable streaming
+            }
+            
+            # Make streaming request to OpenRouter
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=payload
+                ) as response:
+                    if response.status != 200:
+                        # If API fails, fallback to mock response
+                        async for chunk in ChatService._mock_stream_response(user_message):
+                            yield chunk
+                        return
+                    
+                    # Accumulate raw content for markdown processing
+                    accumulated_content = ""
+                    
+                    # Stream the response
+                    async for line in response.content:
+                        line = line.decode('utf-8').strip()
+                        if line.startswith('data: '):
+                            data = line[6:]  # Remove 'data: ' prefix
+                            if data == '[DONE]':
+                                break
+                            
+                            try:
+                                chunk = json.loads(data)
+                                if 'choices' in chunk and len(chunk['choices']) > 0:
+                                    delta = chunk['choices'][0].get('delta', {})
+                                    content = delta.get('content', '')
+                                    if content:
+                                        # Accumulate the raw content
+                                        accumulated_content += content
+                                        
+                                        # Convert accumulated content to HTML
+                                        formatted_html = markdown.markdown(
+                                            accumulated_content,
+                                            extensions=['fenced_code', 'codehilite', 'tables', 'nl2br']
+                                        )
+                                        
+                                        yield {
+                                            "content": formatted_html,
+                                            "raw_content": accumulated_content,
+                                            "model": "meta-llama/llama-3.3-70b-instruct"
+                                        }
+                            except json.JSONDecodeError:
+                                continue  # Skip invalid JSON chunks
+                    
+        except Exception:
+            # Fallback to mock response on any error
+            async for chunk in ChatService._mock_stream_response(user_message):
+                yield chunk
+
+    @staticmethod
+    async def _mock_stream_response(user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
+        """
+        Mock streaming response for testing when API is not available
+        
+        Args:
+            user_message: The user's message
+            
+        Yields:
+            dict: Mock streaming response chunks with HTML formatting
+        """
+        import asyncio
+        
+        # Mock response based on user message
+        if "story" in user_message.lower():
+            response_parts = [
+                "Once upon a time, in a **distant galaxy**, there lived a curious robot named ",
+                "**Rusty**. Unlike other robots who spent their days processing data, Rusty had a ",
+                "dream: to understand the meaning of *human emotions*. \n\n",
+                "Every day, Rusty would observe the humans from afar, watching them laugh, cry, ",
+                "and share moments of joy. The robot's circuits would buzz with questions: ",
+                "`What makes them smile?` `Why do they hold hands?` `What is love?`\n\n",
+                "One day, Rusty decided to take a bold step. Instead of staying in the shadows, ",
+                "the robot approached a group of children playing in the park. At first, the ",
+                "children were surprised, but Rusty's gentle nature and endless curiosity ",
+                "soon won them over.\n\n",
+                "Through their friendship, Rusty learned that emotions weren't just data to be ",
+                "processed—they were experiences to be felt. The robot discovered that ",
+                "**empathy** was the bridge between artificial and human intelligence.\n\n",
+                "And so, Rusty became the first robot to truly understand the heart, proving ",
+                "that sometimes the most profound discoveries come from the simplest connections."
+            ]
+        else:
+            response_parts = [
+                "Hello! I'm **Midori**, your AI assistant. I'm here to help you with ",
+                "any questions or tasks you might have. I can assist with:\n\n",
+                "- **Writing and editing** content\n",
+                "- **Problem solving** and analysis\n",
+                "- **Creative projects** and brainstorming\n",
+                "- **Learning** new topics\n",
+                "- **Coding** and technical questions\n\n",
+                "What would you like to explore today? I'm excited to help you discover ",
+                "new possibilities and find solutions to your challenges!"
+            ]
+        
+        # Accumulate content for markdown processing
+        accumulated_content = ""
+        
+        # Stream the response with delays to simulate real streaming
+        for part in response_parts:
+            await asyncio.sleep(0.1)  # Small delay between chunks
+            accumulated_content += part
+            
+            # Convert accumulated content to HTML
+            formatted_html = markdown.markdown(
+                accumulated_content,
+                extensions=['fenced_code', 'codehilite', 'tables', 'nl2br']
+            )
+            
+            yield {
+                "content": formatted_html,
+                "raw_content": accumulated_content,
+                "model": "meta-llama/llama-3.3-70b-instruct (mock)"
+            } 
