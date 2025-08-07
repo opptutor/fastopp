@@ -62,7 +62,6 @@ This document outlines a phased approach to opening up structured training and d
 * **Build promotional videos and blog post for FastOpp**
   * Create compelling video content showcasing the platform
   * Write technical blog posts highlighting features and benefits
-  * Develop case studies and success stories
   * Create visual assets for social media and marketing
 
 * **Build web site for FastOpp**
