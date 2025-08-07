@@ -66,6 +66,8 @@ Admin panel is restricted to logged-in users.
 
 ### AI Chat with Cloud-Based LLM
 
+![AI Chat](docs/images/ai_chat_indents.webp)
+
 ![AI Chat](docs/images/ai_chat.webp)
 
 ## 🚀 Quick Start (For Team Members)
@@ -329,9 +331,13 @@ uv run python oppman.py env
 
 ## 📚 Documentation
 
-- [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
-- [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
-- [Production vs Development](docs/production_vs_development.md) - Environment differences
-- [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
-- [Authentication System](docs/authentication.md) - Authentication and authorization details
-- [Oppkey Development Plans](docs/oppkey_development_plans.md) - includes assessment plans
+* [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
+* [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
+* [Production vs Development](docs/production_vs_development.md) - Environment differences
+* [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
+* [Authentication System](docs/authentication.md) - Authentication and authorization details
+
+## Development Plans
+
+* [Oppkey Development Plans](docs/plan/oppkey_development_plans.md) - includes assessment plans
+* [Call for Volunteers](docs/plan/call_for_volunteers.md)

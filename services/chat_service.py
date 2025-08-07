@@ -4,6 +4,7 @@ Chat service for handling AI chat functionality using OpenRouter API
 import os
 import json
 import aiohttp
+import markdown
 from typing import Dict, Any
 from fastapi import HTTPException
 
@@ -50,7 +51,11 @@ class ChatService:
                         "content": (
                             "You are a helpful AI assistant. Provide clear, concise, "
                             "and accurate responses. Be friendly and engaging in your "
-                            "communication style."
+                            "communication style. IMPORTANT: Always format your responses "
+                            "using markdown syntax for better readability. Use **bold** for emphasis, "
+                            "*italic* for subtle emphasis, `code` for inline code, ```code blocks``` "
+                            "for multi-line code, and proper markdown formatting for lists, "
+                            "headings, and other structured content."
                         )
                     },
                     {
@@ -78,8 +83,15 @@ class ChatService:
                     # Extract the assistant's response
                     assistant_message = result.get("choices", [{}])[0].get("message", {}).get("content", "")
                     
+                    # Convert markdown to HTML
+                    formatted_html = markdown.markdown(
+                        assistant_message,
+                        extensions=['fenced_code', 'codehilite', 'tables', 'nl2br']
+                    )
+                    
                     return {
-                        "response": assistant_message,
+                        "response": formatted_html,
+                        "raw_response": assistant_message,  # Keep original for debugging
                         "model": "meta-llama/llama-3.3-70b-instruct:free"
                     }
                     

@@ -36,6 +36,89 @@
         }
     </script>
     
+    <!-- Markdown Styles -->
+    <style>
+        .chat-bubble pre {
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .chat-bubble code {
+            background-color: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .chat-bubble pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        
+        .chat-bubble ul, .chat-bubble ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .chat-bubble li {
+            margin: 0.25rem 0;
+        }
+        
+        .chat-bubble h1, .chat-bubble h2, .chat-bubble h3, 
+        .chat-bubble h4, .chat-bubble h5, .chat-bubble h6 {
+            margin: 1rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .chat-bubble h1 { font-size: 1.5rem; }
+        .chat-bubble h2 { font-size: 1.25rem; }
+        .chat-bubble h3 { font-size: 1.125rem; }
+        
+        .chat-bubble blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            margin: 0.5rem 0;
+            font-style: italic;
+            color: #6b7280;
+        }
+        
+        .chat-bubble table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
+        .chat-bubble th, .chat-bubble td {
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        
+        .chat-bubble th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .chat-bubble p {
+            margin: 0.5rem 0;
+        }
+        
+        .chat-bubble strong {
+            font-weight: 600;
+        }
+        
+        .chat-bubble em {
+            font-style: italic;
+        }
+    </style>
+    
     <!-- Alpine.js Data Function -->
     <script>
         function chatData() {
@@ -44,13 +127,8 @@
                 inputMessage: '',
                 isLoading: false,
                 formatMessage(content) {
-                    // Convert markdown-like formatting to HTML
-                    return content
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                        .replace(/`(.*?)`/g, '<code class="bg-base-200 px-1 py-0.5 rounded text-sm">$1</code>')
-                        .replace(/```([\s\S]*?)```/g, '<pre class="bg-base-200 p-3 rounded-lg my-2 overflow-x-auto"><code>$1</code></pre>')
-                        .replace(/\n/g, '<br>');
+                    // Content is already HTML from server-side markdown processing
+                    return content;
                 },
                 sendMessage() {
                     if (!this.inputMessage.trim()) return;
