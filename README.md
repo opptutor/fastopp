@@ -3,30 +3,6 @@
 FastAPI Oppkey starter package using pre-built admin
 components to give FastAPI functionality comparable to Django.
 
-The project is designed for Oppkey management (Jesse and Craig)
-to assess FastAPI functionality.
-
-The pre-built admin tools for FastAPI do not appear to be a
-best practice or even popular among FastAPI developers.
-
-After building applications with pre-built admin components, Oppkey
-may eventually move from pre-built components to building
-our own admin tools.
-
-The tools could be a step in the process to evaluate FastAPI
-or where Oppkey ends up.
-
-**Recent Improvement**: The codebase has been refactored to follow a Model-View-Service (MVS) architecture, improving maintainability and separation of concerns. See [Architecture Overview](docs/ARCHITECTURE.md) for details.
-
-```mermaid
-flowchart TD
-    A[FastOpp Assessment]
-    A --> B[FastAPI+Pre-Built Admin]
-    A --> C[FastAPI+Custom Admin]
-    A --> D[Django with async, HTMX]
-    A --> E[Django+FastAPI for LLM]
-```
-
 ## Screenshots
 
 ### Interactive
@@ -69,6 +45,10 @@ Admin panel is restricted to logged-in users.
 
 ![webinar people](docs/images/webinar_people.webp)
 
+### AI Chat
+
+![AI Chat](docs/images/ai_chat.webp)
+
 ## Components
 
 | Functional Concept| Component | Django Equivalent |
@@ -85,41 +65,89 @@ Admin panel is restricted to logged-in users.
 
 ```text
 ├── main.py                 # FastAPI application with MVS architecture
-├── main_old.py             # Original monolithic file (kept for reference)
 ├── routes/                 # Route handlers (View layer)
 │   ├── pages.py           # HTML page rendering routes
 │   ├── auth.py            # Authentication routes
 │   ├── api.py             # JSON API endpoints
+│   ├── chat.py            # Chat functionality routes
 │   └── webinar.py         # Webinar management routes
 ├── services/              # Business logic (Service layer)
 │   ├── product_service.py # Product-related operations
-│   └── webinar_service.py # Webinar registrant operations
+│   ├── webinar_service.py # Webinar registrant operations
+│   └── chat_service.py    # Chat functionality operations
 ├── auth.py                # JWT authentication system
 ├── admin_auth.py          # SQLAdmin authentication backend
+├── admin/                 # Admin interface configuration
+│   ├── views.py           # Admin view definitions
+│   └── setup.py           # Admin interface setup
 ├── templates/             # Jinja2 templates
 │   ├── index.html         # Homepage template
-│   └── design-demo.html   # Static files demo template
+│   ├── login.html         # Login page template
+│   ├── design-demo.html   # Static files demo template
+│   ├── dashboard-demo.html # Dashboard demo template
+│   ├── ai-demo.html       # AI demo template
+│   ├── webinar-demo.html  # Webinar demo template
+│   ├── webinar-registrants.html # Webinar registrants template
+│   └── partials/          # Template partials
+│       ├── header.html    # Header partial
+│       ├── ai-stats.html  # AI statistics partial
+│       └── demo-response.html # Demo response partial
 ├── static/                # Static assets (images, CSS, JS)
 │   ├── images/            # Image files
 │   ├── css/               # Stylesheets
 │   ├── js/                # JavaScript files
+│   ├── favicon.ico        # Site favicon
+│   ├── uploads/           # File uploads directory
+│   │   ├── photos/        # User uploaded photos
+│   │   └── sample_photos/ # Sample photo files
 │   └── README.md          # Static files documentation
 ├── db.py                  # Database configuration (uses environment variables)
 ├── models.py              # SQLModel models (Model layer)
 ├── users.py               # FastAPI Users configuration
 ├── oppman.py              # Management tool for database operations
+├── alembic/               # Database migrations
+│   ├── env.py             # Alembic environment configuration
+│   ├── script.py.mako     # Migration template
+│   ├── README             # Migration documentation
+│   └── versions/          # Migration files
+│       ├── 8e825dae1884_initial_migration.py
+│       ├── 6ec04a33369d_add_is_staff_field_to_user_model.py
+│       ├── fca21b76a184_add_photo_url_to_webinar_registrants.py
+│       ├── 0333e16b1b9d_add_notes_field_to_webinar_registrants.py
+│       └── 714ef079d138_merge_heads.py
+├── alembic.ini            # Alembic configuration
 ├── scripts/               # Database setup scripts
 │   ├── init_db.py         # Database initialization
 │   ├── create_superuser.py # Superuser creation script
 │   ├── add_test_users.py  # Test users creation script
 │   ├── add_sample_products.py # Sample product data script
+│   ├── add_sample_webinars.py # Sample webinar data script
+│   ├── add_sample_webinar_registrants.py # Sample registrant data script
+│   ├── clear_and_add_registrants.py # Clear and add registrants script
+│   ├── download_sample_photos.py # Download sample photos script
 │   ├── check_env.py       # Environment configuration checker
+│   ├── check_users.py     # User verification script
+│   ├── test_auth.py       # Authentication testing script
+│   ├── production_start.py # Production startup script
 │   └── migrate/           # Database migration management
 ├── docs/                  # Documentation
 │   ├── ARCHITECTURE.md    # MVS Architecture documentation
+│   ├── authentication.md  # Authentication documentation
+│   ├── call_for_volunteers.md # Volunteer documentation
+│   ├── file_upload.md     # File upload documentation
+│   ├── image_storage.md   # Image storage documentation
+│   ├── MIGRATION_GUIDE.md # Migration guide
+│   ├── oppkey_development_plans.md # Development plans
+│   ├── postgresql_install.md # PostgreSQL installation guide
+│   ├── production_vs_development.md # Environment differences
 │   └── images/            # Screenshots and documentation images
+├── test_ai_demo.py        # AI demo testing script
+├── test_formatting.py     # Formatting testing script
 ├── test.db                # SQLite database (auto-created)
+├── test.db.20250805_131918 # Database backup
 ├── .env                   # Environment variables (create this)
+├── .gitignore             # Git ignore file
+├── .python-version        # Python version specification
 ├── pyproject.toml         # Project dependencies
 └── uv.lock                # Lock file
 ```
@@ -390,40 +418,4 @@ uv run python oppman.py env
 - [Production vs Development](docs/production_vs_development.md) - Environment differences
 - [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
 - [Authentication System](docs/authentication.md) - Authentication and authorization details
-
-## 🎯 Evaluation Focus
-
-This setup allows your team to quickly evaluate:
-
-1. **FastAPI Admin Interface** - Compare with Django Admin
-2. **Authentication System** - JWT + Session-based auth plus FastAPI Users' PasswordHelper
-3. **Database Management** - [SQLModel](https://sqlmodel.tiangolo.com/) + [Alembic migrations](https://alembic.sqlalchemy.org/en/latest/)
-4. **User Management** - [FastAPI Users](https://fastapi-users.github.io/fastapi-users/latest/)
-5. **Development Experience** - Environment variables, management commands
-6. **Production Readiness** - PostgreSQL, Gunicorn, environment config
-
-The goal is to assess whether FastAPI + pre-built admin tools can provide a Django-like development experience for your developer team.
-
-### Do With Admin Panel
-
-
-| Create, Update, Delete, Users | Yes | Verify only admin can delete users |
-| Add new record to existing model | Yes | Delete, new, edit  |
-
-### Do With Code Editor
-
-| Usable Functionality | Database Test | Minimum Functionality |
-| -- | -- | -- |
-| Create new database model for different data |  Access through SQL Admin | On your own project, create new model in Python code. migrate. access data in new page and admin panel |
-| Create new page for design testing. Basic with tailwind, HTMX, Alpine.  | Do not use database | On your own project, add new page to `templates`. Connect to site. Must look good |
-| Create new Page for data access.  Does not need to look good.  | Code must pass data to page | On your own project, add new page to `templates`. Connect to site. |
-
-#### Don't
-
-| Functionality Not Covered | Plan For Next Project | Technology Plan|
-| -- | -- | -- |
-| real-time status updates in colored bubbles | Yes |  SSE |
-| streaming data from LLM | Yes | LLM stream |
-| chat box | Yes | LLM |
-| assign long-running task and do something else | Yes | Simulated delay with sleep |
-| React or Flutter with API endpoint | No | Refactor logic code to support both API and template access |
+- [Oppkey Development Plans](docs/oppkey_development_plans.md) - includes assessment plans
