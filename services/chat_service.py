@@ -44,7 +44,7 @@ class ChatService:
             }
             
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": "meta-llama/llama-3.3-70b-instruct",
                 "messages": [
                     {
                         "role": "system",
@@ -135,7 +135,7 @@ class ChatService:
             }
             
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": "meta-llama/llama-3.3-70b-instruct",
                 "messages": [
                     {
                         "role": "system",
@@ -201,7 +201,7 @@ class ChatService:
                                         yield {
                                             "content": formatted_html,
                                             "raw_content": accumulated_content,
-                                            "model": "meta-llama/llama-3.3-70b-instruct:free"
+                                            "model": "meta-llama/llama-3.3-70b-instruct"
                                         }
                             except json.JSONDecodeError:
                                 continue  # Skip invalid JSON chunks
@@ -273,5 +273,5 @@ class ChatService:
             yield {
                 "content": formatted_html,
                 "raw_content": accumulated_content,
-                "model": "meta-llama/llama-3.3-70b-instruct:free (mock)"
+                "model": "meta-llama/llama-3.3-70b-instruct (mock)"
             } 
