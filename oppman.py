@@ -53,6 +53,508 @@ def backup_database():
         return False
 
 
+def backup_demo_files():
+    """Backup demo files to demo_assets directory"""
+    print("🔄 Backing up demo files to demo_assets...")
+    
+    # Ensure demo_assets directory exists
+    demo_assets = Path("demo_assets")
+    demo_assets.mkdir(exist_ok=True)
+    
+    # Create subdirectories
+    (demo_assets / "templates").mkdir(exist_ok=True)
+    (demo_assets / "templates" / "partials").mkdir(exist_ok=True)
+    (demo_assets / "static").mkdir(exist_ok=True)
+    (demo_assets / "static" / "images").mkdir(exist_ok=True)
+    (demo_assets / "static" / "css").mkdir(exist_ok=True)
+    (demo_assets / "static" / "js").mkdir(exist_ok=True)
+    (demo_assets / "routes").mkdir(exist_ok=True)
+    (demo_assets / "services").mkdir(exist_ok=True)
+    (demo_assets / "scripts").mkdir(exist_ok=True)
+    
+    files_copied = 0
+    
+    try:
+        # Backup templates (all root HTML files)
+        print("📄 Backing up templates...")
+        templates_root = Path("templates")
+        if templates_root.exists():
+            for src in templates_root.glob("*.html"):
+                dst = demo_assets / "templates" / src.name
+                shutil.copy2(src, dst)
+                print(f"  ✅ templates/{src.name}")
+                files_copied += 1
+        
+        # Backup template partials
+        partials_src = Path("templates/partials")
+        if partials_src.exists():
+            partials_dst = demo_assets / "templates/partials"
+            for partial_file in partials_src.glob("*.html"):
+                shutil.copy2(partial_file, partials_dst / partial_file.name)
+                print(f"  ✅ partials/{partial_file.name}")
+                files_copied += 1
+        
+        # Backup static files
+        print("🎨 Backing up static files...")
+        
+        # Images
+        images_src = Path("static/images")
+        if images_src.exists():
+            images_dst = demo_assets / "static/images"
+            for image_file in images_src.glob("*.jpg"):
+                shutil.copy2(image_file, images_dst / image_file.name)
+                print(f"  ✅ images/{image_file.name}")
+                files_copied += 1
+        
+        # CSS and JS
+        for subdir in ["css", "js"]:
+            subdir_src = Path(f"static/{subdir}")
+            if subdir_src.exists():
+                subdir_dst = demo_assets / f"static/{subdir}"
+                for file in subdir_src.glob("*"):
+                    if file.is_file():
+                        shutil.copy2(file, subdir_dst / file.name)
+                        print(f"  ✅ {subdir}/{file.name}")
+                        files_copied += 1
+        
+        # Uploads (copy entire uploads tree if present)
+        uploads_src = Path("static/uploads")
+        if uploads_src.exists():
+            uploads_dst = demo_assets / "static/uploads"
+            if uploads_dst.exists():
+                shutil.rmtree(uploads_dst)
+            shutil.copytree(uploads_src, uploads_dst)
+            print("  ✅ uploads/")
+            files_copied += 1
+
+        # Favicon
+        favicon_src = Path("static/favicon.ico")
+        if favicon_src.exists():
+            shutil.copy2(favicon_src, demo_assets / "static/favicon.ico")
+            print("  ✅ favicon.ico")
+            files_copied += 1
+        
+        # Backup routes (all .py files)
+        print("🛣️  Backing up routes...")
+        routes_src_dir = Path("routes")
+        if routes_src_dir.exists():
+            for src in routes_src_dir.glob("*.py"):
+                dst = demo_assets / "routes" / src.name
+                shutil.copy2(src, dst)
+                print(f"  ✅ routes/{src.name}")
+                files_copied += 1
+        
+        # Backup services
+        print("🔧 Backing up services...")
+        service_files = [
+            "services/chat_service.py",
+            "services/product_service.py",
+            "services/webinar_service.py"
+        ]
+        
+        for service_file in service_files:
+            src = Path(service_file)
+            if src.exists():
+                dst = demo_assets / service_file
+                shutil.copy2(src, dst)
+                print(f"  ✅ {service_file}")
+                files_copied += 1
+        
+        # Backup models
+        print("📊 Backing up models...")
+        models_src = Path("models.py")
+        if models_src.exists():
+            shutil.copy2(models_src, demo_assets / "models.py")
+            print("  ✅ models.py")
+            files_copied += 1
+        
+        # Backup sample data scripts
+        print("📝 Backing up sample data scripts...")
+        script_files = [
+            "scripts/add_sample_products.py",
+            "scripts/add_sample_webinar_registrants.py",
+            "scripts/download_sample_photos.py"
+        ]
+        
+        for script_file in script_files:
+            src = Path(script_file)
+            if src.exists():
+                dst = demo_assets / script_file
+                shutil.copy2(src, dst)
+                print(f"  ✅ {script_file}")
+                files_copied += 1
+        
+        # Create/update documentation
+        print("📚 Updating documentation...")
+        
+        # Update README.md
+        readme_content = """# Demo Assets Backup
+
+This directory contains backup copies of all files required to restore the demonstration application functionality.
+
+## Structure
+
+- `templates/` - HTML templates for demo pages
+- `static/` - Static assets (images, CSS, JS)
+- `routes/` - Route handlers for demo functionality
+- `services/` - Business logic services
+- `models.py` - Data models
+- `scripts/` - Sample data scripts
+
+## Demo Pages
+
+1. **AI Chat Demo** (`/ai-demo`) - Interactive chat with Llama 3.3 70B
+2. **Dashboard Demo** (`/dashboard-demo`) - Product inventory dashboard with charts
+3. **Design Demo** (`/design-demo`) - Marketing demo with HTMX interactions
+4. **Webinar Demo** (`/webinar-demo`) - Webinar registrants showcase
+
+## Technologies Used
+
+- **Frontend**: Tailwind CSS, DaisyUI, Alpine.js, HTMX
+- **Backend**: FastAPI, SQLModel, SQLAlchemy
+- **AI**: OpenRouter API with Llama 3.3 70B
+- **Charts**: Chart.js
+
+## Restoration
+
+To restore demo files from this backup:
+
+1. Copy templates from `demo_assets/templates/` to `templates/`
+2. Copy static files from `demo_assets/static/` to `static/`
+3. Copy route files from `demo_assets/routes/` to `routes/`
+4. Copy service files from `demo_assets/services/` to `services/`
+5. Copy `demo_assets/models.py` to root directory
+6. Run sample data scripts from `demo_assets/scripts/`
+
+## Dependencies
+
+The demo requires these external dependencies:
+- `sse_starlette` for streaming chat
+- `markdown` for message formatting
+- `httpx` for API calls
+- `jinja2` for templating
+
+## Backup Information
+
+- **Backup Date**: {backup_date}
+- **Files Backed Up**: {files_copied} files
+- **Backup Command**: `uv run python oppman.py demo backup`
+""".format(
+            backup_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            files_copied=files_copied
+        )
+        
+        with open(demo_assets / "README.md", "w") as f:
+            f.write(readme_content)
+        
+        print("\n✅ Demo backup completed successfully!")
+        print(f"📊 Total files backed up: {files_copied}")
+        print(f"📁 Backup location: {demo_assets.absolute()}")
+        print("\n📋 To restore demo files:")
+        print("   python demo_assets/restore_demo.py")
+        print("   # or")
+        print("   ./demo_assets/restore_demo.sh")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Failed to backup demo files: {e}")
+        return False
+
+
+def restore_demo_files():
+    """Restore demo files from demo_assets directory"""
+    print("🔄 Restoring demo files from backup...")
+    
+    demo_assets = Path("demo_assets")
+    if not demo_assets.exists():
+        print("❌ Error: demo_assets directory not found!")
+        print("Please run 'python oppman.py demo backup' first to create a backup.")
+        return False
+    
+    files_restored = 0
+    
+    try:
+        # Ensure base destination directories exist
+        Path("templates").mkdir(parents=True, exist_ok=True)
+        Path("templates/partials").mkdir(parents=True, exist_ok=True)
+        Path("static").mkdir(parents=True, exist_ok=True)
+        Path("static/images").mkdir(parents=True, exist_ok=True)
+        Path("static/css").mkdir(parents=True, exist_ok=True)
+        Path("static/js").mkdir(parents=True, exist_ok=True)
+        Path("routes").mkdir(parents=True, exist_ok=True)
+        Path("services").mkdir(parents=True, exist_ok=True)
+        Path("scripts").mkdir(parents=True, exist_ok=True)
+
+        # Restore main.py (application entrypoint)
+        print("📄 Restoring main.py...")
+        main_src = demo_assets / "main.py"
+        main_dest = Path("main.py")
+        if main_src.exists():
+            if main_dest.exists():
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                shutil.copy2(main_dest, Path(f"main.py.{timestamp}"))
+            shutil.copy2(main_src, main_dest)
+            print("  ✅ Restored main.py")
+            files_restored += 1
+
+        # Restore templates
+        print("📄 Restoring templates...")
+        templates_src = demo_assets / "templates"
+        templates_dest = Path("templates")
+        
+        if templates_src.exists():
+            # Copy individual template files
+            for template_file in templates_src.glob("*.html"):
+                dest_file = templates_dest / template_file.name
+                shutil.copy2(template_file, dest_file)
+                print(f"  ✅ Restored {template_file.name}")
+                files_restored += 1
+            
+            # Copy partials directory
+            partials_src = templates_src / "partials"
+            partials_dest = templates_dest / "partials"
+            
+            if partials_src.exists():
+                if partials_dest.exists():
+                    shutil.rmtree(partials_dest)
+                shutil.copytree(partials_src, partials_dest)
+                print("  ✅ Restored partials/")
+        
+        # Restore static files
+        print("🎨 Restoring static files...")
+        static_src = demo_assets / "static"
+        static_dest = Path("static")
+        
+        if static_src.exists():
+            # Copy images
+            images_src = static_src / "images"
+            images_dest = static_dest / "images"
+            
+            if images_src.exists():
+                if images_dest.exists():
+                    shutil.rmtree(images_dest)
+                shutil.copytree(images_src, images_dest)
+                print("  ✅ Restored images/")
+            
+            # Copy other static files
+            for static_file in static_src.glob("*"):
+                if static_file.is_file() and static_file.name != "uploads":
+                    dest_file = static_dest / static_file.name
+                    shutil.copy2(static_file, dest_file)
+                    print(f"  ✅ Restored {static_file.name}")
+                    files_restored += 1
+            
+            # Copy CSS and JS directories
+            for subdir in ["css", "js"]:
+                subdir_src = static_src / subdir
+                subdir_dest = static_dest / subdir
+                
+                if subdir_src.exists():
+                    if subdir_dest.exists():
+                        shutil.rmtree(subdir_dest)
+                    shutil.copytree(subdir_src, subdir_dest)
+                    print(f"  ✅ Restored {subdir}/")
+        
+        # Restore routes
+        print("🛣️  Restoring routes...")
+        routes_src = demo_assets / "routes"
+        routes_dest = Path("routes")
+        
+        if routes_src.exists():
+            for route_file in routes_src.glob("*.py"):
+                dest_file = routes_dest / route_file.name
+                shutil.copy2(route_file, dest_file)
+                print(f"  ✅ Restored {route_file.name}")
+                files_restored += 1
+        
+        # Restore services
+        print("🔧 Restoring services...")
+        services_src = demo_assets / "services"
+        services_dest = Path("services")
+        
+        if services_src.exists():
+            for service_file in services_src.glob("*.py"):
+                dest_file = services_dest / service_file.name
+                shutil.copy2(service_file, dest_file)
+                print(f"  ✅ Restored {service_file.name}")
+                files_restored += 1
+        
+        # Restore models
+        print("📊 Restoring models...")
+        models_src = demo_assets / "models.py"
+        models_dest = Path("models.py")
+        
+        if models_src.exists():
+            shutil.copy2(models_src, models_dest)
+            print("  ✅ Restored models.py")
+            files_restored += 1
+        
+        # Copy sample data scripts
+        print("📝 Restoring sample data scripts...")
+        scripts_src = demo_assets / "scripts"
+        scripts_dest = Path("scripts")
+        
+        if scripts_src.exists():
+            for script_file in scripts_src.glob("*.py"):
+                dest_file = scripts_dest / script_file.name
+                shutil.copy2(script_file, dest_file)
+                print(f"  ✅ Restored {script_file.name}")
+                files_restored += 1
+
+        # Supplement missing required files from original working copy if available
+        print("🔍 Checking original working copy for missing files...")
+        original_root = Path("../original/fastopp").resolve()
+        if original_root.exists():
+            # Required templates
+            for tpl_name in ["index.html", "login.html"]:
+                dst = Path("templates") / tpl_name
+                src = original_root / "templates" / tpl_name
+                if not dst.exists() and src.exists():
+                    shutil.copy2(src, dst)
+                    print(f"  ➕ Restored missing template from original: {tpl_name}")
+                    files_restored += 1
+
+            # Ensure routes package and required route files
+            routes_pkg = Path("routes")
+            (routes_pkg).mkdir(parents=True, exist_ok=True)
+            init_dst = routes_pkg / "__init__.py"
+            if not init_dst.exists():
+                # Copy from original if present, else create empty
+                init_src = original_root / "routes" / "__init__.py"
+                if init_src.exists():
+                    shutil.copy2(init_src, init_dst)
+                else:
+                    init_dst.write_text("")
+                print("  ➕ Ensured routes/__init__.py")
+
+            for route_name in ["auth.py", "webinar.py"]:
+                dst = routes_pkg / route_name
+                src = original_root / "routes" / route_name
+                if not dst.exists() and src.exists():
+                    shutil.copy2(src, dst)
+                    print(f"  ➕ Restored missing route from original: {route_name}")
+                    files_restored += 1
+        else:
+            print("  ℹ️  Original working copy not found at ../original/fastopp (skipping supplement)")
+        
+        print("\n✅ Demo restoration completed successfully!")
+        print(f"📊 Total files restored: {files_restored}")
+        print("\n📋 Next steps:")
+        print("1. Run sample data scripts to populate the database:")
+        print("   uv run python scripts/add_sample_products.py")
+        print("   uv run python scripts/add_sample_webinar_registrants.py")
+        print("   uv run python scripts/download_sample_photos.py")
+        print("2. Start the application: uv run python main.py")
+        print("3. Visit the demo pages:")
+        print("   - http://localhost:8000/ai-demo")
+        print("   - http://localhost:8000/dashboard-demo")
+        print("   - http://localhost:8000/design-demo")
+        print("   - http://localhost:8000/webinar-demo")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Failed to restore demo files: {e}")
+        return False
+
+
+def destroy_demo_files():
+    """Destroy demo files and switch to minimal base application"""
+    print("🗑️  Destroying demo files and switching to minimal application...")
+    
+    try:
+        # Step 1: Copy main.py from base_assets to root
+        print("📄 Copying minimal main.py from base_assets...")
+        base_main = Path("base_assets/main.py")
+        if not base_main.exists():
+            print("❌ Error: base_assets/main.py not found!")
+            print("Please ensure base_assets directory exists with main.py")
+            return False
+        
+        # Backup current main.py if it exists
+        current_main = Path("main.py")
+        if current_main.exists():
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_main = Path(f"main.py.{timestamp}")
+            shutil.copy2(current_main, backup_main)
+            print(f"  ✅ Backed up current main.py to {backup_main}")
+        
+        # Copy base main.py to root
+        shutil.copy2(base_main, current_main)
+        print("  ✅ Copied base_assets/main.py to main.py")
+        
+        # Step 2: Remove services directory
+        print("🔧 Removing services directory...")
+        services_dir = Path("services")
+        if services_dir.exists():
+            shutil.rmtree(services_dir)
+            print("  ✅ Removed services/")
+        else:
+            print("  ℹ️  services/ directory not found")
+        
+        # Step 3: Delete SQLite database
+        print("🗄️  Deleting SQLite database...")
+        db_path = Path("test.db")
+        if db_path.exists():
+            # Backup database first
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_db = Path(f"test.db.{timestamp}")
+            shutil.copy2(db_path, backup_db)
+            print(f"  ✅ Backed up database to {backup_db}")
+            
+            db_path.unlink()
+            print("  ✅ Deleted test.db")
+        else:
+            print("  ℹ️  test.db not found")
+        
+        # Step 4: Remove routes directory
+        print("🛣️  Removing routes directory...")
+        routes_dir = Path("routes")
+        if routes_dir.exists():
+            shutil.rmtree(routes_dir)
+            print("  ✅ Removed routes/")
+        else:
+            print("  ℹ️  routes/ directory not found")
+        
+        # Step 5: Remove static directory
+        print("🎨 Removing static directory...")
+        static_dir = Path("static")
+        if static_dir.exists():
+            shutil.rmtree(static_dir)
+            print("  ✅ Removed static/")
+        else:
+            print("  ℹ️  static/ directory not found")
+        
+        # Step 6: Remove templates directory
+        print("📄 Removing templates directory...")
+        templates_dir = Path("templates")
+        if templates_dir.exists():
+            shutil.rmtree(templates_dir)
+            print("  ✅ Removed templates/")
+        else:
+            print("  ℹ️  templates/ directory not found")
+        
+        print("\n✅ Demo destruction completed successfully!")
+        print("🔄 Switched to minimal FastAPI application")
+        print("\n📋 Next steps:")
+        print("1. Start the minimal application:")
+        print("   uv run python main.py")
+        print("2. Visit the application:")
+        print("   - http://localhost:8000/ (main page with restore instructions)")
+        print("   - http://localhost:8000/health (health check)")
+        print("\n💡 To restore the full demo later:")
+        print("   uv run python oppman.py demo restore")
+        print("   uv run python oppman.py init")
+        print("   uv run python oppman.py runserver")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Failed to destroy demo files: {e}")
+        return False
+
+
 def delete_database():
     """Delete the current database file"""
     db_path = Path("test.db")
@@ -341,6 +843,9 @@ COMMANDS:
     production  Start production server with Gunicorn (no Nginx)
     delete      Delete current database (with backup)
     backup      Backup current database
+    demo backup Backup demo files to demo_assets directory
+    demo restore Restore demo files from demo_assets directory
+    demo destroy Destroy demo files and switch to minimal application
     migrate     Database migration management (see examples below)
     env         Check environment configuration
     help        Show this help message
@@ -373,6 +878,11 @@ EXAMPLES:
     # Database management
     python oppman.py backup
     python oppman.py delete
+    
+    # Demo management
+    python oppman.py demo backup
+    python oppman.py demo restore
+    python oppman.py demo destroy
     
     # Migration management
     python oppman.py migrate init
@@ -443,7 +953,7 @@ Examples:
         choices=[
             "init", "db", "superuser", "users", "products", "webinars",
             "download_photos", "registrants", "clear_registrants", "check_users", "test_auth",
-            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help"
+            "runserver", "stopserver", "production", "delete", "backup", "demo", "migrate", "env", "help"
         ],
         help="Command to execute"
     )
@@ -483,6 +993,22 @@ Examples:
     
     if args.command == "backup":
         backup_database()
+        return
+    
+    if args.command == "demo":
+        if not args.migrate_command:
+            print("❌ Demo command requires a subcommand")
+            print("Usage: python oppman.py demo backup|restore|destroy")
+            return
+        if args.migrate_command == "backup":
+            backup_demo_files()
+        elif args.migrate_command == "restore":
+            restore_demo_files()
+        elif args.migrate_command == "destroy":
+            destroy_demo_files()
+        else:
+            print("❌ Invalid demo subcommand")
+            print("Usage: python oppman.py demo backup|restore|destroy")
         return
     
     if args.command == "runserver":

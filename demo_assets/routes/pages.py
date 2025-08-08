@@ -60,16 +60,6 @@ async def ai_demo(request: Request):
     })
 
 
-@router.get("/migration-guide", response_class=HTMLResponse)
-async def migration_guide(request: Request):
-    """Migration guide page with database migration documentation"""
-    return templates.TemplateResponse("migration-guide.html", {
-        "request": request,
-        "title": "Migration Guide",
-        "current_page": "migration-guide"
-    })
-
-
 @router.get("/ai-stats", response_class=HTMLResponse)
 async def ai_stats(request: Request):
     """HTMX endpoint to return AI marketing statistics"""
