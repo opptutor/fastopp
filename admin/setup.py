@@ -17,5 +17,4 @@ def setup_admin(app: FastAPI, secret_key: str):
     admin.add_view(ProductAdmin)
     admin.add_view(WebinarRegistrantsAdmin)
     admin.add_view(AuditLogAdmin)
-    
-    return admin 
+    return admin

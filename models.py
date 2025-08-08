@@ -64,3 +64,4 @@ class AuditLog(SQLModel, table=True):
     ip_address: Optional[str] = Field(default=None, nullable=True)
     user_agent: Optional[str] = Field(default=None, nullable=True)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+

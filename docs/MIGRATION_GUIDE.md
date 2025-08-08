@@ -209,6 +209,47 @@ fastapi_d/
 - **Backup**: `python oppman.py backup` before major changes
 - **Reset**: `python oppman.py delete` to start fresh
 
+## Resetting the database and migrations
+
+Sometimes you want to wipe the database and start over with a clean set of migration files. The `delete` command now backs up and removes both the SQLite database and all Alembic migration files under `alembic/versions/`.
+
+### Delete database and migration files
+
+```bash
+uv run python oppman.py delete
+```
+
+This will:
+
+- Back up the current database to `test.db.YYYYMMDD_HHMMSS`.
+- Back up all migration files to `alembic/versions_backup_YYYYMMDD_HHMMSS/`.
+- Delete all `alembic/versions/*.py` files and clean `__pycache__`.
+
+### Recreate migrations
+
+Use this when you have deleted the previous migration history and want to generate a fresh migration that reflects the current state of `models.py` and then apply it.
+
+```bash
+# Optional: ensure Alembic config is aligned (DB URL, imports)
+uv run python oppman.py migrate setup
+
+# Create a fresh initial migration from current models
+uv run python oppman.py migrate create "Initial"
+
+# Apply the migration to the (empty) database
+uv run python oppman.py migrate upgrade
+```
+
+### How "Recreate migrations" differs from `uv run python oppman.py db`
+
+- **Recreate migrations (create + upgrade)**: Uses Alembic to generate a migration file and apply it. This creates a proper migration history you can commit to version control, review, and use for upgrades/downgrades in all environments.
+- **`uv run python oppman.py db`**: Directly creates tables via `SQLModel.metadata.create_all` without generating or applying Alembic migrations. This is convenient for quick local setups but does not produce migration files or history.
+
+Recommended:
+
+- Use the migration workflow for team/production workflows.
+- Use `db` for quick local prototyping when migration history is not required.
+
 ## Best Practices
 
 1. **Always create migrations** for model changes
@@ -300,4 +341,66 @@ def downgrade() -> None:
 4. **Apply migrations** to update your database: `python oppman.py migrate upgrade`
 5. **Use in production** by running migrations before starting your server
 
-This migration system provides the same functionality as Django's `manage.py migrate` but is tailored for your FastAPI + SQLModel setup. 
+This migration system provides the same functionality as Django's `manage.py migrate` but is tailored for your FastAPI + SQLModel setup.
+
+## Registering a model in the SQLAdmin panel
+
+Follow these steps to make a new model appear in the SQLAdmin UI. The examples use the `Partner` model, but the flow is the same for any model. All migration commands are run via your custom `oppman.py` tool.
+
+1. Define the model in `models.py`.
+
+   ```python
+   # models.py
+   class Partner(SQLModel, table=True):
+       __tablename__ = "partners"
+       id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
+       name: str = Field(max_length=100, nullable=False)
+       email: str = Field(unique=True, index=True, nullable=False)
+   ```
+
+2. Create a ModelView in `admin/views.py`.
+
+   ```python
+   # admin/views.py
+   from sqladmin import ModelView
+   from models import Partner
+
+   class PartnerAdmin(ModelView, model=Partner):
+       column_list = ["name", "email"]
+   ```
+
+3. Register the view in `admin/setup.py`.
+
+   ```python
+   # admin/setup.py
+   from .views import UserAdmin, ProductAdmin, WebinarRegistrantsAdmin, AuditLogAdmin, PartnerAdmin
+
+   def setup_admin(app: FastAPI, secret_key: str):
+       admin = Admin(app, async_engine, authentication_backend=AdminAuth(secret_key=secret_key))
+       admin.add_view(UserAdmin)
+       admin.add_view(ProductAdmin)
+       admin.add_view(WebinarRegistrantsAdmin)
+       admin.add_view(AuditLogAdmin)
+       admin.add_view(PartnerAdmin)  # <- new
+       return admin
+   ```
+
+4. Ensure Alembic "sees" the new model, then create and apply a migration using `oppman.py`.
+
+   ```bash
+   # Update Alembic environment/imports (handled by the migrate setup command)
+   python oppman.py migrate setup
+
+   # Create a migration for the new table
+   python oppman.py migrate create "Add partners table"
+
+   # Apply the migration
+   python oppman.py migrate upgrade
+   ```
+
+   Note: If you prefer to verify manually, ensure `alembic/env.py` imports your new model so that autogenerate includes it (e.g., `from models import Partner`). The `migrate setup` command typically takes care of this.
+
+5. Restart the server and sign in to `/admin`.
+
+   - You must log in as a user with `is_staff` or `is_superuser` to see the admin panel.
+   - The new model (e.g., "Partner") should now appear in the sidebar.
