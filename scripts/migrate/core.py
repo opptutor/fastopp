@@ -3,7 +3,9 @@
 Migration Management Core
 Handles Alembic migrations for the FastAPI application.
 """
+import os
 import subprocess
+import glob
 from pathlib import Path
 from typing import Optional, List, Tuple
 
@@ -40,10 +42,10 @@ class MigrationManager:
         if self.is_initialized():
             print("ℹ️  Alembic already initialized")
             return True
-        
+
         print("🔄 Initializing Alembic...")
         return_code, stdout, stderr = self._run_alembic_command(["init", "alembic"])
-        
+
         if return_code == 0:
             print("✅ Alembic initialized successfully")
             if stdout:
@@ -62,21 +64,64 @@ class MigrationManager:
         if not self.is_initialized():
             print("❌ Alembic not initialized. Run: python oppman.py migrate init")
             return False
-        
+
         print(f"🔄 Creating migration: {message}")
         return_code, stdout, stderr = self._run_alembic_command([
             "revision", "--autogenerate", "-m", message
         ])
-        
+
         if return_code == 0:
             print("✅ Migration created successfully")
             if stdout:
                 print(stdout.strip())
+            # Post-process the generated migration file to add sqlmodel import
+            self._fix_migration_imports()
             return True
         else:
             print(f"❌ Failed to create migration: {stderr}")
             return False
-    
+
+    def _fix_migration_imports(self):
+        """Fix sqlmodel imports in the latest migration file"""
+        try:
+            # Find the latest migration file
+            versions_dir = self.project_root / "alembic" / "versions"
+            migration_files = glob.glob(str(versions_dir / "*.py"))
+
+            if not migration_files:
+                return
+
+            # Get the most recent migration file
+            latest_migration = max(migration_files, key=os.path.getctime)
+
+            # Read the file content
+            with open(latest_migration, 'r') as f:
+                content = f.read()
+
+            # Check if sqlmodel import is missing
+            if 'import sqlmodel' not in content and 'sqlmodel.sql.sqltypes' in content:
+                # Add sqlmodel import after the existing imports
+                lines = content.split('\n')
+                new_lines = []
+                imports_added = False
+
+                for line in lines:
+                    new_lines.append(line)  # type: ignore
+                    # Add sqlmodel import after the sqlalchemy import
+                    if 'import sqlalchemy as sa' in line and not imports_added:
+                        new_lines.append('import sqlmodel')  # type: ignore
+                        imports_added = True
+
+                # Write the updated content back
+                content = '\n'.join(new_lines)  # type: ignore
+                with open(latest_migration, 'w') as f:
+                    f.write(content)
+                
+                print(f"✅ Fixed sqlmodel import in {os.path.basename(latest_migration)}")
+        
+        except Exception as e:
+            print(f"⚠️  Warning: Could not fix migration imports: {e}")
+
     def upgrade(self, revision: str = "head") -> bool:
         """Upgrade database to specified revision (default: head)"""
         if not self.is_initialized():
