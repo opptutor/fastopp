@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Guide - FastOpp</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ai-blue': '#3B82F6',
+                        'ai-purple': '#8B5CF6',
+                        'migration-green': '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-green-50 min-h-screen">
+    <div class="min-h-screen flex flex-col">
+        {% include 'partials/header.html' %}
+
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden bg-gradient-to-r from-migration-green to-emerald-600 text-white py-20">
+            <div class="absolute inset-0 bg-black opacity-10"></div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    Database Migration Guide
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">
+                    Complete guide to managing database migrations in your FastAPI application
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <div class="bg-white bg-opacity-20 rounded-full px-6 py-2">
+                        <span class="text-lg font-semibold">Alembic</span> Powered
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full px-6 py-2">
+                        <span class="text-lg font-semibold">SQLModel</span> Ready
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" x-data="migrationGuide()">
+                
+                <!-- Overview Section -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-12">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-gradient-to-br from-migration-green to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">FastAPI Migration Management</h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Your FastAPI project includes a complete migration management system using Alembic, providing Django-like migration functionality with the syntax: <code class="bg-gray-100 px-2 py-1 rounded">python oppman.py migrate [command]</code>
+                        </p>
+                    </div>
+
+                    <!-- Migration Stats -->
+                    <div class="grid md:grid-cols-3 gap-8 mb-8">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-migration-green mb-2">5</div>
+                            <div class="text-gray-600">Migration Commands</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-emerald-600 mb-2">100%</div>
+                            <div class="text-gray-600">Django Compatible</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-green-600 mb-2">SQLModel</div>
+                            <div class="text-gray-600">Native Support</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Start Section -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">Quick Start Guide</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        
+                        <!-- Step 1 -->
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                            <div class="w-12 h-12 bg-migration-green rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white font-bold text-lg">1</span>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3 text-center">Initialize</h4>
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <code class="text-sm text-gray-800">python oppman.py migrate init</code>
+                            </div>
+                            <p class="text-gray-600 text-sm text-center">Initialize Alembic in your project</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                            <div class="w-12 h-12 bg-migration-green rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white font-bold text-lg">2</span>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3 text-center">Add Models</h4>
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <code class="text-sm text-gray-800">Edit models.py</code>
+                            </div>
+                            <p class="text-gray-600 text-sm text-center">Add new models to your models.py file</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                            <div class="w-12 h-12 bg-migration-green rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white font-bold text-lg">3</span>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3 text-center">Create Migration</h4>
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <code class="text-sm text-gray-800">python oppman.py migrate create "Description"</code>
+                            </div>
+                            <p class="text-gray-600 text-sm text-center">Generate migration files</p>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                            <div class="w-12 h-12 bg-migration-green rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-white font-bold text-lg">4</span>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 mb-3 text-center">Apply</h4>
+                            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+                                <code class="text-sm text-gray-800">python oppman.py migrate upgrade</code>
+                            </div>
+                            <p class="text-gray-600 text-sm text-center">Apply migrations to database</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Commands Reference -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-12">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Available Commands</h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        
+                        <!-- Basic Commands -->
+                        <div>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-4">Basic Commands</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Initialize</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate init</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Create Migration</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate create "Description"</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Apply Migrations</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate upgrade</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Check Status</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate current</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Commands -->
+                        <div>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-4">Advanced Commands</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Downgrade</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate downgrade &lt;revision&gt;</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">View History</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate history</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Check Up to Date</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate check</code>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-700">Setup Config</span>
+                                    <code class="text-sm bg-white px-2 py-1 rounded">migrate setup</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Django Comparison -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-12">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Django Migration Comparison</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="text-left p-4 border-b">Django Command</th>
+                                    <th class="text-left p-4 border-b">FastAPI Equivalent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="p-4"><code>python manage.py migrate</code></td>
+                                    <td class="p-4"><code>python oppman.py migrate upgrade</code></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-4"><code>python manage.py makemigrations</code></td>
+                                    <td class="p-4"><code>python oppman.py migrate create "Description"</code></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-4"><code>python manage.py showmigrations</code></td>
+                                    <td class="p-4"><code>python oppman.py migrate history</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4"><code>python manage.py migrate --plan</code></td>
+                                    <td class="p-4"><code>python oppman.py migrate check</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Next Steps Section -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Ready to Get Started?</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Initialize Migrations -->
+                        <div class="text-center p-6 rounded-xl bg-gradient-to-br from-green-50 to-green-100">
+                            <div class="w-16 h-16 bg-migration-green rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-3">Initialize Migrations</h4>
+                            <p class="text-gray-600 mb-4">Set up Alembic in your project for the first time.</p>
+                            <button class="bg-migration-green text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                Get Started
+                            </button>
+                        </div>
+
+                        <!-- View Documentation -->
+                        <div class="text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100">
+                            <div class="w-16 h-16 bg-ai-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-3">View Documentation</h4>
+                            <p class="text-gray-600 mb-4">Read the complete migration guide and best practices.</p>
+                            <button class="bg-ai-blue text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Read Docs
+                            </button>
+                        </div>
+
+                        <!-- Admin Panel -->
+                        <div class="text-center p-6 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100">
+                            <div class="w-16 h-16 bg-ai-purple rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-3">Admin Panel</h4>
+                            <p class="text-gray-600 mb-4">Manage your database and view migration status.</p>
+                            <a href="/admin/" class="inline-block bg-ai-purple text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                                Access Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p>&copy; 2025 FastOpp. Built with FastAPI, Tailwind CSS, HTMX, and Alpine.js.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function migrationGuide() {
+            return {
+                init() {
+                    console.log('Migration Guide page initialized');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
