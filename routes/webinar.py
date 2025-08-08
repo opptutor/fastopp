@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse
 from models import User
-from auth import get_current_staff_or_admin_from_cookies
+from auth.core import get_current_staff_or_admin_from_cookies
 
 router = APIRouter()
 

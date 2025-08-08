@@ -1,5 +1,5 @@
 # =========================
-# admin_auth.py - SQLAdmin authentication
+# auth/admin.py - SQLAdmin authentication
 # =========================
 from typing import Optional
 from sqladmin.authentication import AuthenticationBackend

@@ -85,12 +85,17 @@
                 <div class="mb-12">
                     <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">Meet Our Amazing Attendees</h3>
                     <div id="attendeesContainer" 
-                         hx-get="/webinar-attendees" 
+                         hx-get="/api/webinar-attendees" 
                          hx-trigger="load"
                          hx-target="this"
                          hx-swap="innerHTML">
                         <!-- Attendees will be loaded here -->
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">Loading attendees...</p>
+                        </div>
                     </div>
+                    
+
                 </div>
 
                 <!-- Next Steps Section -->
@@ -170,6 +175,15 @@
                     
                     // Then try to load real data
                     this.loadAttendeeCounts();
+                    
+                    // Manually trigger HTMX request if needed
+                    setTimeout(() => {
+                        const container = document.getElementById('attendeesContainer');
+                        if (container && container.innerHTML.includes('Loading attendees')) {
+                            console.log('Manually triggering HTMX request');
+                            htmx.trigger(container, 'load');
+                        }
+                    }, 500);
                 },
                 loadAttendeeCounts() {
                     console.log('Loading attendee counts...');
@@ -199,57 +213,17 @@
             }
         }
 
-        // Custom HTMX response handler for attendees
-        htmx.on('htmx:afterRequest', function(evt) {
-            if (evt.detail.pathInfo.requestPath === '/webinar-attendees') {
-                const response = JSON.parse(evt.detail.xhr.responseText);
-                const container = evt.detail.target;
-                
-                if (response.attendees && response.attendees.length > 0) {
-                    container.innerHTML = `
-                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            ${response.attendees.map(attendee => {
-                                const photoHtml = attendee.photo_url 
-                                    ? `<img src="${attendee.photo_url}" alt="${attendee.name}" class="w-32 h-32 object-cover rounded-full border-4 border-white shadow-lg mx-auto mb-4">`
-                                    : `<div class="w-32 h-32 bg-gradient-to-br from-ai-blue to-ai-purple rounded-full flex items-center justify-center text-white text-4xl font-bold mx-auto mb-4">${attendee.name.charAt(0)}</div>`;
-                                
-                                const webinarIcon = getWebinarIcon(attendee.webinar_title);
-                                const notesHtml = attendee.notes 
-                                    ? `<div class="bg-blue-50 rounded-lg p-4 mb-4">
-                                         <p class="text-gray-700 italic">"${attendee.notes}"</p>
-                                       </div>`
-                                    : '';
-                                
-                                return `
-                                    <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                                        ${photoHtml}
-                                        <div class="text-center">
-                                            <h4 class="text-xl font-bold text-gray-900 mb-2">${attendee.name}</h4>
-                                            <p class="text-gray-600 mb-3">${attendee.company || 'Independent Professional'}</p>
-                                            
-                                            <div class="flex items-center justify-center mb-4">
-                                                ${webinarIcon}
-                                                <span class="ml-2 text-sm font-medium text-gray-700">${attendee.webinar_title}</span>
-                                            </div>
-                                            
-                                            ${notesHtml}
-                                            
-                                            <div class="flex justify-center space-x-2">
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    ${attendee.status}
-                                                </span>
-                                                ${attendee.group ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${attendee.group}</span>` : ''}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = '<p class="text-gray-500 text-center py-8">No attendees found</p>';
+        // HTMX is now handled by the server returning HTML directly
+        
+        // Ensure HTMX loads attendees when the page is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const container = document.getElementById('attendeesContainer');
+                if (container && container.innerHTML.includes('Loading attendees')) {
+                    console.log('DOM ready - triggering HTMX request');
+                    htmx.trigger(container, 'load');
                 }
-            }
+            }, 1000);
         });
 
         function getWebinarIcon(webinarTitle) {

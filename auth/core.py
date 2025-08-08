@@ -1,5 +1,5 @@
 # =========================
-# auth.py - Custom authentication for admin panel
+# auth/core.py - Core authentication logic
 # =========================
 import jwt
 import uuid

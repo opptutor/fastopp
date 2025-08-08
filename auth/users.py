@@ -1,5 +1,5 @@
 # =========================
-# users.py
+# auth/users.py - FastAPI Users setup
 # =========================
 import uuid
 from fastapi_users import FastAPIUsers
@@ -40,4 +40,4 @@ auth_backend = AuthenticationBackend(
 fastapi_users = FastAPIUsers[User, uuid.UUID](
     get_user_manager,
     [auth_backend],
-)  # type: ignore
+)  # type: ignore 

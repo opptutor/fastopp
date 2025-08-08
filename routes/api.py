@@ -1,10 +1,10 @@
 """
 API routes for data endpoints
 """
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from models import User
-from auth import get_current_staff_or_admin_from_cookies
+from auth.core import get_current_staff_or_admin_from_cookies
 
 router = APIRouter()
 
@@ -28,9 +28,21 @@ async def get_registrants(current_user: User = Depends(get_current_staff_or_admi
 
 
 @router.get("/webinar-attendees")
-async def get_webinar_attendees():
+async def get_webinar_attendees(request: Request):
     """Get webinar attendees for the marketing demo page"""
     from services.webinar_service import WebinarService
+    from fastapi.templating import Jinja2Templates
     
     attendees = await WebinarService.get_webinar_attendees()
-    return JSONResponse({"attendees": attendees}) 
+    
+    # Check if this is an HTMX request
+    templates = Jinja2Templates(directory="templates")
+    
+    # Return HTML for HTMX requests, JSON for API requests
+    if 'hx-request' in request.headers:
+        return templates.TemplateResponse("partials/attendees-grid.html", {
+            "request": request,
+            "attendees": attendees
+        })
+    else:
+        return JSONResponse({"attendees": attendees}) 
