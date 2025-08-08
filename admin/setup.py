@@ -4,7 +4,7 @@
 from sqladmin import Admin
 from fastapi import FastAPI
 from db import async_engine
-from admin_auth import AdminAuth
+from auth.admin import AdminAuth
 from .views import UserAdmin, ProductAdmin, WebinarRegistrantsAdmin, AuditLogAdmin
 
 

@@ -54,8 +54,11 @@ fastapi_d/
 │   ├── product_service.py # Product-related operations
 │   ├── webinar_service.py # Webinar registrant operations
 │   └── chat_service.py    # Chat functionality operations
-├── auth.py                # JWT authentication system
-├── admin_auth.py          # SQLAdmin authentication backend
+├── auth/                  # Authentication module
+│   ├── __init__.py       # Module exports and public API
+│   ├── core.py           # Core JWT authentication logic
+│   ├── users.py          # FastAPI Users integration
+│   └── admin.py          # SQLAdmin authentication
 ├── admin/                 # Admin interface configuration
 │   ├── views.py           # Admin view definitions
 │   └── setup.py           # Admin interface setup
@@ -82,7 +85,7 @@ fastapi_d/
 │   └── README.md          # Static files documentation
 ├── db.py                  # Database configuration (uses environment variables)
 ├── models.py              # SQLModel models (Model layer)
-├── users.py               # FastAPI Users configuration
+
 ├── oppman.py              # Management tool for database operations
 ├── alembic/               # Database migrations
 │   ├── env.py             # Alembic environment configuration

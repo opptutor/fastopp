@@ -4,7 +4,7 @@ Script to test the authentication system
 """
 
 import asyncio
-from auth import create_user_token, verify_token
+from auth.core import create_user_token, verify_token
 from db import AsyncSessionLocal
 from models import User
 from sqlmodel import select
