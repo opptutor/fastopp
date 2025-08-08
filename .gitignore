@@ -17,3 +17,7 @@ test.db.*
 .env
 .env.local
 .env.*.local
+
+# Backup files
+# Ignore timestamped backups like main.py.20250808_144836
+/main.py.*
