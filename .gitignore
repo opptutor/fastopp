@@ -21,3 +21,9 @@ test.db.*
 # Backup files
 # Ignore timestamped backups like main.py.20250808_144836
 /main.py.*
+
+# User-uploaded files
+# Ignore everything under uploads except sample_photos and a directory placeholder
+static/uploads/*
+!static/uploads/.gitkeep
+!static/uploads/sample_photos/**
