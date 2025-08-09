@@ -34,6 +34,16 @@ except ImportError as e:
     sys.exit(1)
 
 
+def ensure_upload_dirs():
+    """Ensure static upload directories exist regardless of current working directory."""
+    project_root = Path(__file__).resolve().parent
+    uploads_root = project_root / "static" / "uploads"
+    photos_dir = uploads_root / "photos"
+    sample_photos_dir = uploads_root / "sample_photos"
+    uploads_root.mkdir(parents=True, exist_ok=True)
+    photos_dir.mkdir(parents=True, exist_ok=True)
+    sample_photos_dir.mkdir(parents=True, exist_ok=True)
+
 def backup_database():
     """Backup the current database with timestamp"""
     db_path = Path("test.db")
@@ -678,6 +688,7 @@ async def run_webinars():
 async def run_download_photos():
     """Download sample photos for webinar registrants"""
     print("🔄 Downloading sample photos...")
+    ensure_upload_dirs()
     download_sample_photos()
     print("✅ Sample photos download complete")
 
@@ -793,6 +804,7 @@ def run_production_server():
 async def run_full_init():
     """Run complete initialization: init + superuser + users + products + webinars + registrants"""
     print("🚀 Running full initialization...")
+    ensure_upload_dirs()
     
     await run_init()
     await run_superuser()

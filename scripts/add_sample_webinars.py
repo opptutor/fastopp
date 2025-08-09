@@ -5,6 +5,7 @@ import asyncio
 from datetime import datetime, timedelta
 from db import AsyncSessionLocal
 from models import WebinarRegistrants
+from sqlmodel import select
 
 
 async def add_sample_webinars():
@@ -112,11 +113,18 @@ async def add_sample_webinars():
         ]
         
         for webinar_data in webinars:
+            # Skip if registrant already exists (idempotent by email)
+            result = await session.execute(
+                select(WebinarRegistrants).where(WebinarRegistrants.email == webinar_data["email"])  # type: ignore[index]
+            )
+            if result.scalar_one_or_none():
+                print(f"ℹ️  Webinar registrant already exists, skipping: {webinar_data['email']}")
+                continue
             registrant = WebinarRegistrants(**webinar_data)
             session.add(registrant)
         
         await session.commit()
-        print("✅ Added sample webinar registrants to database!")
+        print("✅ Added sample webinar registrants to database (skipping existing)")
         print("Sample webinars:")
         print("- FastAPI Best Practices (TechCorp)")
         print("- Database Migration Strategies (Startup.io)")
