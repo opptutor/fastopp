@@ -172,37 +172,16 @@ async def root():
         <div class="content">
             <div class="section">
                 <h2>📋 Overview</h2>
-                <p>This is a minimal FastAPI application. To restore the full demo with all features,
+                <p>This is a minimal FastOpp application. To restore the full demo with all features,
                 use the <code>oppman.py</code> management tool.</p>
             </div>
 
-            <div class="section">
-                <h2>🛠️ Quick Restore Commands</h2>
-
-                <div class="step">
-                    <h3>Step 1: Restore Demo Files</h3>
-                    <div class="command">uv run python oppman.py demo restore</div>
-                    <p>This command restores all demo files from the <code>demo_assets</code> backup.</p>
-                </div>
-
-                <div class="step">
-                    <h3>Step 2: Populate Database</h3>
-                    <div class="command">uv run python oppman.py init</div>
-                    <p>This initializes the database with sample data including users, products, webinars,
-                    and registrants.</p>
-                </div>
-
-                <div class="step">
-                    <h3>Step 3: Start the Application</h3>
-                    <div class="command">uv run python oppman.py runserver</div>
-                    <p>This starts the development server with all demo features enabled.</p>
-                </div>
-            </div>
+            
 
 
 
             <div class="section">
-                <h2>🔐 Admin Panel</h2>
+                <h2>🔐 Minimal Application Admin Panel</h2>
                 <p>You can log in to the admin panel at:</p>
                 <div class="code-block">
 http://localhost:8000/admin/
@@ -250,6 +229,29 @@ Test Users: test123 (for all test users)
                     <li>Sample photos are downloaded automatically during initialization</li>
                     <li>Database is SQLite by default (test.db)</li>
                 </ul>
+            </div>
+
+            <div class="section">
+                <h2>🛠️ Restore Demo with Design Templates and Fake Data</h2>
+
+                <div class="step">
+                    <h3>Step 1: Restore Demo Files</h3>
+                    <div class="command">uv run python oppman.py demo restore</div>
+                    <p>This command restores all demo files from the <code>demo_assets</code> backup.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: Populate Database</h3>
+                    <div class="command">uv run python oppman.py init</div>
+                    <p>This initializes the database with sample data including users, products, webinars,
+                    and registrants.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: Start the Application</h3>
+                    <div class="command">uv run python oppman.py runserver</div>
+                    <p>This starts the development server with all demo features enabled.</p>
+                </div>
             </div>
 
             <div class="success">
