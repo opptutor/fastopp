@@ -273,6 +273,15 @@ PY'
 # expect: [('pong',)]
 ```
 
+## Troubleshooting
+
+If you make changes to your Dockerfile and want to redeploy, you can make sure fly is not using a cached version by running the command
+
+```bash
+fly deploy --dockerfile Dockerfile
+```
+
+
 ## Extra Information
 
 ### Can fly.io handle persistent storage?
