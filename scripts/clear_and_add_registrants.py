@@ -74,10 +74,11 @@ async def clear_and_add_registrants():
         }
     ]
     
-    # Setup photo directories
-    sample_photos_dir = Path("static/uploads/sample_photos")
-    photos_dir = Path("static/uploads/photos")
-    photos_dir.mkdir(exist_ok=True)
+    # Setup photo directories (resolve relative to project root and ensure parents exist)
+    project_root = Path(__file__).resolve().parent.parent
+    sample_photos_dir = project_root / "static" / "uploads" / "sample_photos"
+    photos_dir = project_root / "static" / "uploads" / "photos"
+    photos_dir.mkdir(parents=True, exist_ok=True)
     
     async with AsyncSessionLocal() as session:
         # Clear existing registrants

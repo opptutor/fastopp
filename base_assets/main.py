@@ -1,29 +1,44 @@
 #!/usr/bin/env python3
 """
-Minimal FastAPI Application
-A simple FastAPI app that shows how to restore the demo using oppman.py
+FastOpp
+An Opinionated FastAPI Starter Kit
 """
+import os
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from starlette.middleware.sessions import SessionMiddleware
+from dotenv import load_dotenv
+from admin.setup import setup_admin
 
 app = FastAPI(
-    title="FastAPI Demo Restore Helper",
-    description="A minimal FastAPI application showing how to restore the demo",
+    title="Welcome to FastOpp",
+    description="An Opinionated FastAPI Starter Kit",
     version="1.0.0"
 )
+
+"""Configure authentication/session for SQLAdmin login"""
+# Load environment variables and secret key
+load_dotenv()
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
+
+# Enable sessions (required by sqladmin authentication backend)
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# Mount SQLAdmin with authentication backend
+setup_admin(app, SECRET_KEY)
 
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Show a simple page with demo restoration instructions"""
-    
+
     html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FastAPI Demo Restore Helper</title>
+    <title>FastOpp</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -150,117 +165,62 @@ async def root():
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 FastAPI Demo Restore Helper</h1>
-            <p>Instructions for restoring the full demo application</p>
+            <h1>🚀 Welcome to FastOpp</h1>
+            <p>An Opinionated FastAPI Starter Kit</p>
         </div>
-        
+
         <div class="content">
             <div class="section">
                 <h2>📋 Overview</h2>
-                <p>This is a minimal FastAPI application. To restore the full demo with all features, use the <code>oppman.py</code> management tool.</p>
+                <p>This is a minimal FastOpp application. To restore the full demo with all features,
+                use the <code>oppman.py</code> management tool.</p>
             </div>
+
             
+
+
+
             <div class="section">
-                <h2>🛠️ Quick Restore Commands</h2>
-                
-                <div class="step">
-                    <h3>Step 1: Restore Demo Files</h3>
-                    <div class="command">uv run python oppman.py demo restore</div>
-                    <p>This command restores all demo files from the <code>demo_assets</code> backup.</p>
-                </div>
-                
-                <div class="step">
-                    <h3>Step 2: Populate Database</h3>
-                    <div class="command">uv run python oppman.py init</div>
-                    <p>This initializes the database with sample data including users, products, webinars, and registrants.</p>
-                </div>
-                
-                <div class="step">
-                    <h3>Step 3: Start the Application</h3>
-                    <div class="command">uv run python oppman.py runserver</div>
-                    <p>This starts the development server with all demo features enabled.</p>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🎯 Demo Pages Available</h2>
-                <p>After restoration, you'll have access to these demo pages:</p>
-                
-                <div class="demo-pages">
-                    <div class="demo-card">
-                        <h4>🤖 AI Chat Demo</h4>
-                        <p>Interactive chat with Llama 3.3 70B</p>
-                        <code>/ai-demo</code>
-                    </div>
-                    <div class="demo-card">
-                        <h4>📊 Dashboard Demo</h4>
-                        <p>Product inventory with charts</p>
-                        <code>/dashboard-demo</code>
-                    </div>
-                    <div class="demo-card">
-                        <h4>🎨 Design Demo</h4>
-                        <p>Marketing demo with HTMX</p>
-                        <code>/design-demo</code>
-                    </div>
-                    <div class="demo-card">
-                        <h4>👥 Webinar Demo</h4>
-                        <p>Webinar registrants showcase</p>
-                        <code>/webinar-demo</code>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🔧 Advanced Commands</h2>
-                
-                <h3>Individual Operations</h3>
+                <h2>🔐 Minimal Application Admin Panel</h2>
+                <p>You can log in to the admin panel at:</p>
                 <div class="code-block">
-# Database operations
-uv run python oppman.py db                    # Initialize database only
-uv run python oppman.py superuser            # Create superuser only
-uv run python oppman.py users                # Add test users only
-uv run python oppman.py products             # Add sample products only
-uv run python oppman.py webinars             # Add sample webinars only
-uv run python oppman.py registrants          # Add webinar registrants only
+http://localhost:8000/admin/
+                </div>
 
-# Demo management
-uv run python oppman.py demo backup          # Backup demo files
-uv run python oppman.py demo restore         # Restore demo files
+                <div class="step">
+                    <h3>Create a Database</h3>
+                    <div class="command">uv run python oppman.py db</div>
+                    <p>Initialize the database before accessing any data</p>
+                </div>
+                
+                <div class="step">
+                    <h3>Create an Admin User</h3>
+                    <div class="command">uv run python oppman.py superuser</div>
+                    <p>Run this before logging in to create your first admin account.</p>
+                </div>
 
-# Server management
-uv run python oppman.py runserver            # Start development server
-uv run python oppman.py stopserver           # Stop development server
-uv run python oppman.py production           # Start production server
-
-# Database management
-uv run python oppman.py backup               # Backup database
-uv run python oppman.py delete               # Delete database (with backup)
+                <div class="step">
+                    <h3>Optional: Create Sample Users and Products</h3>
+                    <div class="command">uv run python oppman.py users</div>
+                    <div class="command">uv run python oppman.py products</div>
                 </div>
             </div>
-            
+
             <div class="section">
-                <h2>📚 Help & Documentation</h2>
-                
+                <h2>📚 Help</h2>
+
                 <div class="command">uv run python oppman.py help</div>
                 <p>Shows detailed help for all available commands.</p>
-                
+
                 <h3>Default Credentials</h3>
                 <div class="code-block">
 Superuser: admin@example.com / admin123
+<br>
 Test Users: test123 (for all test users)
 
-Test Users Created:
-- admin@example.com (superuser, admin)
-- admin2@example.com (superuser, admin)
-- john@example.com (staff, marketing)
-- jane@example.com (staff, sales)
-- staff@example.com (staff, support)
-- marketing@example.com (staff, marketing)
-- sales@example.com (staff, sales)
-- bob@example.com (inactive)
                 </div>
             </div>
-            
+
             <div class="warning">
                 <h4>⚠️ Important Notes</h4>
                 <ul>
@@ -270,7 +230,30 @@ Test Users Created:
                     <li>Database is SQLite by default (test.db)</li>
                 </ul>
             </div>
-            
+
+            <div class="section">
+                <h2>🛠️ Restore Demo with Design Templates and Fake Data</h2>
+
+                <div class="step">
+                    <h3>Step 1: Restore Demo Files</h3>
+                    <div class="command">uv run python oppman.py demo restore</div>
+                    <p>This command restores all demo files from the <code>demo_assets</code> backup.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 2: Populate Database</h3>
+                    <div class="command">uv run python oppman.py init</div>
+                    <p>This initializes the database with sample data including users, products, webinars,
+                    and registrants.</p>
+                </div>
+
+                <div class="step">
+                    <h3>Step 3: Start the Application</h3>
+                    <div class="command">uv run python oppman.py runserver</div>
+                    <p>This starts the development server with all demo features enabled.</p>
+                </div>
+            </div>
+
             <div class="success">
                 <h4>✅ Ready to Go!</h4>
                 <p>Once you've restored the demo, you'll have a fully functional FastAPI application with:</p>
@@ -288,7 +271,7 @@ Test Users Created:
 </body>
 </html>
     """
-    
+
     return HTMLResponse(content=html_content)
 
 

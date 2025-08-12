@@ -9,6 +9,13 @@ load_dotenv()
 # Get database URL from environment (defaults to SQLite for development)
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
+# Safety check: ensure we don't have an invalid https:// URL
+if DATABASE_URL and DATABASE_URL.startswith("https://"):
+    print("⚠️  Warning: DATABASE_URL contains 'https://' which is not a valid SQLAlchemy dialect")
+    print(f"   Current DATABASE_URL: {DATABASE_URL}")
+    print("   Falling back to SQLite for development")
+    DATABASE_URL = "sqlite+aiosqlite:///./test.db"
+
 # Database URL formats:
 # SQLite (async) - development default
 # DATABASE_URL = "sqlite+aiosqlite:///./test.db"
