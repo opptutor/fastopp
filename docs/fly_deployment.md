@@ -74,7 +74,7 @@ RUN uv sync --frozen --no-dev
 
 COPY . .
 EXPOSE 8000
-CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
 ```
 
 Add a `.dockerignore`:
@@ -129,9 +129,11 @@ Now run:
 fly volumes create data --region <REGION> --size 1
 ```
 
+Do not include `< >`
+
 Note: If you get this error, you can ignore.
 
-```text
+```bash
 Warning! Every volume is pinned to a specific physical host. You should create two or more volumes per application to avoid downtime. 
 ```
 
@@ -156,7 +158,7 @@ min_machines_running = 0
 processes = ['app']
 
 [[vm]]
-memory = '1gb'
+memory = '256mb'
 cpu_kind = 'shared'
 cpus = 1
 ```
@@ -182,6 +184,8 @@ Make sure this is included, too.
     handlers = ["tls", "http"]
 ```
 
+You can replace the existing memory = '256mb' in fly.toml with '1gb' if desired.
+
 ### 5) Set secrets and DB URL
 
 ```bash
@@ -189,26 +193,22 @@ fly secrets set SECRET_KEY=$(openssl rand -hex 32)
 fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/app.db"
 ```
 
-### 6) Single-machine only (SQLite requires one writer)
-
-```bash
-fly scale count 1
-```
-
-Note: If you get this error, do step 7 first
-
-```text
-jcasman@MacBook-Air-6 fastcfv % fly scale count 1
-Error: failed to grab app config from existing machines, error: could not create a fly.toml from any machines :-(
-No machines configured for this app
-```
-
-### 7) Deploy
+### 6) Deploy
 
 ```bash
 fly deploy
+```
+
+You can check the status with
+
+```bash
 fly status
-fly logs --since 5m
+```
+
+### 7) Single-machine only (SQLite requires one writer)
+
+```bash
+fly scale count 1
 ```
 
 ### 8) Issue an SSH certificate
@@ -223,7 +223,7 @@ fly ssh issue --agent
 
 ```bash
 # upgrade schema
-fly ssh console -C "uv run python oppman.py db"
+fly ssh console -C "uv run python oppman.py init"
 ```
 
 _Note, as of Aug 12, 2025, 2pm PT: Jesse has not used the steps below here._
