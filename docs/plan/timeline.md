@@ -6,18 +6,13 @@ This document outlines a phased approach to opening up structured training and d
 
 ## Internal Discussion Topics
 
-* Project team managers will benefit from working directly with volunteers and discussing strategy, plan, task identification
-* Project team managers will understand
-  * problems we are trying to solve with project
-  * components we are testing to solve problems
-  * collaboration techniques with larger group of developers
-  * strength and weakness of interns
+
 
 * As of August 2025, Oppkey is the founding company volunteering for project management.  
-* Corporate volunteers will benefit from close association with the unpaid interns and offer paid project, paid part-time, paid full-time work as it becomes available
-* Corporate volunteers will benefit from new technical expertise insights - different perspectives from interns involved in newest things from the community and from their computer science schools
+* Corporate volunteers will benefit from close association with unpaid volunteers and be in a better position to offer paid project, paid part-time, paid full-time work as it becomes available
+* Corporate volunteers will benefit from new technical expertise insights - different perspectives from volunteers  involved in newest things from the community and from their computer science schools
 * interns will help to identify new business problems (such as how to recruit people, how to pay people), new solutions, different strategies, improved workflows (like different conference system)
-* Corporate volunteers will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for internships as well as vetting process and set of tests
+* Corporate volunteers will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for paid internships as well as vetting process and set of tests
 
 ## Phase 1: Foundation (Completed by founding volunteers prior to launching call for more volunteers)
 
