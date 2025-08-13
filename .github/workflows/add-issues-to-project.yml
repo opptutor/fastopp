@@ -1,0 +1,32 @@
+name: Add open issues to Oppkey Project #9
+
+on:
+  workflow_dispatch:
+
+jobs:
+  add_issues_to_project:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install GitHub CLI
+      run: sudo apt-get install gh
+
+    - name: Authenticate GitHub CLI
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: echo $GH_TOKEN | gh auth login --with-token
+
+    - name: Get all open issues in Oppkey/fastopp
+      id: get_issues
+      run: |
+        gh issue list --repo Oppkey/fastopp --state open --json number | jq -r '.[].number' > issue_numbers.txt
+
+    - name: Add issues to project
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        while read issue; do
+          gh project item-add 9 --owner Oppkey --url https://github.com/Oppkey/fastopp/issues/$issue
+        done < issue_numbers.txt
