@@ -34,6 +34,7 @@ This document outlines a phased approach to opening up structured training and d
 
 * **Tests tasks (such as building a new page with AI)**
   * Develop sample tasks that demonstrate real-world development scenarios
+    * new page, deploy to one cheap site (such as fly.io), new model, new site without database and unused components
   * Create AI-assisted development workflows
   * Test task complexity and completion timeframes
   * Validate learning outcomes and skill development
