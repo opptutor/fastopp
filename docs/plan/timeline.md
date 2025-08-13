@@ -14,7 +14,7 @@ This document outlines a phased approach to opening up structured training and d
 * interns will help to identify new business problems (such as how to recruit people, how to pay people), new solutions, different strategies, improved workflows (like different conference system)
 * Corporate volunteers will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for paid internships as well as vetting process and set of tests
 
-## Phase 1: Requirements to Launch Expanded **Call for Volunteers**
+## Phase 1: Call for Volunteers Expansion Launch Requirements
 
 ### Core Platform Development
 
@@ -74,7 +74,7 @@ This document outlines a phased approach to opening up structured training and d
   * Create content calendar and distribution plan
   * Establish metrics for measuring promotional success
 
-* **Build recruitment plan**
+* **Build volunteer recruitment plan**
   * Define candidate profiles and requirements
   * Create application and screening processes
   * Develop interview and assessment procedures
