@@ -6,8 +6,8 @@ This document outlines a phased approach to opening up structured training and d
 
 ## Internal Discussion Topics
 
-* Jesse will benefit from working directly with interns and discussing strategy, plan, task identification with Craig
-* Jesse will understand
+* Project team managers will benefit from working directly with interns and discussing strategy, plan, task identification
+* Project team managers will understand
   * problems we are trying to solve with project
   * components we are testing to solve problems
   * collaboration techniques with larger group of developers
