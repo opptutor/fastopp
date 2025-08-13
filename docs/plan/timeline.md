@@ -62,11 +62,13 @@ This document outlines a phased approach to opening up structured training and d
 ### Marketing and Promotion
 
 * **Build promotional videos and blog post for FastOpp**
+  * status as of Aug 13.  Jesse has one.
   * Create compelling video content showcasing the platform
   * Write technical blog posts highlighting features and benefits
   * Create visual assets for social media and marketing
 
 * **Build web site for FastOpp**
+  * Jesse making first attempt either Aug 13 or Aug 14
   * includes recruitment
   * includes videos, blog posts
   * community discussions features
