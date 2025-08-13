@@ -13,12 +13,13 @@ This document outlines a phased approach to opening up structured training and d
   * collaboration techniques with larger group of developers
   * strength and weakness of interns
 
-* Oppkey will benefit from close association with the unpaid interns and offer paid project, paid part-time, paid full-time work as it becomes available
-* Oppkey will benefit from new technical expertise insights - different perspectives from interns involved in newest things from the community and from their computer science schools
+* Oppkey is the founding company volunteering for project management.  
+* Corporate volunteers will benefit from close association with the unpaid interns and offer paid project, paid part-time, paid full-time work as it becomes available
+* Corporate volunteers will benefit from new technical expertise insights - different perspectives from interns involved in newest things from the community and from their computer science schools
 * interns will help to identify new business problems (such as how to recruit people, how to pay people), new solutions, different strategies, improved workflows (like different conference system)
-* Oppkey will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for internships as well as vetting process and set of tests
+* Corporate volunteer will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for internships as well as vetting process and set of tests
 
-## Phase 1: Foundation (Completed by Oppkey Prior to Hiring)
+## Phase 1: Foundation (Completed by founding volunteers prior to hiring)
 
 ### Core Platform Development
 
