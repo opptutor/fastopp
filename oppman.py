@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Oppkey Management Tool (oppman.py)
-A comprehensive tool for managing the FastAPI admin application.
+A tool for managing the FastAPI admin and FastOpp application stack.
 """
 import argparse
 import asyncio
@@ -64,9 +64,9 @@ def backup_database():
         return False
 
 
-def backup_demo_files():
-    """Backup demo files to demo_assets directory"""
-    print("🔄 Backing up demo files to demo_assets...")
+def save_demo_files():
+    """Save demo files to demo_assets directory"""
+    print("🔄 Saving demo files to demo_assets...")
     
     # Ensure demo_assets directory exists
     demo_assets = Path("demo_assets")
@@ -215,9 +215,9 @@ def backup_demo_files():
         print("📚 Updating documentation...")
         
         # Update README.md
-        readme_content = """# Demo Assets Backup
+        readme_content = """# Demo Assets Save
 
-This directory contains backup copies of all files required to restore the demonstration application functionality.
+This directory contains saved copies of all files required to restore the demonstration application functionality.
 
 ## Structure
 
@@ -261,11 +261,11 @@ The demo requires these external dependencies:
 - `httpx` for API calls
 - `jinja2` for templating
 
-## Backup Information
+## Save Information
 
-- **Backup Date**: {backup_date}
-- **Files Backed Up**: {files_copied} files
-- **Backup Command**: `uv run python oppman.py demo backup`
+- **Save Date**: {backup_date}
+- **Files Saved**: {files_copied} files
+- **Save Command**: `uv run python oppman.py demo save`
 """.format(
             backup_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             files_copied=files_copied
@@ -274,9 +274,9 @@ The demo requires these external dependencies:
         with open(demo_assets / "README.md", "w") as f:
             f.write(readme_content)
         
-        print("\n✅ Demo backup completed successfully!")
-        print(f"📊 Total files backed up: {files_copied}")
-        print(f"📁 Backup location: {demo_assets.absolute()}")
+        print("\n✅ Demo save completed successfully!")
+        print(f"📊 Total files saved: {files_copied}")
+        print(f"📁 Save location: {demo_assets.absolute()}")
         print("\n📋 To restore demo files:")
         print("   python demo_assets/restore_demo.py")
         print("   # or")
@@ -285,7 +285,7 @@ The demo requires these external dependencies:
         return True
         
     except Exception as e:
-        print(f"❌ Failed to backup demo files: {e}")
+        print(f"❌ Failed to save demo files: {e}")
         return False
 
 
@@ -296,7 +296,7 @@ def restore_demo_files():
     demo_assets = Path("demo_assets")
     if not demo_assets.exists():
         print("❌ Error: demo_assets directory not found!")
-        print("Please run 'python oppman.py demo backup' first to create a backup.")
+        print("Please run 'python oppman.py demo save' first to create a save.")
         return False
     
     files_restored = 0
@@ -605,13 +605,13 @@ def destroy_demo_files():
 
 
 def diff_demo_files():
-    """Show differences between current demo files and demo_assets backup"""
-    print("🔍 Comparing current demo files with demo_assets backup...")
+    """Show differences between current demo files and demo_assets save"""
+    print("🔍 Comparing current demo files with demo_assets save...")
     
     demo_assets = Path("demo_assets")
     if not demo_assets.exists():
         print("❌ Error: demo_assets directory not found!")
-        print("Please run 'python oppman.py demo backup' first to create a backup.")
+        print("Please run 'python oppman.py demo save' first to create a save.")
         return False
     
     differences = {
@@ -819,13 +819,13 @@ def diff_demo_files():
             print(f"\n📊 Summary: {total_changes} total changes detected")
             
             if differences['added'] or differences['modified']:
-                print("\n💡 To update backup with current changes:")
-                print("   uv run python oppman.py demo backup")
+                print("\n💡 To update save with current changes:")
+                print("   uv run python oppman.py demo save")
             
             if differences['deleted']:
-                print("\n⚠️  Note: Deleted files will remain in backup unless manually removed")
+                print("\n⚠️  Note: Deleted files will remain in save unless manually removed")
         else:
-            print("✅ No differences found! Current demo files match the backup.")
+            print("✅ No differences found! Current demo files match the save.")
         
         return True
         
@@ -1124,10 +1124,10 @@ COMMANDS:
     production  Start production server with Gunicorn (no Nginx)
     delete      Delete current database (with backup)
     backup      Backup current database
-    demo backup Backup demo files to demo_assets directory
+    demo save    Save demo files to demo_assets directory
     demo restore Restore demo files from demo_assets directory
     demo destroy Destroy demo files and switch to minimal application
-    demo diff    Show differences between current demo and backup
+    demo diff    Show differences between current demo and save
     migrate     Database migration management (see examples below)
     env         Check environment configuration
     help        Show this help message
@@ -1162,7 +1162,7 @@ EXAMPLES:
     python oppman.py delete
     
     # Demo management
-    python oppman.py demo backup
+    python oppman.py demo save
     python oppman.py demo restore
     python oppman.py demo destroy
     python oppman.py demo diff
@@ -1281,10 +1281,10 @@ Examples:
     if args.command == "demo":
         if not args.migrate_command:
             print("❌ Demo command requires a subcommand")
-            print("Usage: python oppman.py demo backup|restore|destroy|diff")
+            print("Usage: python oppman.py demo save|restore|destroy|diff")
             return
-        if args.migrate_command == "backup":
-            backup_demo_files()
+        if args.migrate_command == "save":
+            save_demo_files()
         elif args.migrate_command == "restore":
             restore_demo_files()
         elif args.migrate_command == "destroy":
@@ -1293,7 +1293,7 @@ Examples:
             diff_demo_files()
         else:
             print("❌ Invalid demo subcommand")
-            print("Usage: python oppman.py demo backup|restore|destroy|diff")
+            print("Usage: python oppman.py demo save|restore|destroy|diff")
         return
     
     if args.command == "runserver":

@@ -1,6 +1,6 @@
-# Demo Assets Backup
+# Demo Assets Save
 
-This directory contains backup copies of all files required to restore the demonstration application functionality.
+This directory contains saved copies of all files required to restore the demonstration application functionality.
 
 ## Structure
 
@@ -44,8 +44,8 @@ The demo requires these external dependencies:
 - `httpx` for API calls
 - `jinja2` for templating
 
-## Backup Information
+## Save Information
 
-- **Backup Date**: 2025-08-14 10:19:21
-- **Files Backed Up**: 36 files
-- **Backup Command**: `uv run python oppman.py demo backup`
+- **Save Date**: 2025-08-14 11:03:51
+- **Files Saved**: 36 files
+- **Save Command**: `uv run python oppman.py demo save`
