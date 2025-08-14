@@ -396,7 +396,7 @@
                 Demonstration of Modern Web Technologies
             </h2>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- HTMX Feature -->
                 <div class="group" x-data="{ hovered: false }" 
                      @mouseenter="hovered = true" 
@@ -433,6 +433,24 @@
                     </div>
                 </div>
 
+                <!-- Tailwind Feature -->
+                <div class="group" x-data="{ hovered: false }" 
+                     @mouseenter="hovered = true" 
+                     @mouseleave="hovered = false">
+                    <div class="bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-xl transition-all duration-300"
+                         :class="hovered ? 'shadow-xl scale-105' : 'shadow-lg'">
+                        <div class="w-16 h-16 bg-gradient-to-br from-ai-blue to-ai-purple rounded-lg flex items-center justify-center mb-6">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Tailwind CSS</h3>
+                        <p class="text-gray-600">
+                            Beautiful, responsive design with utility-first CSS framework for a modern and polished interface.
+                        </p>
+                    </div>
+                </div>
+
                 <!-- DaisyUI Feature -->
                 <div class="group" x-data="{ hovered: false }" 
                      @mouseenter="hovered = true" 
@@ -451,20 +469,20 @@
                     </div>
                 </div>
 
-                <!-- Tailwind Feature -->
+                <!-- OpenRouter Feature -->
                 <div class="group" x-data="{ hovered: false }" 
                      @mouseenter="hovered = true" 
                      @mouseleave="hovered = false">
-                    <div class="bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-xl transition-all duration-300"
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-8 rounded-xl transition-all duration-300"
                          :class="hovered ? 'shadow-xl scale-105' : 'shadow-lg'">
-                        <div class="w-16 h-16 bg-gradient-to-br from-ai-blue to-ai-purple rounded-lg flex items-center justify-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mb-6">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold mb-4 text-gray-900">Tailwind CSS</h3>
+                        <h3 class="text-xl font-semibold mb-4 text-gray-900">OpenRouter</h3>
                         <p class="text-gray-600">
-                            Beautiful, responsive design with utility-first CSS framework for a modern and polished interface.
+                            AI gateway for developers providing a single, standardized API to access LLMs from multiple providers.
                         </p>
                     </div>
                 </div>
@@ -486,26 +504,28 @@
             </p>
             <div class="mt-12 flex justify-center">
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-blue-200">
-                    <div class="flex items-center justify-center space-x-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-lg font-semibold text-gray-900">No Internet Search</h3>
+                                <p class="text-gray-600">Just pure AI reasoning without external distractions</p>
+                            </div>
                         </div>
-                        <div class="text-left">
-                            <h3 class="text-lg font-semibold text-gray-900">No Internet Search</h3>
-                            <p class="text-gray-600">Just pure AI reasoning without external distractions</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-center space-x-4 mt-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-left">
-                            <h3 class="text-lg font-semibold text-gray-900">No Chat History</h3>
-                            <p class="text-gray-600">Fresh start every conversation, no baggage from the past</p>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-lg font-semibold text-gray-900">No Chat History</h3>
+                                <p class="text-gray-600">Fresh start every conversation, no baggage from the past</p>
+                            </div>
                         </div>
                     </div>
                 </div>
