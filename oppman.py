@@ -128,15 +128,27 @@ def backup_demo_files():
                         print(f"  ✅ {subdir}/{file.name}")
                         files_copied += 1
         
-        # Uploads (copy entire uploads tree if present)
+        # Uploads (copy only sample_photos, exclude user uploads)
         uploads_src = Path("static/uploads")
         if uploads_src.exists():
             uploads_dst = demo_assets / "static/uploads"
-            if uploads_dst.exists():
-                shutil.rmtree(uploads_dst)
-            shutil.copytree(uploads_src, uploads_dst)
-            print("  ✅ uploads/")
-            files_copied += 1
+            uploads_dst.mkdir(parents=True, exist_ok=True)
+            
+            # Copy only sample_photos directory (exclude photos with user uploads)
+            sample_photos_src = uploads_src / "sample_photos"
+            if sample_photos_src.exists():
+                sample_photos_dst = uploads_dst / "sample_photos"
+                if sample_photos_dst.exists():
+                    shutil.rmtree(sample_photos_dst)
+                shutil.copytree(sample_photos_src, sample_photos_dst)
+                print("  ✅ uploads/sample_photos/")
+                files_copied += 1
+            
+            # Create .gitkeep to preserve directory structure
+            gitkeep_file = uploads_dst / ".gitkeep"
+            if not gitkeep_file.exists():
+                gitkeep_file.touch()
+                print("  ✅ uploads/.gitkeep")
 
         # Other static files in root (like LICENSE, favicon.ico, etc.)
         static_root = Path("static")
@@ -370,6 +382,28 @@ def restore_demo_files():
                         shutil.rmtree(subdir_dest)
                     shutil.copytree(subdir_src, subdir_dest)
                     print(f"  ✅ Restored {subdir}/")
+            
+            # Restore uploads (only sample_photos)
+            uploads_src = static_src / "uploads"
+            uploads_dest = static_dest / "uploads"
+            
+            if uploads_src.exists():
+                uploads_dest.mkdir(parents=True, exist_ok=True)
+                
+                # Restore sample_photos directory
+                sample_photos_src = uploads_src / "sample_photos"
+                if sample_photos_src.exists():
+                    sample_photos_dest = uploads_dest / "sample_photos"
+                    if sample_photos_dest.exists():
+                        shutil.rmtree(sample_photos_dest)
+                    shutil.copytree(sample_photos_src, sample_photos_dest)
+                    print("  ✅ Restored uploads/sample_photos/")
+                
+                # Ensure .gitkeep exists
+                gitkeep_file = uploads_dest / ".gitkeep"
+                if not gitkeep_file.exists():
+                    gitkeep_file.touch()
+                    print("  ✅ Ensured uploads/.gitkeep")
         
         # Restore routes
         print("🛣️  Restoring routes...")
@@ -671,6 +705,30 @@ def diff_demo_files():
                             src_file = subdir_src / backup_file.name
                             if not src_file.exists():
                                 differences['deleted'].append(f"static/{subdir}/{backup_file.name}")
+            
+            # Compare uploads (only sample_photos)
+            uploads_src = static_src / "uploads"
+            uploads_backup = static_backup / "uploads"
+            
+            if uploads_src.exists() and uploads_backup.exists():
+                sample_photos_src = uploads_src / "sample_photos"
+                sample_photos_backup = uploads_backup / "sample_photos"
+                
+                if sample_photos_src.exists() and sample_photos_backup.exists():
+                    for file in sample_photos_src.glob("*"):
+                        if file.is_file():
+                            backup_file = sample_photos_backup / file.name
+                            if not backup_file.exists():
+                                differences['added'].append(f"static/uploads/sample_photos/{file.name}")
+                            else:
+                                if not filecmp.cmp(file, backup_file, shallow=False):
+                                    differences['modified'].append(f"static/uploads/sample_photos/{file.name}")
+                    
+                    for backup_file in sample_photos_backup.glob("*"):
+                        if backup_file.is_file():
+                            src_file = sample_photos_src / backup_file.name
+                            if not src_file.exists():
+                                differences['deleted'].append(f"static/uploads/sample_photos/{backup_file.name}")
         
         # Compare routes
         print("🛣️  Comparing routes...")
