@@ -91,4 +91,13 @@ async def marketing_demo(request: Request):
         "request": request,
         "success": True,
         "message": "Thank you! Our AI team will contact you within 24 hours with a personalized marketing demo."
+    })
+
+
+@router.get("/license")
+async def license_page(request: Request):
+    """License page"""
+    return templates.TemplateResponse("license.html", {
+        "request": request,
+        "title": "MIT License"
     }) 
