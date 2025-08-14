@@ -265,6 +265,42 @@
         </div>
     </section>
 
-    {% include 'partials/footer.html' %}
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <img src="{{ url_for('static', path='/images/oppkey_logo.jpg') }}" 
+                         alt="Oppkey Logo" 
+                         class="h-8 w-auto mb-4">
+                    <p class="text-gray-400">
+                        Oppkey's starter kit for FastAPI with modern web technologies.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/design-demo" class="hover:text-white transition-colors">Design Demo</a></li>
+                        <li><a href="/admin/" class="hover:text-white transition-colors">Admin</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Technologies</h4>
+                    <div class="flex space-x-4">
+                        <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">Tailwind CSS</span>
+                        <span class="bg-green-600 px-3 py-1 rounded-full text-sm">HTMX</span>
+                        <span class="bg-purple-600 px-3 py-1 rounded-full text-sm">Alpine.js</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 FastOpp. Built with FastAPI, Tailwind CSS, HTMX, and Alpine.js.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html> 

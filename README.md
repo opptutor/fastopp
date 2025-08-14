@@ -337,6 +337,10 @@ uv run python oppman.py env
 * [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
 * [Authentication System](docs/authentication.md) - Authentication and authorization details
 
+## Contributing To This Project
+
+* [Contribute to Demos](demo_assets/README.md)
+
 ## Development Plans
 
 * [Oppkey Development Plans](docs/plan/oppkey_development_plans.md) - includes assessment plans

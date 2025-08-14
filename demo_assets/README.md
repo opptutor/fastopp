@@ -1,6 +1,8 @@
-# Demo Assets Backup
+# Demo Assets Save
 
-This directory contains backup copies of all files required to restore the demonstration application functionality.
+This directory contains saved copies of all files required to demonstrate FastOpp application functionality.
+
+
 
 ## Structure
 
@@ -27,7 +29,7 @@ This directory contains backup copies of all files required to restore the demon
 
 ## Restoration
 
-To restore demo files from this backup:
+To restore demo files from this directory:
 
 1. Copy templates from `demo_assets/templates/` to `templates/`
 2. Copy static files from `demo_assets/static/` to `static/`
@@ -44,8 +46,42 @@ The demo requires these external dependencies:
 - `httpx` for API calls
 - `jinja2` for templating
 
-## Backup Information
+## Contributing to Demo
 
-- **Backup Date**: 2025-08-08 14:36:26
-- **Files Backed Up**: 29 files
-- **Backup Command**: `uv run python oppman.py demo backup`
+On a separate branch, developers work in the project root directory. When enhancements
+are working and ready to submit, save your work to this demo_assets location with oppman.
+
+### Development Workflow
+
+1. **Create Development Branch**: Create a new branch for your feature or enhancement
+   - Use descriptive branch names: `feature/ai-chat-enhancement` or `fix/webinar-registration-bug`
+2. **Work in Project Root**: All development happens in the main project directory
+3. **Test Your Changes**: Ensure your demo enhancements work correctly
+   - Test locally before saving
+   - Verify all demo pages still function
+4. **Save Your Work**: When ready to submit, run the `oppman.py demo save` command
+   to add your changes to the `demo_assets/` folder which is the source of truth of the demo.
+5. **Commit and Push**: Commit your changes with descriptive messages and push to your branch
+6. **Create Pull Request**: Create a pull request with clear description of changes
+   - Include screenshots for UI changes
+   - List any new dependencies or configuration changes
+7. **Review Process**: Project manager will either review and assign to reviewer
+8. **Engage in Discussion**: Look for comments and engage in discussion
+   - Address all review comments promptly
+   - Ask for clarification if needed
+9. **Make Changes**: Make changes if requested during review
+   - Push additional commits to the same branch
+   - The PR will automatically update
+10. **Merge**: Project manager will merge into main after approval
+
+### Save Command
+
+```bash
+uv run python oppman.py demo save
+```
+
+## Save Information
+
+- **Save Date**: 2025-08-14 11:03:51
+- **Files Saved**: 36 files
+- **Save Command**: `uv run python oppman.py demo save`
