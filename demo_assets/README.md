@@ -46,6 +46,6 @@ The demo requires these external dependencies:
 
 ## Backup Information
 
-- **Backup Date**: 2025-08-08 14:36:26
-- **Files Backed Up**: 29 files
+- **Backup Date**: 2025-08-14 09:52:28
+- **Files Backed Up**: 36 files
 - **Backup Command**: `uv run python oppman.py demo backup`

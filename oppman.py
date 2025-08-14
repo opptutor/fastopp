@@ -5,6 +5,7 @@ A comprehensive tool for managing the FastAPI admin application.
 """
 import argparse
 import asyncio
+import filecmp
 import os
 import shutil
 import sys
@@ -137,12 +138,16 @@ def backup_demo_files():
             print("  ✅ uploads/")
             files_copied += 1
 
-        # Favicon
-        favicon_src = Path("static/favicon.ico")
-        if favicon_src.exists():
-            shutil.copy2(favicon_src, demo_assets / "static/favicon.ico")
-            print("  ✅ favicon.ico")
-            files_copied += 1
+        # Other static files in root (like LICENSE, favicon.ico, etc.)
+        static_root = Path("static")
+        if static_root.exists():
+            for static_file in static_root.glob("*"):
+                if static_file.is_file() and static_file.name not in ["uploads"]:
+                    # Skip directories that are handled separately
+                    if not static_file.is_dir():
+                        shutil.copy2(static_file, demo_assets / "static" / static_file.name)
+                        print(f"  ✅ {static_file.name}")
+                        files_copied += 1
         
         # Backup routes (all .py files)
         print("🛣️  Backing up routes...")
@@ -565,6 +570,212 @@ def destroy_demo_files():
         return False
 
 
+def diff_demo_files():
+    """Show differences between current demo files and demo_assets backup"""
+    print("🔍 Comparing current demo files with demo_assets backup...")
+    
+    demo_assets = Path("demo_assets")
+    if not demo_assets.exists():
+        print("❌ Error: demo_assets directory not found!")
+        print("Please run 'python oppman.py demo backup' first to create a backup.")
+        return False
+    
+    differences = {
+        'added': [],
+        'modified': [],
+        'deleted': [],
+        'missing_backup': []
+    }
+    
+    try:
+        # Compare templates
+        print("📄 Comparing templates...")
+        templates_src = Path("templates")
+        templates_backup = demo_assets / "templates"
+        
+        if templates_src.exists() and templates_backup.exists():
+            # Compare root template files
+            for template_file in templates_src.glob("*.html"):
+                backup_file = templates_backup / template_file.name
+                if not backup_file.exists():
+                    differences['added'].append(f"templates/{template_file.name}")
+                else:
+                    # Check if files are different
+                    if not filecmp.cmp(template_file, backup_file, shallow=False):
+                        differences['modified'].append(f"templates/{template_file.name}")
+            
+            # Check for deleted files
+            for backup_file in templates_backup.glob("*.html"):
+                src_file = templates_src / backup_file.name
+                if not src_file.exists():
+                    differences['deleted'].append(f"templates/{backup_file.name}")
+            
+            # Compare partials
+            partials_src = templates_src / "partials"
+            partials_backup = templates_backup / "partials"
+            
+            if partials_src.exists() and partials_backup.exists():
+                for partial_file in partials_src.glob("*.html"):
+                    backup_file = partials_backup / partial_file.name
+                    if not backup_file.exists():
+                        differences['added'].append(f"templates/partials/{partial_file.name}")
+                    else:
+                        if not filecmp.cmp(partial_file, backup_file, shallow=False):
+                            differences['modified'].append(f"templates/partials/{partial_file.name}")
+                
+                for backup_file in partials_backup.glob("*.html"):
+                    src_file = partials_src / backup_file.name
+                    if not src_file.exists():
+                        differences['deleted'].append(f"templates/partials/{backup_file.name}")
+        
+        # Compare static files
+        print("🎨 Comparing static files...")
+        static_src = Path("static")
+        static_backup = demo_assets / "static"
+        
+        if static_src.exists() and static_backup.exists():
+            # Compare root static files
+            for static_file in static_src.glob("*"):
+                if static_file.is_file() and static_file.name != "uploads":
+                    backup_file = static_backup / static_file.name
+                    if not backup_file.exists():
+                        differences['added'].append(f"static/{static_file.name}")
+                    else:
+                        if not filecmp.cmp(static_file, backup_file, shallow=False):
+                            differences['modified'].append(f"static/{static_file.name}")
+            
+            # Check for deleted files
+            for backup_file in static_backup.glob("*"):
+                if backup_file.is_file() and backup_file.name != "uploads":
+                    src_file = static_src / backup_file.name
+                    if not src_file.exists():
+                        differences['deleted'].append(f"static/{backup_file.name}")
+            
+            # Compare subdirectories (css, js, images)
+            for subdir in ["css", "js", "images"]:
+                subdir_src = static_src / subdir
+                subdir_backup = static_backup / subdir
+                
+                if subdir_src.exists() and subdir_backup.exists():
+                    for file in subdir_src.glob("*"):
+                        if file.is_file():
+                            backup_file = subdir_backup / file.name
+                            if not backup_file.exists():
+                                differences['added'].append(f"static/{subdir}/{file.name}")
+                            else:
+                                if not filecmp.cmp(file, backup_file, shallow=False):
+                                    differences['modified'].append(f"static/{subdir}/{file.name}")
+                    
+                    for backup_file in subdir_backup.glob("*"):
+                        if backup_file.is_file():
+                            src_file = subdir_src / backup_file.name
+                            if not src_file.exists():
+                                differences['deleted'].append(f"static/{subdir}/{backup_file.name}")
+        
+        # Compare routes
+        print("🛣️  Comparing routes...")
+        routes_src = Path("routes")
+        routes_backup = demo_assets / "routes"
+        
+        if routes_src.exists() and routes_backup.exists():
+            for route_file in routes_src.glob("*.py"):
+                backup_file = routes_backup / route_file.name
+                if not backup_file.exists():
+                    differences['added'].append(f"routes/{route_file.name}")
+                else:
+                    if not filecmp.cmp(route_file, backup_file, shallow=False):
+                        differences['modified'].append(f"routes/{route_file.name}")
+            
+            for backup_file in routes_backup.glob("*.py"):
+                src_file = routes_src / backup_file.name
+                if not src_file.exists():
+                    differences['deleted'].append(f"routes/{backup_file.name}")
+        
+        # Compare services
+        print("🔧 Comparing services...")
+        services_src = Path("services")
+        services_backup = demo_assets / "services"
+        
+        if services_src.exists() and services_backup.exists():
+            for service_file in services_src.glob("*.py"):
+                backup_file = services_backup / service_file.name
+                if not backup_file.exists():
+                    differences['added'].append(f"services/{service_file.name}")
+                else:
+                    if not filecmp.cmp(service_file, backup_file, shallow=False):
+                        differences['modified'].append(f"services/{service_file.name}")
+            
+            for backup_file in services_backup.glob("*.py"):
+                src_file = services_src / backup_file.name
+                if not src_file.exists():
+                    differences['deleted'].append(f"services/{backup_file.name}")
+        
+        # Compare models.py
+        print("📊 Comparing models...")
+        models_src = Path("models.py")
+        models_backup = demo_assets / "models.py"
+        
+        if models_src.exists() and models_backup.exists():
+            if not filecmp.cmp(models_src, models_backup, shallow=False):
+                differences['modified'].append("models.py")
+        elif models_src.exists() and not models_backup.exists():
+            differences['missing_backup'].append("models.py")
+        
+        # Compare main.py
+        print("📄 Comparing main.py...")
+        main_src = Path("main.py")
+        main_backup = demo_assets / "main.py"
+        
+        if main_src.exists() and main_backup.exists():
+            if not filecmp.cmp(main_src, main_backup, shallow=False):
+                differences['modified'].append("main.py")
+        elif main_src.exists() and not main_backup.exists():
+            differences['missing_backup'].append("main.py")
+        
+        # Display results
+        print("\n📋 Demo Files Comparison Results:")
+        print("=" * 50)
+        
+        if any(differences.values()):
+            if differences['added']:
+                print(f"\n🟢 Added files ({len(differences['added'])}):")
+                for file in sorted(differences['added']):
+                    print(f"  + {file}")
+            
+            if differences['modified']:
+                print(f"\n🟡 Modified files ({len(differences['modified'])}):")
+                for file in sorted(differences['modified']):
+                    print(f"  ~ {file}")
+            
+            if differences['deleted']:
+                print(f"\n🔴 Deleted files ({len(differences['deleted'])}):")
+                for file in sorted(differences['deleted']):
+                    print(f"  - {file}")
+            
+            if differences['missing_backup']:
+                print(f"\n⚠️  Files missing from backup ({len(differences['missing_backup'])}):")
+                for file in sorted(differences['missing_backup']):
+                    print(f"  ? {file}")
+            
+            total_changes = sum(len(diff) for diff in differences.values())
+            print(f"\n📊 Summary: {total_changes} total changes detected")
+            
+            if differences['added'] or differences['modified']:
+                print("\n💡 To update backup with current changes:")
+                print("   uv run python oppman.py demo backup")
+            
+            if differences['deleted']:
+                print("\n⚠️  Note: Deleted files will remain in backup unless manually removed")
+        else:
+            print("✅ No differences found! Current demo files match the backup.")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Failed to compare demo files: {e}")
+        return False
+
+
 def delete_database():
     """Delete the current database file"""
     db_path = Path("test.db")
@@ -858,6 +1069,7 @@ COMMANDS:
     demo backup Backup demo files to demo_assets directory
     demo restore Restore demo files from demo_assets directory
     demo destroy Destroy demo files and switch to minimal application
+    demo diff    Show differences between current demo and backup
     migrate     Database migration management (see examples below)
     env         Check environment configuration
     help        Show this help message
@@ -895,6 +1107,7 @@ EXAMPLES:
     python oppman.py demo backup
     python oppman.py demo restore
     python oppman.py demo destroy
+    python oppman.py demo diff
     
     # Migration management
     python oppman.py migrate init
@@ -1010,7 +1223,7 @@ Examples:
     if args.command == "demo":
         if not args.migrate_command:
             print("❌ Demo command requires a subcommand")
-            print("Usage: python oppman.py demo backup|restore|destroy")
+            print("Usage: python oppman.py demo backup|restore|destroy|diff")
             return
         if args.migrate_command == "backup":
             backup_demo_files()
@@ -1018,9 +1231,11 @@ Examples:
             restore_demo_files()
         elif args.migrate_command == "destroy":
             destroy_demo_files()
+        elif args.migrate_command == "diff":
+            diff_demo_files()
         else:
             print("❌ Invalid demo subcommand")
-            print("Usage: python oppman.py demo backup|restore|destroy")
+            print("Usage: python oppman.py demo backup|restore|destroy|diff")
         return
     
     if args.command == "runserver":
