@@ -1,6 +1,6 @@
 # Demo Assets Save
 
-This directory contains saved copies of all files required to restore the demonstration application functionality.
+This directory contains saved copies of all files required to demonstrate FastOpp application functionality.
 
 
 
@@ -29,7 +29,7 @@ This directory contains saved copies of all files required to restore the demons
 
 ## Restoration
 
-To restore demo files from this backup:
+To restore demo files from this directory:
 
 1. Copy templates from `demo_assets/templates/` to `templates/`
 2. Copy static files from `demo_assets/static/` to `static/`
@@ -48,7 +48,8 @@ The demo requires these external dependencies:
 
 ## Contributing to Demo
 
-Developers work in the project root directory. When enhancements are working and ready to submit, save your work to this backup location.
+On a separate branch, developers work in the project root directory. When enhancements
+are working and ready to submit, save your work to this demo_assets location with oppman.
 
 ### Development Workflow
 
@@ -58,7 +59,8 @@ Developers work in the project root directory. When enhancements are working and
 3. **Test Your Changes**: Ensure your demo enhancements work correctly
    - Test locally before saving
    - Verify all demo pages still function
-4. **Save Your Work**: When ready to submit, run the save command to add your changes to the `demo_assets/` folder which is the source of truth of the demo.
+4. **Save Your Work**: When ready to submit, run the `oppman.py demo save` command
+   to add your changes to the `demo_assets/` folder which is the source of truth of the demo.
 5. **Commit and Push**: Commit your changes with descriptive messages and push to your branch
 6. **Create Pull Request**: Create a pull request with clear description of changes
    - Include screenshots for UI changes
