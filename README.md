@@ -119,9 +119,6 @@ cd fastopp
 
 # Install dependencies
 uv sync
-
-# Add environment variable support
-uv add python-dotenv
 ```
 
 ### 2. Environment Configuration
