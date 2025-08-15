@@ -33,7 +33,7 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
 
 ## Target Audience
 
-This stack is opinionated and may not be for you.  It is intended for students and novice developers who
+This stack is opinionated and may not be for you. It is intended for students and novice developers who
 know Python, but are not strong in or do not like JavaScript.
 
 * You strongly prefer Python over JavaScript on the backend
@@ -41,6 +41,7 @@ know Python, but are not strong in or do not like JavaScript.
 * You prefer inline styling instead of separation of concerns with CSS in separate files
 * You prefer typed languages and want to use Python optional type hints instead of relying only on dynamic typing
 * You prefer HTML files with Python code and variables embedded in the HTML instead of embedding HTML in the Python code on the server
+* You are using Django or Flask and are having problems with async LLM communication
 
 ## Screenshots of Included Design Examples and Functionality Demos
 
