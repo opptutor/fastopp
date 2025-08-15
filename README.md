@@ -24,6 +24,17 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
   * designed to connect to Flutter and React in the future, but we do not have examples
 * **oppman.py** management tool with some functionality similar to Django manage
 
+## Target Audience
+
+This stack is opinionated and may not be for you.  It is intended for students and novice developers who
+know Python, but are not strong in or do not like JavaScript.
+
+* You strongly prefer Python over JavaScript on the backend
+* You prefer to handle logic on the Python backend instead of using JavaScript code on the frontend
+* You prefer inline styling instead of separation of concerns with CSS in separate files
+* You prefer typed languages and want to use Python optional type hints instead of relying only on dynamic typing
+* You prefer HTML files with Python code and variables embedded in the HTML instead of embedding HTML in the Python code on the server
+
 ## Screenshots of Included Design Examples and Functionality Demos
 
 ### Clickable Cards with Mouseover
