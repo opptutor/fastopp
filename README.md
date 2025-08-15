@@ -1,28 +1,30 @@
-# FastOpp
+# FastOpp for AI Web Apps
 
-FastAPI Oppkey starter package using pre-built admin
+FastAPI starter package for AI web applications. It uses pre-built admin
 components to give FastAPI functionality comparable to Django
 for AI-first applications.
 
 Django and Flask are not designed for optimized async LLM applications.
 Although both Django and Flask can absolutely be used for these
 applications and are great in many, many ways, there are often rough patches during
-development.
+development of asynchronous AI applications that communicate with an backend LLM such as those
+at OpenAI, Anthropic, and OpenRouter.
 
 Although FastAPI has advantages in future-proof architecture, it can
 have a steep learning curve for people, especially for developers familiar with Django.
 
 FastOpp provides an opinionated framework for FastAPI with the following features:
 
-* admin panel similar to Django
-* admin panel example with custom styling
+* admin panel similar to Django with role-based authentication
+* SQL database with Django-inspired models and migrations
 * Django-style HTML templates with modern UI components
   * Replaceable style templates to get started
 * API endpoints to connect to other frontend frameworks
   * auto-generated documentation for API endpoints
   * designed to connect to Flutter and React in the future, but we do not have examples
+* **oppman.py** management tool with some functionality similar to Django manage
 
-## Screenshots of Included Design Examples
+## Screenshots of Included Design Examples and Functionality Demos
 
 ### Clickable Cards with Mouseover
 
@@ -69,6 +71,10 @@ Admin panel is restricted to logged-in users.
 ![AI Chat](docs/images/ai_chat_indents.webp)
 
 ![AI Chat](docs/images/ai_chat.webp)
+
+## Basic Design System and Reference Template
+
+FastOpp comes with a basic UI design system to accelerate AI application development.
 
 ## 🚀 Quick Start (For Team Members)
 
