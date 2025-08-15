@@ -1,12 +1,11 @@
-# FastOpp Assessment Project
+# FastOpp Assessment versus Django
 
-The project is designed for Oppkey management (Jesse and Craig)
+The project is designed for developers
 to assess FastAPI functionality.
 
-The pre-built admin tools for FastAPI do not appear to be a
-best practice or even popular among FastAPI developers.
+The pre-built admin tools for FastAPI may not end up being popular for FastAPI developers.
 
-After building applications with pre-built admin components, Oppkey
+After building applications with pre-built admin components, developers
 may eventually move from pre-built components to building
 our own admin tools.
 
