@@ -390,3 +390,10 @@ We believe this can be reduced further with either Turso or S3 and Litestream.
 
 * [Oppkey Development Plans](docs/plan/oppkey_development_plans.md) - includes assessment plans
 * [Call for Volunteers](docs/plan/call_for_volunteers.md)
+
+## Guidelines
+
+* beautiful
+* cheap
+* easy
+* opinionated
