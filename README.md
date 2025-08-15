@@ -1,4 +1,4 @@
-# FastOpp for AI Web Apps
+# FastOpp - Easy AI Web Apps
 
 FastAPI starter package for AI web applications. It uses pre-built admin
 components to give FastAPI functionality comparable to Django
