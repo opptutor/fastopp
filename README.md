@@ -145,6 +145,10 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
 ```
 
+If you want to use free models, edit `services/chat_service.py` in this project
+and change the LLM model to "meta-llama/llama-3.3-70b-instruct:free" (as of August 15, 2025)
+[Browse OpenRouter free models](https://openrouter.ai/models?max_price=0).
+
 **Or manually create `.env`:**
 
 ```bash
@@ -366,9 +370,17 @@ uv run python oppman.py env
 * [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
 * [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
 
-### Overview and Deployment
+## Cheap Deployment
+
+Fly is the cheapest solution we've found thus far at under $0.25/month with a database.
+We believe this can be reduced further with either Turso or S3 and Litestream.
+[See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
 * [Deploy to fly.io](docs/fly_deployment)
+
+### Overview and Deployment
+
+
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
 * [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
 * [Production vs Development](docs/production_vs_development.md) - Environment differences

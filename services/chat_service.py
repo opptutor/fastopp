@@ -43,6 +43,8 @@ class ChatService:
                 "X-Title": "FastOpp AI Demo"
             }
             
+            # free model is meta-llama/llama-3.3-70b-instruct:free
+            # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
             payload = {
                 "model": "meta-llama/llama-3.3-70b-instruct",
                 "messages": [
