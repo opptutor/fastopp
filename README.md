@@ -1,10 +1,13 @@
 # FastOpp - Easier AI Web Apps
 
-FastAPI starter package for AI web applications. It uses pre-built admin
+**What it is:** FastAPI starter package for AI web applications. It uses pre-built admin
 components to give FastAPI functionality comparable to Django
 for AI-first applications.
 
-Django and Flask are not designed for optimized async LLM applications.
+**Problem FastOpp Solves:** Django and Flask are not designed for optimized async LLM applications.
+
+## Overview
+
 Although both Django and Flask can absolutely be used for these
 applications and are great in many, many ways, there are often rough patches during
 development of asynchronous AI applications that communicate with an backend LLMs available
