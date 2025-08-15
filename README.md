@@ -74,7 +74,10 @@ Admin panel is restricted to logged-in users.
 
 ## Basic Design System and Reference Template
 
-FastOpp comes with a basic UI design system to accelerate AI application development.
+FastOpp comes with an optional basic UI design system to accelerate AI application development. 
+
+* based on Tailwind CSS, DaisyUI, AlpineJS and HTMX
+
 
 ## 🚀 Quick Start (For Team Members)
 
