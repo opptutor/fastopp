@@ -362,7 +362,7 @@ uv run python oppman.py env
 ### Developer Tutorials and HowTos
 
 * [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
-* [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
+* [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
 
 ### Overview and Deployment
 
