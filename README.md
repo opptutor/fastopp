@@ -377,7 +377,6 @@ We believe this can be reduced further with either Turso or S3 and Litestream.
 
 ### Overview and Deployment
 
-
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
 * [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
 * [Production vs Development](docs/production_vs_development.md) - Environment differences
