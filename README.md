@@ -7,7 +7,7 @@ for AI-first applications.
 Django and Flask are not designed for optimized async LLM applications.
 Although both Django and Flask can absolutely be used for these
 applications and are great in many, many ways, there are often rough patches during
-development of asynchronous AI applications that communicate with an backend LLM such as those
+development of asynchronous AI applications that communicate with an backend LLMs available
 at OpenAI, Anthropic, and OpenRouter.
 
 Although FastAPI has advantages in future-proof architecture, it can
