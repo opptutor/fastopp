@@ -359,10 +359,17 @@ uv run python oppman.py env
 
 ## 📚 Documentation
 
+### Developer Tutorials and HowTos
+
+* [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
+* [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
+
+### Overview and Deployment
+
+* [Deploy to fly.io](docs/fly_deployment)
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
 * [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
 * [Production vs Development](docs/production_vs_development.md) - Environment differences
-* [Migration Guide](docs/MIGRATION_GUIDE.md) - Database migration management
 * [Authentication System](docs/authentication.md) - Authentication and authorization details
 
 ## Contributing To This Project
