@@ -1,5 +1,7 @@
 # FastOpp - Easier AI Web Apps
 
+![FastOpp Logo](docs/images/fastopp_logo.webp)
+
 ## What
 
 FastAPI starter package for AI web applications. It uses pre-built admin
