@@ -45,8 +45,9 @@ class ChatService:
             
             # free model is meta-llama/llama-3.3-70b-instruct:free
             # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
+            # paid model is meta-llama/llama-3.3-70b-instruct
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct",
+                "model": "https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api",
                 "messages": [
                     {
                         "role": "system",
@@ -135,9 +136,11 @@ class ChatService:
                 "HTTP-Referer": "https://fastopp.local",  # Replace with your domain
                 "X-Title": "FastOpp AI Demo"
             }
-            
+            # free model is meta-llama/llama-3.3-70b-instruct:free
+            # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
+            # paid model is meta-llama/llama-3.3-70b-instruct
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct",
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": [
                     {
                         "role": "system",
@@ -199,11 +202,13 @@ class ChatService:
                                             accumulated_content,
                                             extensions=['fenced_code', 'codehilite', 'tables', 'nl2br']
                                         )
-                                        
+                                        # free model is meta-llama/llama-3.3-70b-instruct:free
+                                        # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
+                                        # paid model is meta-llama/llama-3.3-70b-instruct
                                         yield {
                                             "content": formatted_html,
                                             "raw_content": accumulated_content,
-                                            "model": "meta-llama/llama-3.3-70b-instruct"
+                                            "model": "meta-llama/llama-3.3-70b-instruct:free"
                                         }
                             except json.JSONDecodeError:
                                 continue  # Skip invalid JSON chunks
