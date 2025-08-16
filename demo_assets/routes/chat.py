@@ -10,6 +10,19 @@ import json
 router = APIRouter()
 
 
+@router.get("/chat/test")
+async def test_chat_connection():
+    """Test endpoint to check OpenRouter API connection"""
+    try:
+        result = await ChatService.test_connection()
+        return JSONResponse(content=result)
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"Test failed: {str(e)}"}
+        )
+
+
 @router.post("/chat")
 async def chat_with_llama(request: Request):
     """Chat endpoint using OpenRouter API with Llama 3.3 70B (non-streaming)"""
