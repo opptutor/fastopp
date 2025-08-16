@@ -5,12 +5,79 @@ import os
 import json
 import aiohttp
 import markdown
+import logging
 from typing import Dict, Any, AsyncGenerator
 from fastapi import HTTPException
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class ChatService:
     """Service for AI chat operations using OpenRouter API"""
+
+    @staticmethod
+    async def test_connection() -> Dict[str, Any]:
+        """
+        Test method to check if the OpenRouter API is accessible
+        
+        Returns:
+            dict: Connection test result
+        """
+        try:
+            api_key = os.getenv("OPENROUTER_API_KEY")
+            if not api_key:
+                return {"status": "error", "message": "No API key found", "api_key_length": 0}
+            
+            print(f"DEBUG: Testing connection with API key: {api_key[:10]}...")
+            
+            # Simple test payload
+            test_payload = {
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "messages": [
+                    {"role": "user", "content": "Hello"}
+                ],
+                "max_tokens": 10
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://localhost",
+                "X-Title": "FastOpp AI Demo"
+            }
+            
+            print("DEBUG: Making test request to OpenRouter...")
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=test_payload
+                ) as response:
+                    print(f"DEBUG: Test response status: {response.status}")
+                    
+                    if response.status == 200:
+                        result = await response.json()
+                        print(f"DEBUG: Test response: {result}")
+                        return {
+                            "status": "success", 
+                            "message": "API connection successful",
+                            "response": result
+                        }
+                    else:
+                        error_text = await response.text()
+                        print(f"DEBUG: Test error: {error_text}")
+                        return {
+                            "status": "error",
+                            "message": f"API error: {error_text}",
+                            "status_code": response.status
+                        }
+                        
+        except Exception as e:
+            print(f"DEBUG: Test exception: {e}")
+            return {"status": "error", "message": f"Exception: {str(e)}"}
 
     @staticmethod
     async def chat_with_llama(user_message: str) -> Dict[str, Any]:
@@ -35,19 +102,24 @@ class ChatService:
             if not api_key:
                 raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
             
+            logger.info(f"Starting chat request with message: {user_message[:50]}...")
+            logger.info(f"API key found: {api_key[:10]}...")
+            print(f"DEBUG: Starting chat request with message: {user_message[:50]}...")
+            print(f"DEBUG: API key found: {api_key[:10]}...")
+            
             # Prepare the request to OpenRouter
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://fastopp.local",  # Replace with your domain
+                "HTTP-Referer": "https://localhost",  # More generic referer
                 "X-Title": "FastOpp AI Demo"
             }
             
             # free model is meta-llama/llama-3.3-70b-instruct:free
-            # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
             # paid model is meta-llama/llama-3.3-70b-instruct
+            # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
             payload = {
-                "model": "https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api",
+                "model": "meta-llama/llama-3.3-70b-instruct:free",
                 "messages": [
                     {
                         "role": "system",
@@ -70,21 +142,38 @@ class ChatService:
                 "max_tokens": 1000
             }
             
+            logger.info(f"Making request to OpenRouter with payload: {json.dumps(payload, indent=2)}")
+            print(f"DEBUG: Making request to OpenRouter with payload: {json.dumps(payload, indent=2)}")
+            
             # Make request to OpenRouter
             async with aiohttp.ClientSession() as session:
+                print("DEBUG: Created aiohttp session")
                 async with session.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers=headers,
                     json=payload
                 ) as response:
+                    print(f"DEBUG: Got response from OpenRouter, status: {response.status}")
+                    logger.info(f"OpenRouter response status: {response.status}")
+                    logger.info(f"OpenRouter response headers: {dict(response.headers)}")
+                    
                     if response.status != 200:
                         error_text = await response.text()
+                        logger.error(f"OpenRouter API error: {error_text}")
                         raise HTTPException(status_code=500, detail=f"OpenRouter API error: {error_text}")
                     
                     result = await response.json()
+                    logger.info(f"OpenRouter response: {json.dumps(result, indent=2)}")
+                    print(f"DEBUG: OpenRouter response: {json.dumps(result, indent=2)}")
                     
                     # Extract the assistant's response
                     assistant_message = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                    
+                    if not assistant_message:
+                        logger.warning("No assistant message content found in response")
+                        logger.warning(f"Full response structure: {result}")
+                        print(f"DEBUG: No assistant message content found in response")
+                        print(f"DEBUG: Full response structure: {result}")
                     
                     # Convert markdown to HTML
                     formatted_html = markdown.markdown(
@@ -92,15 +181,22 @@ class ChatService:
                         extensions=['fenced_code', 'codehilite', 'tables', 'nl2br']
                     )
                     
+                    logger.info(f"Successfully processed response, length: {len(assistant_message)}")
+                    print(f"DEBUG: Successfully processed response, length: {len(assistant_message)}")
+                    
                     return {
                         "response": formatted_html,
                         "raw_response": assistant_message,  # Keep original for debugging
                         "model": "meta-llama/llama-3.3-70b-instruct:free"
                     }
                     
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON decode error: {e}")
+            print(f"DEBUG: JSON decode error: {e}")
             raise HTTPException(status_code=400, detail="Invalid JSON")
         except Exception as e:
+            logger.error(f"Unexpected error: {e}", exc_info=True)
+            print(f"DEBUG: Unexpected error: {e}")
             raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     @staticmethod
@@ -124,16 +220,16 @@ class ChatService:
             # Get API key from environment
             api_key = os.getenv("OPENROUTER_API_KEY")
             if not api_key:
-                # Fallback to mock response for testing
-                async for chunk in ChatService._mock_stream_response(user_message):
-                    yield chunk
-                return
+                raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
+            
+            logger.info(f"Starting streaming chat request with message: {user_message[:50]}...")
+            logger.info(f"API key found: {api_key[:10]}...")
             
             # Prepare the request to OpenRouter
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
-                "HTTP-Referer": "https://fastopp.local",  # Replace with your domain
+                "HTTP-Referer": "https://localhost",  # More generic referer
                 "X-Title": "FastOpp AI Demo"
             }
             # free model is meta-llama/llama-3.3-70b-instruct:free
@@ -164,6 +260,8 @@ class ChatService:
                 "stream": True  # Enable streaming
             }
             
+            logger.info(f"Making streaming request to OpenRouter with payload: {json.dumps(payload, indent=2)}")
+            
             # Make streaming request to OpenRouter
             async with aiohttp.ClientSession() as session:
                 async with session.post(
@@ -171,14 +269,19 @@ class ChatService:
                     headers=headers,
                     json=payload
                 ) as response:
+                    logger.info(f"OpenRouter streaming response status: {response.status}")
+                    logger.info(f"OpenRouter streaming response headers: {dict(response.headers)}")
+                    
                     if response.status != 200:
-                        # If API fails, fallback to mock response
-                        async for chunk in ChatService._mock_stream_response(user_message):
-                            yield chunk
-                        return
+                        error_text = await response.text()
+                        logger.error(f"OpenRouter API streaming error: {error_text}")
+                        raise HTTPException(status_code=500, detail=f"OpenRouter API error: {error_text}")
                     
                     # Accumulate raw content for markdown processing
                     accumulated_content = ""
+                    chunk_count = 0
+                    
+                    logger.info("Starting to stream response...")
                     
                     # Stream the response
                     async for line in response.content:
@@ -186,10 +289,14 @@ class ChatService:
                         if line.startswith('data: '):
                             data = line[6:]  # Remove 'data: ' prefix
                             if data == '[DONE]':
+                                logger.info("Stream completed with [DONE]")
                                 break
                             
                             try:
                                 chunk = json.loads(data)
+                                chunk_count += 1
+                                logger.debug(f"Received chunk {chunk_count}: {chunk}")
+                                
                                 if 'choices' in chunk and len(chunk['choices']) > 0:
                                     delta = chunk['choices'][0].get('delta', {})
                                     content = delta.get('content', '')
@@ -210,13 +317,15 @@ class ChatService:
                                             "raw_content": accumulated_content,
                                             "model": "meta-llama/llama-3.3-70b-instruct:free"
                                         }
-                            except json.JSONDecodeError:
+                            except json.JSONDecodeError as e:
+                                logger.warning(f"JSON decode error in chunk: {e}, chunk: {data}")
                                 continue  # Skip invalid JSON chunks
                     
-        except Exception:
-            # Fallback to mock response on any error
-            async for chunk in ChatService._mock_stream_response(user_message):
-                yield chunk
+                    logger.info(f"Streaming completed. Total chunks: {chunk_count}, Final content length: {len(accumulated_content)}")
+                    
+        except Exception as e:
+            logger.error(f"Unexpected error in streaming: {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
     @staticmethod
     async def _mock_stream_response(user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
@@ -280,5 +389,5 @@ class ChatService:
             yield {
                 "content": formatted_html,
                 "raw_content": accumulated_content,
-                "model": "meta-llama/llama-3.3-70b-instruct (mock)"
+                "model": "meta-llama/llama-3.3-70b-instruct:free (mock)"
             } 
