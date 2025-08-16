@@ -142,9 +142,6 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
 ```
 
-If you want to use free models, edit `services/chat_service.py` in this project
-and change the LLM model to "meta-llama/llama-3.3-70b-instruct:free" (as of August 15, 2025)
-[Browse OpenRouter free models](https://openrouter.ai/models?max_price=0).
 
 **Or manually create `.env`:**
 
@@ -374,6 +371,16 @@ We believe this can be reduced further with either Turso or S3 and Litestream.
 [See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
 * [Deploy to fly.io](docs/fly_deployment)
+
+## Improve LLM Performance by Selecting a Better LLM
+
+The demo is set to use free models, which have lower performance.
+Edit `services/chat_service.py` in this project
+and change the LLM model from "meta-llama/llama-3.3-70b-instruct:free"
+to another model such as "meta-llama/llama-3.3-70b-instruct" without the free
+for better performance and still be about 20x cheaper than premier OpenAI models.
+(as of August 15, 2025)
+[Browse OpenRouter cheap models](https://openrouter.ai/models?max_price=0.1).
 
 ### Overview and Deployment
 
