@@ -131,11 +131,15 @@ fly volumes create data --region <REGION> --size 1
 
 Do not include `< >`
 
-Note: If you get this error, you can ignore.
+Note: You will get this error, you can ignore. 
 
-```bash
-Warning! Every volume is pinned to a specific physical host. You should create two or more volumes per application to avoid downtime. 
-```
+> Warning! Every volume is pinned to a specific physical host. You should create two or more volumes per application to avoid downtime.
+
+It will then ask
+
+> ? Do you still want to use the volumes feature? 
+
+Say Yes
 
 ### 4) Edit fly.toml
 
