@@ -1,4 +1,4 @@
-# AI Software Developer Position (Volunteer and 100% Remote)
+# AI Software Open Source Position (Volunteer and 100% Remote)
 
 Last update August 8, 2025
 
