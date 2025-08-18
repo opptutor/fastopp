@@ -96,7 +96,7 @@ __pycache__/
 *.db
 ```
 
-### 2) Initialize fly app (nor deployed yet)
+### 2) Initialize fly app (not deployed yet)
 
 ```bash
 fly launch --no-deploy
