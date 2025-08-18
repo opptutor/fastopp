@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines a phased approach to opening up structured training and development opportunities to Computer Science undergraduates through the FastOpp platform. The initiative aims to provide hands-on experience with modern web development technologies while building a scalable training program.
+This document outlines a phased approach to opening up structured training and development experience opportunities to Computer Science undergraduates through the FastOpp platform. The initiative aims to provide hands-on experience with modern web development technologies while building a scalable training program.
 
 ## Internal Discussion Topics
 
