@@ -125,6 +125,21 @@ Redis: (not requested)
 Tigris: (not requested)
 ```
 
+#### Cost Reduction
+
+To further reduce costs, you can set memory to 512MB
+
+```toml
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+```
+
+To increase the stability of the system, you can also add SWAP.
+
+
+
 ### 3) Create and mount a persistent volume
 
 Note: Pick the same region you chose above. However, just use its short code, not the full name. For example, it's not "San Jose, California (US)", it's "sjc" - You can find your region code using:
