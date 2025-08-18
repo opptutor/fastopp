@@ -266,6 +266,8 @@ fly ssh issue --agent
 # or: fly ssh issue
 ```
 
+🌶️ Hot tip: If you get an error like "error connecting to SSH server: ssh: handshake failed: ssh: unable to authenticate," please check that the app is started using `fly status`
+
 ### 9) Setup up your database using oppman.py
 
 ```bash
@@ -281,7 +283,7 @@ To verify inside the instance, ssh in with:
 then check your meminfo:
 `cat /proc/meminfo | grep -i swap`
 
-bash```
+```bash
 root@286031ea9e5268:/app# cat /proc/meminfo | egrep 'Mem|Swap'
 MemTotal:         470128 kB
 MemFree:          108764 kB
