@@ -13,6 +13,14 @@ from fastapi import HTTPException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# LLM Configuration - Change this to switch models
+LLM_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
+# Alternative models you can use:
+# LLM_MODEL = "meta-llama/llama-3.3-70b-instruct"  # Paid version
+# LLM_MODEL = "anthropic/claude-3.5-sonnet:free"    # Claude 3.5 Sonnet
+# LLM_MODEL = "openai/gpt-4o-mini:free"             # GPT-4o Mini
+# LLM_MODEL = "google/gemini-pro:free"              # Gemini Pro
+
 
 class ChatService:
     """Service for AI chat operations using OpenRouter API"""
@@ -21,7 +29,7 @@ class ChatService:
     async def test_connection() -> Dict[str, Any]:
         """
         Test method to check if the OpenRouter API is accessible
-        
+
         Returns:
             dict: Connection test result
         """
@@ -34,7 +42,7 @@ class ChatService:
             
             # Simple test payload
             test_payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": LLM_MODEL,
                 "messages": [
                     {"role": "user", "content": "Hello"}
                 ],
@@ -119,7 +127,7 @@ class ChatService:
             # paid model is meta-llama/llama-3.3-70b-instruct
             # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": LLM_MODEL,
                 "messages": [
                     {
                         "role": "system",
@@ -172,7 +180,7 @@ class ChatService:
                     if not assistant_message:
                         logger.warning("No assistant message content found in response")
                         logger.warning(f"Full response structure: {result}")
-                        print(f"DEBUG: No assistant message content found in response")
+                        print("DEBUG: No assistant message content found in response")
                         print(f"DEBUG: Full response structure: {result}")
                     
                     # Convert markdown to HTML
@@ -187,7 +195,7 @@ class ChatService:
                     return {
                         "response": formatted_html,
                         "raw_response": assistant_message,  # Keep original for debugging
-                        "model": "meta-llama/llama-3.3-70b-instruct:free"
+                        "model": LLM_MODEL
                     }
                     
         except json.JSONDecodeError as e:
@@ -236,7 +244,7 @@ class ChatService:
             # https://openrouter.ai/meta-llama/llama-3.3-70b-instruct:free/api
             # paid model is meta-llama/llama-3.3-70b-instruct
             payload = {
-                "model": "meta-llama/llama-3.3-70b-instruct:free",
+                "model": LLM_MODEL,
                 "messages": [
                     {
                         "role": "system",
@@ -315,13 +323,16 @@ class ChatService:
                                         yield {
                                             "content": formatted_html,
                                             "raw_content": accumulated_content,
-                                            "model": "meta-llama/llama-3.3-70b-instruct:free"
+                                            "model": LLM_MODEL
                                         }
                             except json.JSONDecodeError as e:
                                 logger.warning(f"JSON decode error in chunk: {e}, chunk: {data}")
                                 continue  # Skip invalid JSON chunks
                     
-                    logger.info(f"Streaming completed. Total chunks: {chunk_count}, Final content length: {len(accumulated_content)}")
+                    logger.info(
+                        f"Streaming completed. Total chunks: {chunk_count}, "
+                        f"Final content length: {len(accumulated_content)}"
+                    )
                     
         except Exception as e:
             logger.error(f"Unexpected error in streaming: {e}", exc_info=True)
@@ -389,5 +400,5 @@ class ChatService:
             yield {
                 "content": formatted_html,
                 "raw_content": accumulated_content,
-                "model": "meta-llama/llama-3.3-70b-instruct:free (mock)"
+                "model": LLM_MODEL
             } 
