@@ -14,27 +14,36 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
 * API endpoints to connect to other frontend frameworks
 * Auto-generated documentation for API endpoints
 
- You can deploy it yourself. It needs to be able to run uvicorn and mount a persistent volume for a single SQLite file. 
+ You can deploy it yourself. It needs to be able to run uvicorn and mount a persistent volume for a single SQLite file.
  
- It does not use PostgreSQL or Nginx.
+It does not use PostgreSQL or Nginx.
 
 It uses Fly.io, since it's cheap, repeatable, and volume-backed. Run uvicorn directly. Store SQLite at /data/app.db.
 
 ## Pricing
 
-This deployment is intended to be low-cost. You will be using the "Pay As You Go Plan." 
+You can deploy your app in whatever manner you need. Deploying to Fly.io is one example. It is intended to be a low-cost example.
 
-You will need to log in and add a payment method.
+You will be using the "Pay As You Go Plan."
 
-> "To start deploying apps you'll need to add a payment method"
-> 
-> Great for side projects, test environments, or projects with a small team. Run basic full-stack apps close to your users, paying only for what you use.
-> 
-> Deploy in 30+ regions
-> 
-> No minimum spend commitment
+You will be using Fly Machine and Fly Volume.
 
-## Let's Get Started!
+* Fly Machines are fast-launching VMs; they can be started and stopped at subsecond speeds.
+* Fly Volumes are local persistent storage for Fly Machines.
+
+You will be required to log in and add a payment method.
+
+### Fly Machine Pricing
+
+Running 24/7: ~$3.19/month for a shared-cpu-1x, 512 MB RAM machine. Swap (512 MB via swap_size_mb = 512) has no separate charge.
+
+Stopped: $0 for CPU/RAM; you only pay $0.15/GB-month for root filesystem (rootfs). A swap file uses rootfs space (no extra line item), so if 512 MB of swap were counted in rootfs while stopped, that portion would be $0.075/month. 
+
+### Fly Volume Pricing
+
+Fly Volumes are billed the same whether your Machine is Running or Stopped. It's $0.15/GB-month.
+
+## Let's Get Started
 
 ### 0) Prereqs
 
@@ -45,6 +54,7 @@ You will need to log in and add a payment method.
 brew install flyctl
 fly auth signup   # or: fly auth login
 ```
+
 Opens up a webpage on fly.io. You can use Google or GitHub to create an account.
 
 > "Your flyctl should be connected now. Feel free to close this tab"
@@ -131,7 +141,7 @@ fly volumes create data --region <REGION> --size 1
 
 Do not include `< >`
 
-Note: You will get this error, you can ignore. 
+Note: You will get this error, you can ignore.
 
 > Warning! Every volume is pinned to a specific physical host. You should create two or more volumes per application to avoid downtime.
 
@@ -151,6 +161,8 @@ You probably have this:
 app = "<your-app-name>"
 primary_region = '<your-region>'
 
+swap_size_mb = 512   <---- ADD THIS TO ADD SWAP
+
 [build]
 
 [http_service]
@@ -162,7 +174,7 @@ min_machines_running = 0
 processes = ['app']
 
 [[vm]]
-memory = '256mb'
+memory = '512mb'  <----- SUGGESTED MEMORY SIZE FOR FASTOPP
 cpu_kind = 'shared'
 cpus = 1
 ```
@@ -188,7 +200,22 @@ Make sure this is included, too.
     handlers = ["tls", "http"]
 ```
 
-You can replace the existing memory = '256mb' in fly.toml with '1gb' if desired.
+### Setting Memory and Swap
+In testing, I've found that 256mb may not be enough to run the current FastOpp application and the database.
+
+You can increase the memory. You can also add swap. By all means, please test it yourself and configure your memory settings to what works for your version of the app.
+
+Wwap is disabled by default for Fly Machines. You must explicitly configure it in your fly.toml.
+
+I added:
+`swap_size_mb = 512`
+
+It should be included at the top level of your `fly.toml`, not nested under a [[vm]] block. Putting it inside [[vm]] won’t work.
+
+And then in [[vm]] I increased memory from 256 to 512:
+`memory = '512mb'`
+
+You can confirm these settings using the steps in the Confirm Memory and Swap Settings section later in this document.
 
 ### 5) Set secrets and DB URL
 
@@ -216,7 +243,8 @@ fly scale count 1
 ```
 
 ### 8) Issue an SSH certificate
-You'll be sending SSH commands to fly.io. 
+
+You'll be sending SSH commands to fly.io.
 
 ```bash
 fly ssh issue --agent
@@ -230,52 +258,55 @@ fly ssh issue --agent
 fly ssh console -C "uv run python oppman.py init"
 ```
 
-_Note, as of Aug 12, 2025, 2pm PT: Jesse has not used the steps below here._
+### Confirm Memory and Swap Settings
 
-### Back up your database
+To verify inside the instance, ssh in with:
+`fly ssh console`
 
-```bash
-fly ssh console -C 'mkdir -p /data/backups && cp /data/app.db /data/backups/app-$(date +%F-%H%M%S).db && ls -lh /data/backups'
+then check your meminfo:
+`cat /proc/meminfo | grep -i swap`
+
+bash```
+root@286031ea9e5268:/app# cat /proc/meminfo | egrep 'Mem|Swap'
+MemTotal:         470128 kB
+MemFree:          108764 kB
+MemAvailable:     316112 kB
+SwapCached:            0 kB
+SwapTotal:        524284 kB
+SwapFree:         524284 kB
 ```
 
-### Verify persistence
+Details on the output above:
 
-Create a probe row, restart, then read it again.
+🖥️ Memory (RAM)
 
-```bash
-# write probe
-fly ssh console -C 'uv run python - <<PY
-import asyncio, os
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy import text
-async def main():
-    eng = create_async_engine(os.environ["DATABASE_URL"], future=True)
-    async with eng.begin() as c:
-        await c.execute(text("CREATE TABLE IF NOT EXISTS _probe(k TEXT PRIMARY KEY, v TEXT)"))
-        await c.execute(text("INSERT OR REPLACE INTO _probe(k,v) VALUES (\"ping\",\"pong\")"))
-    await eng.dispose()
-asyncio.run(main())
-print("ok")
-PY'
+MemTotal: 470128 kB (~459 MB)
+This is the total physical RAM allocated to the Fly machine. It matches our fly.toml setting of memory = "512mb", because Fly reserves a little overhead, so it's ~470 MB instead of the full 512 MB.
 
-# restart
-fly apps restart
+MemFree: 108764 kB (~106 MB)
+This is memory currently unused.
 
-# read probe
-fly ssh console -C 'uv run python - <<PY
-import asyncio, os
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy import text
-async def main():
-    eng = create_async_engine(os.environ["DATABASE_URL"], future=True)
-    async with eng.connect() as c:
-        r = await c.execute(text("SELECT v FROM _probe WHERE k=\"ping\""))
-        print(list(r))
-    await eng.dispose()
-asyncio.run(main())
-PY'
-# expect: [('pong',)]
-```
+MemAvailable: 316112 kB (~308 MB)
+This is a better indicator of what’s actually usable. It includes free memory plus reclaimable caches/buffers. The app effectively has ~300 MB headroom before swapping would begin.
+
+💾 Swap
+
+SwapTotal: 524284 kB (~512 MB)
+This shows swap set at 512mb (swap_size_mb = 512), so the VM has half a gig of virtual memory to fall back on. If SwapTotal is 0, you have no swap enabled. If it shows a non-zero value, swap is active.
+
+SwapFree: 524284 kB (~512 MB)
+None of it has been touched yet (good — the system isn’t under memory pressure).
+
+SwapCached: 0 kB
+Nothing swapped out and cached in RAM, confirming swap hasn’t been used at all.
+
+✅ What this means
+
+The Fly machine is running with ~470 MB usable RAM and ~512 MB swap.
+
+At the moment, memory usage is well under control — there's ~300 MB available plus the entire swap untouched.
+
+If the app ever spikes beyond ~470 MB RAM, the kernel will push data into swap instead of immediately killing our process with an Out Of Memory error. A little bit of a safety net.
 
 ## Troubleshooting
 
@@ -284,7 +315,6 @@ If you make changes to your Dockerfile and want to redeploy, you can make sure f
 ```bash
 fly deploy --dockerfile Dockerfile
 ```
-
 
 ## Extra Information
 
