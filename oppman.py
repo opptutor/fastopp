@@ -27,6 +27,7 @@ try:
     from scripts.download_sample_photos import download_sample_photos
     from scripts.check_users import check_users
     from scripts.test_auth import test_auth
+    from scripts.change_password import list_users, change_password_interactive
     from scripts.migrate.cli import run_migrate_command, show_migration_help
     from scripts.check_env import check_environment
 except ImportError as e:
@@ -929,6 +930,18 @@ async def run_test_auth():
     print("✅ Authentication test complete")
 
 
+async def run_change_password():
+    """Change user password interactively"""
+    print("🔐 Changing user password...")
+    await change_password_interactive()
+
+
+async def run_list_users():
+    """List all users"""
+    print("👥 Listing users...")
+    await list_users()
+
+
 def run_server():
     """Start the development server with uvicorn"""
     print("🚀 Starting development server...")
@@ -1058,6 +1071,8 @@ COMMANDS:
     clear_registrants Clear and add fresh webinar registrants with photos
     check_users Check existing users and their permissions
     test_auth   Test the authentication system
+    change_password Change user password interactively
+    list_users  List all users in the database
     runserver   Start development server with uvicorn --reload
     stopserver  Stop development server
     production  Start production server with Gunicorn (no Nginx)
@@ -1086,6 +1101,8 @@ EXAMPLES:
     python oppman.py clear_registrants
     python oppman.py check_users
     python oppman.py test_auth
+    python oppman.py change_password
+    python oppman.py list_users
     
     # Start development server
     python oppman.py runserver
@@ -1136,6 +1153,12 @@ PERMISSION LEVELS:
     - Support: Product management only
     - Regular users: No admin access
 
+PASSWORD MANAGEMENT:
+    - change_password: Interactive password change for any user
+    - list_users: View all users and their status
+    - Usage: uv run python oppman.py change_password
+    - Direct script: uv run python scripts/change_password.py --email user@example.com --password newpass
+
 WEBINAR REGISTRANTS:
     - Access: http://localhost:8000/webinar-registrants
     - Login required: Staff or admin access
@@ -1175,6 +1198,7 @@ Examples:
         choices=[
             "init", "db", "superuser", "users", "products", "webinars",
             "download_photos", "registrants", "clear_registrants", "check_users", "test_auth",
+            "change_password", "list_users",
             "runserver", "stopserver", "production", "delete", "backup", "demo", "migrate", "env", "help"
         ],
         help="Command to execute"
@@ -1285,6 +1309,10 @@ Examples:
             await run_check_users()
         elif args.command == "test_auth":
             await run_test_auth()
+        elif args.command == "change_password":
+            await run_change_password()
+        elif args.command == "list_users":
+            await run_list_users()
     
     # Run the async command
     asyncio.run(run_command())
