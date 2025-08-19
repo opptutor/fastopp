@@ -9,19 +9,20 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBasic
 from starlette.middleware.sessions import SessionMiddleware
+
 from dotenv import load_dotenv
 from admin.setup import setup_admin
-from routes.chat import router as chat_router
-from routes.api import router as api_router
-try:
-    from routes.auth import router as auth_router
-except Exception:
-    auth_router = None  # Optional during partial restores
-from routes.pages import router as pages_router
-try:
-    from routes.webinar import router as webinar_router
-except Exception:
-    webinar_router = None  # Optional during partial restores
+# from routes.chat import router as chat_router
+# from routes.api import router as api_router
+# try:
+#     from routes.auth import router as auth_router
+# except Exception:
+#     auth_router = None  # Optional during partial restores
+# from routes.pages import router as pages_router
+# try:
+#     from routes.webinar import router as webinar_router
+# except Exception:
+#     webinar_router = None  # Optional during partial restores
 
 # Load environment variables
 load_dotenv()
@@ -38,7 +39,13 @@ PHOTOS_DIR.mkdir(exist_ok=True)
 # from users import fastapi_users, auth_backend  # type: ignore
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.add_middleware(
+    SessionMiddleware, 
+    secret_key=SECRET_KEY,
+    max_age=3600,  # 1 hour session timeout
+    same_site="lax",  # CSRF protection
+    https_only=False,  # Set to True in production with HTTPS
+)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -50,14 +57,26 @@ security = HTTPBasic()
 # Setup admin interface
 setup_admin(app, SECRET_KEY)
 
-# Include routers
-app.include_router(chat_router, prefix="/api")
-app.include_router(api_router, prefix="/api")
-if auth_router:
-    app.include_router(auth_router)
-app.include_router(pages_router)
-if webinar_router:
-    app.include_router(webinar_router)
+# Include routers (commented out to isolate session issue)
+# app.include_router(chat_router, prefix="/api")
+# app.include_router(api_router, prefix="/api")
+# if auth_router:
+#     app.include_router(auth_router)
+# app.include_router(pages_router)
+# if webinar_router:
+#     app.include_router(webinar_router)
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "timestamp": "2025-08-18T17:30:00Z"}
+
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {"message": "FastOpp API is running"}
 
 
 @app.exception_handler(HTTPException)
