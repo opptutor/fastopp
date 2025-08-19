@@ -12,17 +12,17 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from dotenv import load_dotenv
 from admin.setup import setup_admin
-# from routes.chat import router as chat_router
-# from routes.api import router as api_router
-# try:
-#     from routes.auth import router as auth_router
-# except Exception:
-#     auth_router = None  # Optional during partial restores
-# from routes.pages import router as pages_router
-# try:
-#     from routes.webinar import router as webinar_router
-# except Exception:
-#     webinar_router = None  # Optional during partial restores
+from routes.chat import router as chat_router
+from routes.api import router as api_router
+try:
+    from routes.auth import router as auth_router
+except Exception:
+    auth_router = None  # Optional during partial restores
+from routes.pages import router as pages_router
+try:
+    from routes.webinar import router as webinar_router
+except Exception:
+    webinar_router = None  # Optional during partial restores
 
 # Load environment variables
 load_dotenv()
@@ -57,14 +57,14 @@ security = HTTPBasic()
 # Setup admin interface
 setup_admin(app, SECRET_KEY)
 
-# Include routers (commented out to isolate session issue)
-# app.include_router(chat_router, prefix="/api")
-# app.include_router(api_router, prefix="/api")
-# if auth_router:
-#     app.include_router(auth_router)
-# app.include_router(pages_router)
-# if webinar_router:
-#     app.include_router(webinar_router)
+# Include routers
+app.include_router(chat_router, prefix="/api")
+app.include_router(api_router, prefix="/api")
+if auth_router:
+    app.include_router(auth_router)
+app.include_router(pages_router)
+if webinar_router:
+    app.include_router(webinar_router)
 
 
 @app.get("/health")
@@ -88,3 +88,5 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         status_code=exc.status_code,
         content={"detail": exc.detail},
     )
+
+
