@@ -55,7 +55,20 @@ async def login_form(request: Request):
             })
 
         password_helper = PasswordHelper()
-        if not password_helper.verify_and_update(str(password), user.hashed_password):
+        print(f"🔐 Password verification - Input password: {password}")
+        print(f"🔐 Stored hash: {user.hashed_password}")
+        print(f"🔐 User email: {user.email}")
+        
+        is_valid = password_helper.verify_and_update(str(password), user.hashed_password)
+        print(f"🔐 Password verification result: {is_valid}")
+        
+        # verify_and_update returns (bool, str) - we need the first element
+        if isinstance(is_valid, tuple):
+            is_valid = is_valid[0]
+        
+        print(f"🔐 Final verification result: {is_valid}")
+        
+        if not is_valid:
             return templates.TemplateResponse("login.html", {
                 "request": request,
                 "title": "Login",
