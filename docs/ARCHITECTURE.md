@@ -9,9 +9,8 @@ The application has been refactored from a monolithic `main.py` file into a well
 ### Directory Structure
 
 ```
-fastapi_d/
+fastopp/
 ├── main.py                # New refactored entry point (MVS Architecture)
-├── main_old.py            # Original monolithic file (552 lines) - kept for reference
 ├── routes/                # Route handlers (View layer)
 │   ├── __init__.py
 │   ├── pages.py          # Page rendering routes
@@ -137,6 +136,7 @@ fastapi_d/
 ## Layer Responsibilities
 
 ### 1. Model Layer (`models.py`)
+
 - **Purpose**: Define data structures and database models
 - **Responsibilities**:
   - SQLModel/SQLAlchemy model definitions
@@ -144,6 +144,7 @@ fastapi_d/
   - Database schema representation
 
 ### 2. View Layer (`routes/`)
+
 - **Purpose**: Handle HTTP requests and responses
 - **Responsibilities**:
   - Route definitions and HTTP method handling
@@ -153,12 +154,14 @@ fastapi_d/
   - Error handling
 
 #### Route Modules:
+
 - **`pages.py`**: HTML page rendering routes
 - **`auth.py`**: Authentication and session management
 - **`api.py`**: JSON API endpoints for data
 - **`webinar.py`**: Webinar registrant management operations
 
 ### 3. Service Layer (`services/`)
+
 - **Purpose**: Business logic and data operations
 - **Responsibilities**:
   - Database operations
@@ -168,22 +171,26 @@ fastapi_d/
   - Error handling for business logic
 
 #### Service Classes:
+
 - **`ProductService`**: Product-related operations and statistics
 - **`WebinarService`**: Webinar registrant management operations
 
 ## Benefits of This Architecture
 
 ### 1. **Separation of Concerns**
+
 - Routes handle HTTP concerns only
 - Services contain business logic
 - Models focus on data structure
 
 ### 2. **Maintainability**
+
 - Smaller, focused files (50-100 lines each vs 552 lines)
 - Clear responsibility boundaries
 - Easier to locate and modify specific functionality
 
 ### 3. **Testability**
+
 - Services can be unit tested independently
 - Routes can be tested with mocked services
 - Clear interfaces between layers
@@ -203,12 +210,14 @@ fastapi_d/
 ### From `main_old.py` to `main.py`
 
 The original `main.py` contained:
+
 - **552 lines** of mixed responsibilities
 - Database operations in route handlers
 - File handling logic in routes
 - Business logic scattered throughout
 
 The new structure:
+
 - **Routes**: 20-50 lines each, focused on HTTP handling
 - **Services**: 50-100 lines each, focused on business logic
 - **Main**: 60 lines, focused on app configuration
@@ -216,6 +225,7 @@ The new structure:
 ### Key Changes
 
 1. **Route Organization**:
+
    ```python
    # Before: All routes in main.py
    @app.get("/")
@@ -234,6 +244,7 @@ The new structure:
    ```
 
 2. **Service Layer**:
+
    ```python
    # Before: Database logic in routes
    async def get_products():
@@ -248,6 +259,7 @@ The new structure:
    ```
 
 3. **Error Handling**:
+
    ```python
    # Before: Mixed error handling in routes
    try:
