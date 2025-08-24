@@ -8,7 +8,7 @@ The application has been refactored from a monolithic `main.py` file into a well
 
 ### Directory Structure
 
-```
+```text
 fastopp/
 ├── main.py                # New refactored entry point (MVS Architecture)
 ├── routes/                # Route handlers (View layer)
