@@ -1,8 +1,8 @@
-# AI Software Open Source Position (Volunteer and 100% Remote)
+# Calling all student developers! Join our open-source AI web app project. (Volunteer and 100% Remote)
 
-Last update August 8, 2025
+_Last update August 24, 2025_
 
-Oppkey, a developer relations firm in Silicon Valley, is seeking an undergraduate computer science student to receive hands-on training on modern AI software development using cutting-edge technologies.
+Oppkey, a developer relations firm in Silicon Valley, is seeking undergraduate computer science students to receive hands-on training on modern AI software development using cutting-edge technologies. Gain hands-on experience and build your portfolio. Pair with mentors for working through projects, get issues assigned in GitHub, and contribute to Silicon Valley-based Oppkey-supported open source project.
 
 ## What You'll Learn
 
@@ -247,19 +247,15 @@ You'll work on a **production-ready application** that demonstrates:
 
 ## 📞 How to Apply
 
-### Contact Information
-
-**Jesse Casman, Oppkey President**
-
-- Email: <jcasman@oppkey.com>
+Fill out the form on the Apply page.
 
 ### Application Process
 
 Please include in your application:
 
-1. **Brief introduction** about your background
-2. **Why you're interested** in this technology stack
-3. **Your learning goals** and career aspirations
+1. **Your learning goals** and career aspirations
+2. **Brief introduction** about your background
+3. **Why you're interested** in this technology stack
 4. **Previous programming experience** and Python knowledge
 5. **Your availability** during California work hours
 6. **Any relevant projects** or coursework you've completed
