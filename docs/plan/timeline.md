@@ -4,17 +4,7 @@
 
 This document outlines a phased approach to opening up structured training and development experience opportunities to Computer Science undergraduates through the FastOpp platform. The initiative aims to provide hands-on experience with modern web development technologies while building a scalable training program.
 
-## Internal Discussion Topics
-
-
-
-* As of August 2025, Oppkey is the founding company volunteering for project management.  
-* Corporate volunteers will benefit from close association with unpaid volunteers and be in a better position to offer paid project, paid part-time, paid full-time work as it becomes available
-* Corporate volunteers will benefit from new technical expertise insights - different perspectives from volunteers  involved in newest things from the community and from their computer science schools
-* interns will help to identify new business problems (such as how to recruit people, how to pay people), new solutions, different strategies, improved workflows (like different conference system)
-* Corporate volunteers will have some benefits of a job-recruitment site by promoting the project and having a steady stream of candidates for paid internships as well as vetting process and set of tests
-
-## Phase 1: Call for Volunteers Expansion Launch Requirements
+## Phase 1: Call for Students Expansion Launch Requirements
 
 ### Core Platform Development
 
@@ -57,13 +47,15 @@ This document outlines a phased approach to opening up structured training and d
 ### Marketing and Promotion
 
 * **Build promotional videos and blog post for FastOpp**
-  * status as of Aug 13.  Jesse has one.
-  * Create compelling video content showcasing the platform
+  * status as of Aug 13. Jesse has one.
+  * Create compelling video content showcasing the platform. Craig has built several videos.
+    * FastAPI with LLM and Database Beginner Tutorial
+    * FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend
   * Write technical blog posts highlighting features and benefits
   * Create visual assets for social media and marketing
 
 * **Build web site for FastOpp**
-  * Jesse making first attempt either Aug 13 or Aug 14
+  * FastOpp_site created. Currently changing messaging to students. Aug 24, 2025.
   * includes recruitment
   * includes videos, blog posts
   * community discussions features
