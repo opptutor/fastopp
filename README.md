@@ -370,7 +370,8 @@ Fly is the cheapest solution we've found thus far at under $0.25/month with a da
 We believe this can be reduced further with either Turso or S3 and Litestream.
 [See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
-* [Deploy to fly.io](docs/fly_deployment)
+* [Deploy to fly.io](docs/fly_deployment.md)
+* [Critical issue with database migrations on fly.io](docs/ALEMBIC_CONFIGURATION_CHANGES.md)
 
 ## Improve LLM Performance by Selecting a Better LLM
 
