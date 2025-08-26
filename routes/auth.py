@@ -1,5 +1,5 @@
 """
-Authentication routes for base_assets
+Authentication routes
 """
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request):
-    """Login page for accessing protected content"""
+    """Login page for webinar registrants access"""
     return templates.TemplateResponse("login.html", {
         "request": request,
         "title": "Login",
@@ -55,11 +55,18 @@ async def login_form(request: Request):
             })
 
         password_helper = PasswordHelper()
+        print(f"🔐 Password verification - Input password: {password}")
+        print(f"🔐 Stored hash: {user.hashed_password}")
+        print(f"🔐 User email: {user.email}")
+        
         is_valid = password_helper.verify_and_update(str(password), user.hashed_password)
+        print(f"🔐 Password verification result: {is_valid}")
         
         # verify_and_update returns (bool, str) - we need the first element
-        if hasattr(is_valid, '__getitem__'):
+        if isinstance(is_valid, tuple):
             is_valid = is_valid[0]
+        
+        print(f"🔐 Final verification result: {is_valid}")
         
         if not is_valid:
             return templates.TemplateResponse("login.html", {
@@ -87,7 +94,7 @@ async def login_form(request: Request):
 
         # Create session token
         token = create_user_token(user)
-        response = RedirectResponse(url="/protected", status_code=302)
+        response = RedirectResponse(url="/webinar-registrants", status_code=302)
         response.set_cookie(key="access_token", value=token, httponly=True, max_age=1800)  # 30 minutes
         return response
 
@@ -97,4 +104,4 @@ async def logout():
     """Logout and clear authentication cookie"""
     response = RedirectResponse(url="/", status_code=302)
     response.delete_cookie(key="access_token")
-    return response
+    return response 

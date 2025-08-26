@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FastOpp Base Assets</title>
+    <title>Login - FastOpp</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         tailwind.config = {
             theme: {
@@ -20,27 +23,14 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-white shadow-sm border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-6">
-                    <div class="flex items-center">
-                        <h1 class="text-2xl font-bold text-gray-900">FastOpp Base Assets</h1>
-                    </div>
-                    <nav class="flex space-x-8">
-                        <a href="/" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="/admin/" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Admin</a>
-                    </nav>
-                </div>
-            </div>
-        </header>
+        {% include 'partials/header.html' %}
 
         <!-- Main Content -->
         <main class="flex-grow flex items-center justify-center">
             <div class="max-w-md w-full space-y-8">
                 <div>
                     <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Sign in to access Protected Content
+                        Sign in to access Webinar Registrants
                     </h2>
                     <p class="mt-2 text-center text-sm text-gray-600">
                         Staff or admin access required
@@ -80,4 +70,4 @@
         </main>
     </div>
 </body>
-</html>
+</html> 
