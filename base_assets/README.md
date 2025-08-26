@@ -1,168 +1,107 @@
-# Base Assets - Minimal FastAPI Application
+# FastOpp Base Assets
 
-This directory contains a minimal FastAPI application that serves as a starting point and helper for restoring the full demo application.
-
-## Purpose
-
-The `base_assets` directory provides:
-
-1. **Minimal FastAPI Application**: A simple FastAPI app with no external dependencies
-2. **Demo Restoration Guide**: Built-in HTML page with instructions on how to restore the full demo
-3. **Quick Start**: Immediate working application that can be run with minimal setup
-
-## Files
-
-- `main.py` - Minimal FastAPI application with built-in HTML help page
-- `README.md` - This documentation file
+A minimal FastAPI application with authentication and protected content, built on the FastOpp framework.
 
 ## Features
 
-### Minimal FastAPI App
+- **Admin Panel**: SQLAdmin interface for database management
+- **User Authentication**: Login/logout system with JWT tokens
+- **Protected Content**: Password-protected pages requiring staff/admin access
+- **Session Management**: Secure session handling with cookies
+- **Modern UI**: Tailwind CSS styling with responsive design
 
-The `main.py` file contains a minimal FastAPI application that:
+## Quick Start
 
-- **No Templates**: All HTML is generated in Python code
-- **No External Dependencies**: Only requires FastAPI and uvicorn
-- **Built-in Help**: Shows comprehensive instructions for restoring the full demo
-- **Health Check**: Includes a `/health` endpoint for monitoring
-
-### Built-in Help Page
-
-The application serves a beautiful HTML page at `/` that includes:
-
-- **Quick Restore Commands**: Step-by-step instructions
-- **Demo Pages Overview**: What's available after restoration
-- **Advanced Commands**: All available oppman.py commands
-- **Default Credentials**: Login information
-- **Important Notes**: Prerequisites and requirements
-
-## Usage
-
-### Quick Start
+### 1. Setup Database
 
 ```bash
-# Navigate to base_assets
-cd base_assets
-
-# Start the minimal application
-uv run python main.py
+uv run python oppman.py db
 ```
 
-### Access the Application
+### 2. Create Admin User
 
-- **Main Page**: http://localhost:8000/
-- **Health Check**: http://localhost:8000/health
-
-### Restore Full Demo
-
-Follow the instructions on the main page:
-
-1. **Restore Demo Files**:
-   ```bash
-   uv run python oppman.py demo restore
-   ```
-
-2. **Initialize Database**:
-   ```bash
-   uv run python oppman.py init
-   ```
-
-3. **Start Full Application**:
-   ```bash
-   uv run python oppman.py runserver
-   ```
-
-## Demo Pages Available After Restoration
-
-- **AI Chat Demo** (`/ai-demo`) - Interactive chat with Llama 3.3 70B
-- **Dashboard Demo** (`/dashboard-demo`) - Product inventory dashboard
-- **Design Demo** (`/design-demo`) - Marketing demo with HTMX
-- **Webinar Demo** (`/webinar-demo`) - Webinar registrants showcase
-
-## Technologies
-
-### Base Application
-- **FastAPI**: Modern Python web framework
-- **Uvicorn**: ASGI server
-- **HTML/CSS**: Built-in styling with modern design
-
-### Full Demo (After Restoration)
-- **Frontend**: Tailwind CSS, DaisyUI, Alpine.js, HTMX, Chart.js
-- **Backend**: FastAPI, SQLModel, SQLAlchemy
-- **AI**: OpenRouter API with Llama 3.3 70B
-- **Database**: SQLite with sample data
-
-## Dependencies
-
-### Base Application
 ```bash
-uv add fastapi uvicorn
+uv run python oppman.py superuser
 ```
 
-### Full Demo (After Restoration)
+### 3. Add Sample Data (Optional)
+
 ```bash
-uv add fastapi sqlmodel sqlalchemy sse_starlette markdown httpx jinja2
+uv run python oppman.py users
+uv run python oppman.py products
 ```
 
-## File Structure
+### 4. Start the Application
 
-```
-base_assets/
-├── main.py          # Minimal FastAPI application
-└── README.md        # This documentation
-```
-
-## Comparison
-
-| Feature | Base App | Full Demo |
-|---------|----------|-----------|
-| **Dependencies** | 2 packages | 8+ packages |
-| **Routes** | 2 endpoints | 20+ endpoints |
-| **Templates** | None (built-in HTML) | 10+ templates |
-| **Database** | None | SQLite with sample data |
-| **AI Features** | None | Llama 3.3 70B chat |
-| **Admin Panel** | None | Full CRUD interface |
-| **File Upload** | None | Photo management |
-| **Authentication** | None | User management |
-
-## Use Cases
-
-### Base Application
-- **Quick Start**: Immediate working application
-- **Learning**: Simple FastAPI example
-- **Testing**: Health check and basic functionality
-- **Documentation**: Built-in help system
-
-### Full Demo
-- **Production Ready**: Complete web application
-- **Feature Rich**: AI chat, dashboards, file uploads
-- **Modern UI**: Tailwind CSS, Alpine.js, HTMX
-- **Admin Interface**: Full CRUD operations
-
-## Development
-
-### Running Base App
 ```bash
-cd base_assets
-uv run python main.py
-```
-
-### Running Full Demo
-```bash
-# Restore demo files
-uv run python oppman.py demo restore
-
-# Initialize database
-uv run python oppman.py init
-
-# Start server
 uv run python oppman.py runserver
 ```
 
-## Notes
+## Available Routes
 
-- The base application is completely self-contained
-- No external files or templates required
-- All HTML is generated in Python code
-- Perfect for quick demos or learning FastAPI
-- The full demo requires restoration from `demo_assets`
+- **`/`** - Home page with navigation
+- **`/login`** - User authentication page
+- **`/protected`** - Password-protected content (requires login)
+- **`/admin/`** - SQLAdmin interface for database management
+- **`/health`** - Health check endpoint
+
+## Authentication
+
+The application uses a dual authentication system:
+
+1. **Admin Panel Authentication**: Uses SQLAdmin's built-in authentication backend
+2. **User Authentication**: Custom JWT-based system with cookie storage
+
+### User Roles
+
+- **Staff Users**: Can access protected content and admin panel
+- **Superusers**: Full administrative access
+- **Regular Users**: No access to protected content
+
+### Default Credentials
+
+- **Superuser**: `admin@example.com` / `admin123`
+- **Test Users**: `test123` (for all test users)
+
+## Architecture
+
+```
+base_assets/
+├── main.py              # FastAPI application entry point
+├── routes/
+│   ├── auth.py         # Authentication routes (login/logout)
+│   └── pages.py        # Page routes (home, protected content)
+└── templates/
+    ├── index.html      # Home page
+    ├── login.html      # Login form
+    └── protected.html  # Protected content page
+```
+
+## Dependencies
+
+- FastAPI
+- SQLAdmin
+- Jinja2Templates
+- FastAPI Users (for password hashing)
+- JWT for token management
+
+## Security Features
+
+- JWT token-based authentication
+- Secure cookie storage
+- Password hashing with FastAPI Users
+- Session expiration (30 minutes)
+- Role-based access control
+- CSRF protection via session middleware
+
+## Development
+
+This is a minimal implementation that demonstrates:
+
+- User authentication flow
+- Protected route implementation
+- Template rendering with Jinja2
+- Session management
+- Admin panel integration
+
+To extend functionality, add new routes in the `routes/` directory and corresponding templates in `templates/`.

@@ -497,14 +497,22 @@ def destroy_demo_files():
         else:
             print("  ℹ️  test.db not found")
         
-        # Step 4: Remove routes directory
-        print("🛣️  Removing routes directory...")
+        # Step 4: Replace routes directory with base_assets routes
+        print("🛣️  Replacing routes directory with base_assets routes...")
         routes_dir = Path("routes")
+        base_routes = Path("base_assets/routes")
+        
         if routes_dir.exists():
             shutil.rmtree(routes_dir)
-            print("  ✅ Removed routes/")
+            print("  ✅ Removed existing routes/")
+        
+        if base_routes.exists():
+            shutil.copytree(base_routes, routes_dir)
+            print("  ✅ Copied base_assets/routes to routes/")
         else:
-            print("  ℹ️  routes/ directory not found")
+            print("  ❌ Error: base_assets/routes not found!")
+            print("Please ensure base_assets/routes directory exists")
+            return False
         
         # Step 5: Remove static directory
         print("🎨 Removing static directory...")
@@ -515,22 +523,33 @@ def destroy_demo_files():
         else:
             print("  ℹ️  static/ directory not found")
         
-        # Step 6: Remove templates directory
-        print("📄 Removing templates directory...")
+        # Step 6: Replace templates directory with base_assets templates
+        print("📄 Replacing templates directory with base_assets templates...")
         templates_dir = Path("templates")
+        base_templates = Path("base_assets/templates")
+        
         if templates_dir.exists():
             shutil.rmtree(templates_dir)
-            print("  ✅ Removed templates/")
+            print("  ✅ Removed existing templates/")
+        
+        if base_templates.exists():
+            shutil.copytree(base_templates, templates_dir)
+            print("  ✅ Copied base_assets/templates to templates/")
         else:
-            print("  ℹ️  templates/ directory not found")
+            print("  ❌ Error: base_assets/templates not found!")
+            print("Please ensure base_assets/templates directory exists")
+            return False
         
         print("\n✅ Demo destruction completed successfully!")
-        print("🔄 Switched to minimal FastAPI application")
+        print("🔄 Switched to minimal FastAPI application with authentication")
         print("\n📋 Next steps:")
         print("1. Start the minimal application:")
         print("   uv run python main.py")
         print("2. Visit the application:")
-        print("   - http://localhost:8000/ (main page with restore instructions)")
+        print("   - http://localhost:8000/ (home page with navigation)")
+        print("   - http://localhost:8000/login (authentication)")
+        print("   - http://localhost:8000/protected (password-protected content)")
+        print("   - http://localhost:8000/admin/ (admin panel)")
         print("   - http://localhost:8000/health (health check)")
         print("\n💡 To restore the full demo later:")
         print("   uv run python oppman.py demo restore")

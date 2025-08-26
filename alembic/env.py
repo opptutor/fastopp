@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -16,7 +17,6 @@ if config.config_file_name is not None:
 
 # Import your models here
 from models import SQLModel
-from models import User, Product
 
 # Set target metadata
 target_metadata = SQLModel.metadata
@@ -39,7 +39,12 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+    
+    # Convert async SQLite URL to regular SQLite URL for migrations
+    if url and "aiosqlite" in url:
+        url = url.replace("sqlite+aiosqlite://", "sqlite://")
+    
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -58,6 +63,16 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    database_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
+    
+    # Convert async SQLite URL to regular SQLite URL for migrations
+    if database_url and "aiosqlite" in database_url:
+        database_url = database_url.replace("sqlite+aiosqlite://", "sqlite://")
+    
+    # Ensure database_url is not None before setting it
+    if database_url:
+        config.set_main_option("sqlalchemy.url", database_url)
+    
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
