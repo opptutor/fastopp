@@ -426,7 +426,7 @@ uv run python oppman.py env
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 
-### Developer Tutorials and HowTos
+### Written Developer Tutorials and HowTos
 
 * [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
 * [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
