@@ -1,11 +1,11 @@
-# FastOpp - Easier AI Web Apps
+# FastOpp - Easier AI Web Apps for Students
 
 ![FastOpp Logo](docs/images/fastopp_logo.webp)
 
 ## What
 
-FastAPI starter package for AI web applications. It uses pre-built admin
-components to give FastAPI functionality comparable to Django
+FastAPI starter package for students prototyping AI web applications. Pre-built admin
+components give FastAPI functionality comparable to Django
 for AI-first applications.
 
 ## Problem Solved
@@ -16,11 +16,12 @@ Django and Flask are not designed for optimized async LLM applications.
 
 Although both Django and Flask can absolutely be used for these
 applications and are great in many, many ways, there are often rough patches during
-development of asynchronous AI applications that communicate with an backend LLMs available
+development of asynchronous AI applications that communicate with backend LLMs available
 at OpenAI, Anthropic, and OpenRouter.
 
-Although FastAPI has advantages in future-proof architecture, it can
-have a steep learning curve for people, especially for developers familiar with Django.
+FastAPI has advantages in future-proof architecture, but can
+have a steep learning curve for people, especially for
+developers familiar with Django.
 
 FastOpp provides an opinionated framework for FastAPI with the following features:
 
@@ -38,14 +39,37 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
 This stack is opinionated and may not be for you. It is intended for students and novice developers who
 know Python, but are not strong in or do not like JavaScript.
 
+**FastOpp is not intended for production use or for experienced developers.**
+
 * You strongly prefer Python over JavaScript on the backend
 * You prefer to handle logic on the Python backend instead of using JavaScript code on the frontend
 * You prefer inline styling instead of separation of concerns with CSS in separate files
 * You prefer typed languages and want to use Python optional type hints instead of relying only on dynamic typing
 * You prefer HTML files with Python code and variables embedded in the HTML instead of embedding HTML in the Python code on the server
 * You are using Django or Flask and are having problems with async LLM communication
+* You started with [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/). Your code became more complex and is now very difficult to manage
+
+## Example Use Cases
+
+* **University student** looking to build resume - Show potential employers that you can
+  build an AI application. You want to host it cheaply and use cheap or free
+  LLMs with the option
+  to use higher-quality LLM before you showoff your project.
+  You have an idea on how to use AI and want to show it to people.
+* **Hobbyist** looking to vibe code simple AI utility - Provide Cursor or equivalent
+  access to demos and start with an opinionated structure for files and UI.
+  Enforce vibe-code behavior with rules so that you can go back and edit your
+  code. Deploy cheaply for less than $1 and month and scale up if your idea take off.
+* **Small business entrepreneur** - You have
+  great business ideas, but you are not a great programmer.
+  You want to put AI into a business workflow that you are familiar with and show other
+  people to get more help.
 
 ## Screenshots of Included Design Examples and Functionality Demos
+
+FastOpp can be viewed as an opinionated design framework that adds an UI to an SQL
+database (or vector db with extensions) and a UI to the input and
+output of an LLM.
 
 ### Clickable Cards with Mouseover
 
