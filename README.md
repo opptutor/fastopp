@@ -54,7 +54,7 @@ know Python, but are not strong in or do not like JavaScript.
 * **University student** looking to build resume - Show potential employers that you can
   build an AI application. You want to host it cheaply and use cheap or free
   LLMs with the option
-  to use higher-quality LLM before you showoff your project.
+  to use a higher-quality LLM before you showoff your project.
   You have an idea on how to use AI and want to show it to people.
 * **Hobbyist** looking to vibe code simple AI utility - Provide Cursor or equivalent
   access to demos and start with an opinionated structure for files and UI.
