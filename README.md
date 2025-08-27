@@ -425,13 +425,16 @@ This separation allows developers to focus on core functionality while keeping d
 
 6. **Port already in use**
 
-     ```bash
-     # Stop any running servers
-     uv run python oppman.py stopserver
+    ```bash
+    # Stop any running servers
+    uv run python oppman.py stopserver
      
-     # Or use a different port
-     uv run uvicorn main:app --reload --port 8001
-     ```
+    # Kill uvicorn processes manually
+    pkill -f uvicorn
+     
+    # Or use a different port
+    uv run uvicorn main:app --reload --port 8001
+    ```
 
 7. **Demo commands not working**
 
