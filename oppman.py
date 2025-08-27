@@ -70,16 +70,33 @@ def demo_command_help():
     """Show help message for demo commands that have been moved to oppdemo.py"""
     print("🔄 Demo commands have been moved to a new file: oppdemo.py")
     print()
-    print("📋 Available demo commands:")
+    print("📋 Available demo file management commands:")
     print("   uv run python oppdemo.py save      # Save demo files")
     print("   uv run python oppdemo.py restore   # Restore demo files")
     print("   uv run python oppdemo.py destroy   # Switch to minimal app")
     print("   uv run python oppdemo.py diff      # Show differences")
+    print("   uv run python oppdemo.py backups   # List all backups")
+    print()
+    print("📊 Available demo data initialization commands:")
+    print("   uv run python oppdemo.py init      # Full initialization")
+    print("   uv run python oppdemo.py db        # Initialize database only")
+    print("   uv run python oppdemo.py superuser # Create superuser only")
+    print("   uv run python oppdemo.py users     # Add test users only")
+    print("   uv run python oppdemo.py products  # Add sample products only")
+    print("   uv run python oppdemo.py webinars  # Add sample webinars only")
+    print("   uv run python oppdemo.py download_photos  # Download sample photos")
+    print("   uv run python oppdemo.py registrants      # Add sample registrants")
+    print("   uv run python oppdemo.py clear_registrants # Clear and add fresh registrants")
+    print("   uv run python oppdemo.py check_users      # Check existing users")
+    print("   uv run python oppdemo.py test_auth        # Test authentication")
+    print("   uv run python oppdemo.py change_password  # Change user password")
+    print("   uv run python oppdemo.py list_users       # List all users")
     print()
     print("💡 For more information:")
     print("   uv run python oppdemo.py help")
     print()
     print("🔧 oppman.py now focuses on core database and application management.")
+    print("📚 oppdemo.py handles all demo-related functionality.")
 
 
 def delete_database():
@@ -363,12 +380,31 @@ def show_help():
 Oppkey Management Tool (oppman.py)
 
 A core tool for managing database migrations, user management, and application setup.
+Similar to Django's manage.py, this tool focuses on core application management.
 Demo commands have been moved to oppdemo.py for better separation of concerns.
 
 USAGE:
     uv run python oppman.py <command> [options]
 
 COMMANDS:
+    # Core application management
+    runserver   Start development server with uvicorn --reload
+    stopserver  Stop development server
+    production  Start production server with Gunicorn (no Nginx)
+    
+    # Database management
+    delete      Delete current database (with backup)
+    backup      Backup current database
+    migrate     Database migration management (see examples below)
+    
+    # Environment and utilities
+    env         Check environment configuration
+    demo        Demo commands have been moved to oppdemo.py
+    help        Show this help message
+    
+    # Demo data initialization (DEPRECATED - use oppdemo.py instead)
+    # These commands are deprecated and will be removed in a future version
+    # Use 'uv run python oppdemo.py <command>' instead
     init        Complete initialization (database + superuser + users + products + webinars + registrants)
     db          Initialize database only
     superuser   Create superuser only
@@ -382,61 +418,44 @@ COMMANDS:
     test_auth   Test the authentication system
     change_password Change user password interactively
     list_users  List all users in the database
-    runserver   Start development server with uvicorn --reload
-    stopserver  Stop development server
-    production  Start production server with Gunicorn (no Nginx)
-    delete      Delete current database (with backup)
-    backup      Backup current database
-    demo        Demo commands have been moved to oppdemo.py
-    migrate     Database migration management (see examples below)
-    env         Check environment configuration
-    help        Show this help message
 
 EXAMPLES:
-    # Full initialization (recommended for first-time setup)
-    uv run python oppman.py init
-    
-    # Individual operations
-    uv run python oppman.py db
-    uv run python oppman.py superuser
-    uv run python oppman.py users
-    uv run python oppman.py products
-    uv run python oppman.py webinars
-    uv run python oppman.py download_photos
-    uv run python oppman.py registrants
-    uv run python oppman.py clear_registrants
-    uv run python oppman.py check_users
-    uv run python oppman.py test_auth
-    uv run python oppman.py change_password
-    uv run python oppman.py list_users
-    
-    # Start development server
-    uv run python oppman.py runserver
-    
-    # Stop development server
-    uv run python oppman.py stopserver
-    
-    # Start production server (no Nginx)
-    uv run python oppman.py production
+    # Core application management
+    uv run python oppman.py runserver      # Start development server
+    uv run python oppman.py stopserver     # Stop development server
+    uv run python oppman.py production     # Start production server
     
     # Database management
-    uv run python oppman.py backup
-    uv run python oppman.py delete
-    
-    # Demo management (moved to oppdemo.py)
-    uv run python oppdemo.py save
-    uv run python oppdemo.py restore
-    uv run python oppdemo.py destroy
-    uv run python oppdemo.py diff
-    
-    # Migration management
-    uv run python oppman.py migrate init
-    uv run python oppman.py migrate create "Add new table"
-    uv run python oppman.py migrate upgrade
-    uv run python oppman.py migrate current
+    uv run python oppman.py backup         # Backup database
+    uv run python oppman.py delete         # Delete database (with backup)
+    uv run python oppman.py migrate init   # Initialize migrations
+    uv run python oppman.py migrate create "Add new table"  # Create migration
+    uv run python oppman.py migrate upgrade  # Apply migrations
+    uv run python oppman.py migrate current  # Show current migration
     
     # Environment management
-    uv run python oppman.py env
+    uv run python oppman.py env            # Check environment configuration
+    
+    # Demo data initialization (DEPRECATED - use oppdemo.py instead)
+    # These commands are deprecated and will be removed in a future version
+    # Use 'uv run python oppdemo.py <command>' instead
+    uv run python oppdemo.py init          # Full initialization
+    uv run python oppdemo.py users         # Add test users
+    uv run python oppdemo.py products      # Add sample products
+    uv run python oppdemo.py webinars      # Add sample webinars
+    uv run python oppdemo.py download_photos  # Download sample photos
+    uv run python oppdemo.py registrants  # Add sample registrants
+    uv run python oppdemo.py clear_registrants  # Clear and add fresh registrants
+    uv run python oppdemo.py check_users  # Check existing users
+    uv run python oppdemo.py test_auth    # Test authentication
+    uv run python oppdemo.py change_password  # Change user password
+    uv run python oppdemo.py list_users   # List all users
+    
+    # Demo file management (use oppdemo.py)
+    uv run python oppdemo.py save          # Save demo files
+    uv run python oppdemo.py restore       # Restore demo files
+    uv run python oppdemo.py destroy       # Switch to minimal app
+    uv run python oppdemo.py diff          # Show differences
 
 DEFAULT CREDENTIALS:
     Superuser: admin@example.com / admin123
@@ -462,7 +481,7 @@ PERMISSION LEVELS:
 PASSWORD MANAGEMENT:
     - change_password: Interactive password change for any user
     - list_users: View all users and their status
-    - Usage: uv run python oppman.py change_password
+    - Usage: uv run python oppdemo.py change_password (DEPRECATED: use oppdemo.py)
     - Direct script: uv run python scripts/change_password.py --email user@example.com --password newpass
 
 WEBINAR REGISTRANTS:
@@ -470,7 +489,7 @@ WEBINAR REGISTRANTS:
     - Login required: Staff or admin access
     - Features: Photo upload, registrant management
     - Sample data: 5 registrants with professional photos
-    - Commands: download_photos, registrants, clear_registrants
+    - Commands: download_photos, registrants, clear_registrants (DEPRECATED: use oppdemo.py)
 
 DATABASE:
     - Development: SQLite (test.db)
@@ -481,6 +500,9 @@ SERVER:
     - Admin panel: http://localhost:8000/admin/
     - API docs: http://localhost:8000/docs
     - Webinar registrants: http://localhost:8000/webinar-registrants
+
+NOTE: Demo data initialization commands are deprecated in oppman.py.
+Use 'uv run python oppdemo.py <command>' instead for all demo-related functionality.
     """
     print(help_text)
 
@@ -580,30 +602,69 @@ Examples:
     # Handle async commands
     async def run_command():
         if args.command == "init":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py init' is deprecated.")
+            print("   Use 'uv run python oppdemo.py init' instead.")
+            print()
             await run_full_init()
         elif args.command == "db":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py db' is deprecated.")
+            print("   Use 'uv run python oppdemo.py db' instead.")
+            print()
             await run_init()
         elif args.command == "superuser":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py superuser' is deprecated.")
+            print("   Use 'uv run python oppdemo.py superuser' instead.")
+            print()
             await run_superuser()
         elif args.command == "users":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py users' is deprecated.")
+            print("   Use 'uv run python oppdemo.py users' instead.")
+            print()
             await run_users()
         elif args.command == "products":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py products' is deprecated.")
+            print("   Use 'uv run python oppdemo.py products' instead.")
+            print()
             await run_products()
         elif args.command == "webinars":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py webinars' is deprecated.")
+            print("   Use 'uv run python oppdemo.py webinars' instead.")
+            print()
             await run_webinars()
         elif args.command == "download_photos":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py download_photos' is deprecated.")
+            print("   Use 'uv run python oppdemo.py download_photos' instead.")
+            print()
             await run_download_photos()
         elif args.command == "registrants":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py registrants' is deprecated.")
+            print("   Use 'uv run python oppdemo.py registrants' instead.")
+            print()
             await run_registrants()
         elif args.command == "clear_registrants":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py clear_registrants' is deprecated.")
+            print("   Use 'uv run python oppdemo.py clear_registrants' instead.")
+            print()
             await run_clear_registrants()
         elif args.command == "check_users":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py check_users' is deprecated.")
+            print("   Use 'uv run python oppdemo.py check_users' instead.")
+            print()
             await run_check_users()
         elif args.command == "test_auth":
-            await run_test_auth()
+            print("⚠️  DEPRECATION WARNING: 'oppman.py test_auth' is deprecated.")
+            print("   Use 'uv run python oppdemo.py test_auth' instead.")
+            print()
+            await test_auth()
         elif args.command == "change_password":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py change_password' is deprecated.")
+            print("   Use 'uv run python oppdemo.py change_password' instead.")
+            print()
             await run_change_password()
         elif args.command == "list_users":
+            print("⚠️  DEPRECATION WARNING: 'oppman.py list_users' is deprecated.")
+            print("   Use 'uv run python oppdemo.py list_users' instead.")
+            print()
             await run_list_users()
     
     # Run the async command

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
 Oppkey Demo Management Tool (oppdemo.py)
-A tool for managing demo files and switching between demo and minimal application modes.
+A tool for managing demo files, switching between demo and minimal application modes,
+and initializing demo data (users, products, webinars, registrants, photos).
 """
 import argparse
+import asyncio
 import filecmp
 import os
 import shutil
@@ -14,12 +16,40 @@ from pathlib import Path
 # Add the current directory to Python path so we can import our modules
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+try:
+    from scripts.init_db import init_db
+    from scripts.create_superuser import create_superuser
+    from scripts.add_test_users import add_test_users
+    from scripts.add_sample_products import add_sample_products
+    from scripts.add_sample_webinars import add_sample_webinars
+    from scripts.add_sample_webinar_registrants import add_sample_registrants
+    from scripts.clear_and_add_registrants import clear_and_add_registrants
+    from scripts.download_sample_photos import download_sample_photos
+    from scripts.check_users import check_users
+    from scripts.test_auth import test_auth
+    from scripts.change_password import list_users, change_password_interactive
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("Make sure all script files are in the scripts/ directory")
+    sys.exit(1)
+
 
 def ensure_backup_dir():
     """Ensure backups directory exists and return its path"""
     backup_dir = Path("backups")
     backup_dir.mkdir(exist_ok=True)
     return backup_dir
+
+
+def ensure_upload_dirs():
+    """Ensure static upload directories exist regardless of current working directory."""
+    project_root = Path(__file__).resolve().parent
+    uploads_root = project_root / "static" / "uploads"
+    photos_dir = uploads_root / "photos"
+    sample_photos_dir = uploads_root / "sample_photos"
+    uploads_root.mkdir(parents=True, exist_ok=True)
+    photos_dir.mkdir(parents=True, exist_ok=True)
+    sample_photos_dir.mkdir(parents=True, exist_ok=True)
 
 
 def create_backup_path(original_file: Path, operation: str) -> Path:
@@ -34,6 +64,117 @@ def create_backup_path(original_file: Path, operation: str) -> Path:
     # Create backup filename with timestamp
     backup_filename = f"{original_file.name}.{timestamp}"
     return operation_dir / backup_filename
+
+
+# Demo Data Initialization Functions
+async def run_init():
+    """Initialize a new database"""
+    print("🔄 Initializing database...")
+    await init_db()
+    print("✅ Database initialization complete")
+
+
+async def run_superuser():
+    """Create superuser"""
+    print("🔄 Creating superuser...")
+    await create_superuser()
+    print("✅ Superuser creation complete")
+
+
+async def run_users():
+    """Add test users"""
+    print("🔄 Adding test users...")
+    await add_test_users()
+    print("✅ Test users creation complete")
+
+
+async def run_products():
+    """Add sample products"""
+    print("🔄 Adding sample products...")
+    await add_sample_products()
+    print("✅ Sample products creation complete")
+
+
+async def run_webinars():
+    """Add sample webinars"""
+    print("🔄 Adding sample webinars...")
+    await add_sample_webinars()
+    print("✅ Sample webinars creation complete")
+
+
+async def run_download_photos():
+    """Download sample photos for webinar registrants"""
+    print("🔄 Downloading sample photos...")
+    ensure_upload_dirs()
+    download_sample_photos()
+    print("✅ Sample photos download complete")
+
+
+async def run_registrants():
+    """Add sample webinar registrants with photos"""
+    print("🔄 Adding sample webinar registrants...")
+    await add_sample_registrants()
+    print("✅ Sample webinar registrants creation complete")
+
+
+async def run_clear_registrants():
+    """Clear and add fresh webinar registrants with photos"""
+    print("🔄 Clearing and adding fresh webinar registrants...")
+    await clear_and_add_registrants()
+    print("✅ Fresh webinar registrants creation complete")
+
+
+async def run_check_users():
+    """Check existing users and their permissions"""
+    print("🔄 Checking users...")
+    await check_users()
+    print("✅ User check complete")
+
+
+async def run_test_auth():
+    """Test the authentication system"""
+    print("🔄 Testing authentication system...")
+    await test_auth()
+    print("✅ Authentication test complete")
+
+
+async def run_change_password():
+    """Change user password interactively"""
+    print("🔐 Changing user password...")
+    await change_password_interactive()
+
+
+async def run_list_users():
+    """List all users"""
+    print("👥 Listing users...")
+    await list_users()
+
+
+async def run_full_init():
+    """Run complete initialization: init + superuser + users + products + webinars + registrants"""
+    print("🚀 Running full initialization...")
+    ensure_upload_dirs()
+    
+    await run_init()
+    await run_superuser()
+    await run_users()
+    await run_products()
+    await run_webinars()
+    await run_download_photos()
+    await run_registrants()
+    await run_clear_registrants()
+    
+    print("✅ Full initialization complete!")
+    print("\n📋 Summary:")
+    print("- Database initialized")
+    print("- Superuser created: admin@example.com / admin123")
+    print("- Test users added (password: test123)")
+    print("- Sample products added")
+    print("- Sample webinars added")
+    print("- Sample photos downloaded")
+    print("- Webinar registrants added with photos")
+    print("\n🌐 Ready to start the application with: uv run uvicorn main:app --reload")
+    print("🔐 Login to webinar registrants: http://localhost:8000/webinar-registrants")
 
 
 def save_demo_files():
@@ -796,43 +937,74 @@ def show_help():
     help_text = """
 Oppkey Demo Management Tool (oppdemo.py)
 
-A tool for managing demo files and switching between demo and minimal application modes.
+A tool for managing demo files, switching between demo and minimal application modes,
+and initializing demo data (users, products, webinars, registrants, photos).
 
 USAGE:
     uv run python oppdemo.py <command> [options]
 
 COMMANDS:
+    # Demo file management
     save        Save demo files to demo_assets directory
     restore     Restore demo files from demo_assets directory
     destroy     Destroy demo files and switch to minimal application
     diff        Show differences between current demo and save
     backups     List all available backups
+    
+    # Demo data initialization (moved from oppman.py)
+    init        Complete initialization (database + superuser + users + products + webinars + registrants)
+    db          Initialize database only
+    superuser   Create superuser only
+    users       Add test users only
+    products    Add sample products only
+    webinars    Add sample webinars only
+    download_photos  Download sample photos for webinar registrants
+    registrants Add sample webinar registrants with photos
+    clear_registrants Clear and add fresh webinar registrants with photos
+    check_users Check existing users and their permissions
+    test_auth   Test the authentication system
+    change_password Change user password interactively
+    list_users  List all users in the database
+    
     help        Show this help message
 
 EXAMPLES:
-    # Save current demo files
-    uv run python oppdemo.py save
+    # Demo file management
+    uv run python oppdemo.py save      # Save demo files
+    uv run python oppdemo.py restore   # Restore demo files
+    uv run python oppdemo.py destroy   # Switch to minimal app
+    uv run python oppdemo.py diff      # Show differences
+    uv run python oppdemo.py backups   # List all backups
     
-    # Restore demo files from backup
-    uv run python oppdemo.py restore
-    
-    # Switch to minimal application (removes demo files)
-    uv run python oppdemo.py destroy
-    
-    # Compare current files with backup
-    uv run python oppdemo.py diff
-    
-    # List all available backups
-    uv run python oppdemo.py backups
+    # Demo data initialization
+    uv run python oppdemo.py init      # Full initialization
+    uv run python oppdemo.py db        # Initialize database only
+    uv run python oppdemo.py users     # Add test users
+    uv run python oppdemo.py products  # Add sample products
+    uv run python oppdemo.py webinars  # Add sample webinars
+    uv run python oppdemo.py download_photos  # Download sample photos
+    uv run python oppdemo.py registrants     # Add sample registrants
+    uv run python oppdemo.py clear_registrants  # Clear and add fresh registrants
+    uv run python oppdemo.py check_users      # Check existing users
+    uv run python oppdemo.py test_auth        # Test authentication
+    uv run python oppdemo.py change_password  # Change user password
+    uv run python oppdemo.py list_users      # List all users
 
 DESCRIPTION:
-    This tool helps manage the demo application state:
+    This tool helps manage the demo application state and data:
     
+    DEMO FILE MANAGEMENT:
     - save: Creates a backup of all demo-related files in demo_assets/
     - restore: Restores the full demo application from backup
     - destroy: Switches to minimal FastAPI application with authentication
     - diff: Shows what files have changed since the last save
     - backups: Lists all available backups organized by operation type
+    
+    DEMO DATA INITIALIZATION:
+    - init: Complete setup with all sample data
+    - Individual commands for specific data types
+    - User management and authentication testing
+    - Sample products, webinars, and registrants
     
     BACKUP SYSTEM:
     All backups are automatically stored in the backups/ directory:
@@ -852,6 +1024,10 @@ DESCRIPTION:
     - Webinar management
     - Product management
     - Sample data and photos
+    
+    DEFAULT CREDENTIALS:
+    Superuser: admin@example.com / admin123
+    Test Users: test123 (for all test users)
     """
     print(help_text)
 
@@ -863,18 +1039,32 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  # Demo file management
   uv run python oppdemo.py save      # Save demo files
   uv run python oppdemo.py restore   # Restore demo files
   uv run python oppdemo.py destroy   # Switch to minimal app
   uv run python oppdemo.py diff      # Show differences
   uv run python oppdemo.py backups   # List all backups
+  
+  # Demo data initialization
+  uv run python oppdemo.py init      # Full initialization
+  uv run python oppdemo.py users     # Add test users
+  uv run python oppdemo.py products  # Add sample products
         """
     )
     
     parser.add_argument(
         "command",
         nargs="?",
-        choices=["save", "restore", "destroy", "diff", "backups", "help"],
+        choices=[
+            # Demo file management
+            "save", "restore", "destroy", "diff", "backups",
+            # Demo data initialization (moved from oppman.py)
+            "init", "db", "superuser", "users", "products", "webinars",
+            "download_photos", "registrants", "clear_registrants", "check_users",
+            "test_auth", "change_password", "list_users",
+            "help"
+        ],
         help="Command to execute"
     )
     
@@ -890,7 +1080,7 @@ Examples:
         show_help()
         return
     
-    # Handle commands
+    # Handle demo file management commands
     if args.command == "save":
         save_demo_files()
     elif args.command == "restore":
@@ -901,6 +1091,43 @@ Examples:
         diff_demo_files()
     elif args.command == "backups":
         list_backups()
+    
+    # Handle demo data initialization commands (moved from oppman.py)
+    elif args.command in ["init", "db", "superuser", "users", "products", "webinars",
+                          "download_photos", "registrants", "clear_registrants", "check_users",
+                          "test_auth", "change_password", "list_users"]:
+        # Run async commands
+        async def run_command():
+            if args.command == "init":
+                await run_full_init()
+            elif args.command == "db":
+                await run_init()
+            elif args.command == "superuser":
+                await run_superuser()
+            elif args.command == "users":
+                await run_users()
+            elif args.command == "products":
+                await run_products()
+            elif args.command == "webinars":
+                await run_webinars()
+            elif args.command == "download_photos":
+                await run_download_photos()
+            elif args.command == "registrants":
+                await run_registrants()
+            elif args.command == "clear_registrants":
+                await run_clear_registrants()
+            elif args.command == "check_users":
+                await run_check_users()
+            elif args.command == "test_auth":
+                await run_test_auth()
+            elif args.command == "change_password":
+                await run_change_password()
+            elif args.command == "list_users":
+                await run_list_users()
+        
+        # Run the async command
+        asyncio.run(run_command())
+    
     else:
         print("❌ Invalid command")
         show_help()
