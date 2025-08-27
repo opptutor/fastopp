@@ -219,7 +219,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 
 ```bash
 # Complete setup with one command
-uv run python oppman.py init
+uv run python oppdemo.py init
 ```
 
 This single command will:
@@ -245,8 +245,10 @@ uv run python oppman.py migrate create "Initial migration"
 uv run python oppman.py migrate upgrade
 
 # Initialize database with sample data
-uv run python oppman.py init
+uv run python oppdemo.py init
 ```
+
+**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old `oppman.py init` command still works but shows a deprecation warning.
 
 ### 4. Start Development Server
 
@@ -272,43 +274,69 @@ Use these credentials to access the admin panel:
 
 ## 🛠️ Management Commands
 
+FastOpp now uses two separate management tools for better organization and separation of concerns:
+
 ### Core Application Management (oppman.py)
 
-```bash
-# Initialize everything (database + superuser + users + products)
-uv run python oppman.py init
+**oppman.py** is similar to Django's manage.py and focuses on core application management:
 
-# Individual operations
-uv run python oppman.py db              # Initialize database only
-uv run python oppman.py superuser       # Create superuser only
-uv run python oppman.py users           # Add test users only
-uv run python oppman.py products        # Add sample products only
+```bash
+# Server management
+uv run python oppman.py runserver       # Start development server
+uv run python oppman.py stopserver      # Stop development server
+uv run python oppman.py production      # Start production server
 
 # Database management
 uv run python oppman.py backup          # Backup database
 uv run python oppman.py delete          # Delete database (with backup)
+
+# Migration management
+uv run python oppman.py migrate init    # Initialize migrations
+uv run python oppman.py migrate create "Add new table"  # Create migration
+uv run python oppman.py migrate upgrade # Apply migrations
+uv run python oppman.py migrate current # Check migration status
+
+# Environment and utilities
+uv run python oppman.py env             # Check environment configuration
+uv run python oppman.py demo            # Show demo command help
+uv run python oppman.py help            # Show comprehensive help
+
+# Demo data initialization (DEPRECATED - use oppdemo.py instead)
+# These commands are deprecated and will be removed in a future version
+uv run python oppman.py init            # Complete initialization (shows deprecation warning)
+uv run python oppman.py users           # Add test users (shows deprecation warning)
+uv run python oppman.py products        # Add sample products (shows deprecation warning)
 ```
 
-### Demo File Management (oppdemo.py)
+### Demo Management (oppdemo.py)
+
+**oppdemo.py** handles all demo-related functionality:
 
 ```bash
-# Save current demo files
-uv run python oppdemo.py save
+# Demo file management
+uv run python oppdemo.py save           # Save demo files to demo_assets
+uv run python oppdemo.py restore        # Restore demo files from backup
+uv run python oppdemo.py destroy        # Switch to minimal application
+uv run python oppdemo.py diff           # Show differences between current and backup
+uv run python oppdemo.py backups        # List all available backups
 
-# Restore demo files from backup
-uv run python oppdemo.py restore
+# Demo data initialization (moved from oppman.py)
+uv run python oppdemo.py init           # Complete initialization (database + superuser + users + products + webinars + registrants)
+uv run python oppdemo.py db             # Initialize database only
+uv run python oppdemo.py superuser      # Create superuser only
+uv run python oppdemo.py users          # Add test users only
+uv run python oppdemo.py products       # Add sample products only
+uv run python oppdemo.py webinars       # Add sample webinars only
+uv run python oppdemo.py download_photos # Download sample photos
+uv run python oppdemo.py registrants    # Add sample registrants
+uv run python oppdemo.py clear_registrants # Clear and add fresh registrants
+uv run python oppdemo.py check_users    # Check existing users
+uv run python oppdemo.py test_auth      # Test authentication
+uv run python oppdemo.py change_password # Change user password
+uv run python oppdemo.py list_users     # List all users
 
-# Switch to minimal application
-uv run python oppdemo.py destroy
-
-# Compare current files with backup
-uv run python oppdemo.py diff
-
-# List all available backups
-uv run python oppdemo.py backups
-
-# Show help
-uv run python oppdemo.py help
+# Help
+uv run python oppdemo.py help           # Show comprehensive help
 ```
 
 ### Server Management
@@ -353,7 +381,12 @@ uv run python oppman.py help
 
 ### Demo Commands (Legacy Support)
 
-**Note**: The old `oppman.py demo` commands have been moved to `oppdemo.py` for better separation of concerns. If you run `oppman.py demo save`, `oppman.py demo restore`, etc., you'll get helpful messages directing you to use `oppdemo.py` instead.
+**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old commands like `oppman.py init`, `oppman.py users`, `oppman.py products`, etc., still work but show deprecation warnings directing you to use `oppdemo.py` instead.
+
+For example:
+- `uv run python oppman.py init` → `uv run python oppdemo.py init`
+- `uv run python oppman.py users` → `uv run python oppdemo.py users`
+- `uv run python oppman.py products` → `uv run python oppdemo.py products`
 
 ### Backup Management
 
@@ -379,12 +412,27 @@ Sample products with various categories and prices for testing the admin interfa
 
 ## 🛠️ Tool Separation
 
-FastOpp now uses two separate management tools for better organization:
+FastOpp now uses two separate management tools for better organization and separation of concerns:
 
-* **`oppman.py`**: Core application management (database, users, server, migrations)
-* **`oppdemo.py`**: Demo file management (save/restore demo state, switch between modes)
+### oppman.py - Core Application Management
+**oppman.py** is similar to Django's manage.py and focuses on core application management:
+* **Server Management**: Start/stop development and production servers
+* **Database Management**: Backup, delete, and migration operations
+* **Environment Management**: Configuration checks and utilities
+* **Core Operations**: Essential application lifecycle management
 
-This separation allows developers to focus on core functionality while keeping demo management separate.
+### oppdemo.py - Demo Management
+**oppdemo.py** handles all demo-related functionality:
+* **Demo File Management**: Save/restore demo state, switch between demo and minimal modes
+* **Demo Data Initialization**: All sample data creation (users, products, webinars, registrants)
+* **Demo State Control**: Comprehensive demo application management
+
+### Benefits of Separation
+* **Clear Responsibilities**: Each tool has a focused purpose
+* **Better Organization**: Easier to find and use specific functionality
+* **Maintainability**: Simpler to maintain and extend each tool independently
+* **User Experience**: Clear guidance on which tool to use for what purpose
+* **Migration Path**: Smooth transition with deprecation warnings for existing users
 
 ## 🔄 Database Migrations
 
@@ -451,11 +499,13 @@ This separation allows developers to focus on core functionality while keeping d
 7. **Demo commands not working**
 
      ```bash
-     # Demo commands have moved to oppdemo.py
+     # Demo data initialization commands have moved to oppdemo.py
      uv run python oppdemo.py help
      
-     # If you run the old commands, you'll get helpful redirection
-     uv run python oppman.py demo save  # This will redirect you to oppdemo.py
+     # If you run the old commands, you'll get helpful deprecation warnings
+     uv run python oppman.py init      # Shows deprecation warning, redirects to oppdemo.py
+     uv run python oppman.py users     # Shows deprecation warning, redirects to oppdemo.py
+     uv run python oppman.py products  # Shows deprecation warning, redirects to oppdemo.py
      ```
 
 ### Quick Reset
@@ -468,11 +518,13 @@ uv run python oppman.py backup
 
 # Delete and reinitialize
 uv run python oppman.py delete
-uv run python oppman.py init
+uv run python oppdemo.py init
 
 # Verify setup
 uv run python oppman.py env
 ```
+
+**Note**: The `init` command has been moved to `oppdemo.py`. The old `oppman.py init` command still works but shows a deprecation warning.
 
 ## 🔄 Demo vs Minimal Mode
 
@@ -505,6 +557,36 @@ uv run python oppdemo.py restore
 # Check what's different
 uv run python oppdemo.py diff
 ```
+
+## 🔄 Command Migration Guide
+
+### Recent Changes (August 2025)
+
+FastOpp has been refactored to better separate concerns between core application management and demo functionality:
+
+#### What Changed
+* **oppman.py** now focuses on core application management (like Django's manage.py)
+* **oppdemo.py** now handles all demo-related functionality
+* Demo data initialization commands moved from oppman.py to oppdemo.py
+
+#### Migration Path
+* **Existing commands still work** but show deprecation warnings
+* **Clear guidance** provided for new command locations
+* **Smooth transition** with no breaking changes
+
+#### Quick Reference
+| Old Command | New Command | Status |
+|-------------|-------------|---------|
+| `oppman.py init` | `oppdemo.py init` | ✅ Moved with deprecation warning |
+| `oppman.py users` | `oppdemo.py users` | ✅ Moved with deprecation warning |
+| `oppman.py products` | `oppdemo.py products` | ✅ Moved with deprecation warning |
+| `oppman.py webinars` | `oppdemo.py webinars` | ✅ Moved with deprecation warning |
+
+#### Benefits
+* **Better Organization**: Clear separation of concerns
+* **Easier Maintenance**: Each tool has a focused purpose
+* **Improved UX**: Clear guidance on which tool to use
+* **Future-Proof**: Better foundation for future enhancements
 
 ## 📚 Documentation
 
