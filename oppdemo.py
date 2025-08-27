@@ -15,6 +15,27 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 
+def ensure_backup_dir():
+    """Ensure backups directory exists and return its path"""
+    backup_dir = Path("backups")
+    backup_dir.mkdir(exist_ok=True)
+    return backup_dir
+
+
+def create_backup_path(original_file: Path, operation: str) -> Path:
+    """Create a backup path in the backups directory"""
+    backup_dir = ensure_backup_dir()
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Create operation-specific subdirectory
+    operation_dir = backup_dir / operation
+    operation_dir.mkdir(exist_ok=True)
+    
+    # Create backup filename with timestamp
+    backup_filename = f"{original_file.name}.{timestamp}"
+    return operation_dir / backup_filename
+
+
 def save_demo_files():
     """Save demo files to demo_assets directory"""
     print("🔄 Saving demo files to demo_assets...")
@@ -207,8 +228,9 @@ def restore_demo_files():
         main_dest = Path("main.py")
         if main_src.exists():
             if main_dest.exists():
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                shutil.copy2(main_dest, Path(f"main.py.{timestamp}"))
+                backup_main = create_backup_path(main_dest, "restore")
+                shutil.copy2(main_dest, backup_main)
+                print(f"  ✅ Backed up current main.py to {backup_main}")
             shutil.copy2(main_src, main_dest)
             print("  ✅ Restored main.py")
             files_restored += 1
@@ -412,8 +434,7 @@ def destroy_demo_files():
         # Backup current main.py if it exists
         current_main = Path("main.py")
         if current_main.exists():
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_main = Path(f"main.py.{timestamp}")
+            backup_main = create_backup_path(current_main, "destroy")
             shutil.copy2(current_main, backup_main)
             print(f"  ✅ Backed up current main.py to {backup_main}")
         
@@ -435,8 +456,7 @@ def destroy_demo_files():
         db_path = Path("test.db")
         if db_path.exists():
             # Backup database first
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            backup_db = Path(f"test.db.{timestamp}")
+            backup_db = create_backup_path(db_path, "destroy")
             shutil.copy2(db_path, backup_db)
             print(f"  ✅ Backed up database to {backup_db}")
             
@@ -741,6 +761,36 @@ def diff_demo_files():
         return False
 
 
+def list_backups():
+    """List all available backups"""
+    backup_dir = Path("backups")
+    if not backup_dir.exists():
+        print("ℹ️  No backups directory found")
+        return
+    
+    print("📁 Available Backups:")
+    print("=" * 50)
+    
+    for operation_dir in backup_dir.iterdir():
+        if operation_dir.is_dir():
+            print(f"\n🔧 {operation_dir.name.upper()} Backups:")
+            backups = list(operation_dir.glob("*"))
+            if backups:
+                for backup in sorted(backups, reverse=True):
+                    # Extract timestamp from filename
+                    filename = backup.name
+                    if "." in filename:
+                        base_name = filename.rsplit(".", 1)[0]
+                        timestamp = filename.rsplit(".", 1)[1]
+                        print(f"  📄 {base_name} - {timestamp}")
+                    else:
+                        print(f"  📄 {filename}")
+            else:
+                print("  ℹ️  No backups found")
+    
+    print(f"\n📁 Backup location: {backup_dir.absolute()}")
+
+
 def show_help():
     """Show detailed help information"""
     help_text = """
@@ -756,6 +806,7 @@ COMMANDS:
     restore     Restore demo files from demo_assets directory
     destroy     Destroy demo files and switch to minimal application
     diff        Show differences between current demo and save
+    backups     List all available backups
     help        Show this help message
 
 EXAMPLES:
@@ -770,6 +821,9 @@ EXAMPLES:
     
     # Compare current files with backup
     uv run python oppdemo.py diff
+    
+    # List all available backups
+    uv run python oppdemo.py backups
 
 DESCRIPTION:
     This tool helps manage the demo application state:
@@ -778,6 +832,12 @@ DESCRIPTION:
     - restore: Restores the full demo application from backup
     - destroy: Switches to minimal FastAPI application with authentication
     - diff: Shows what files have changed since the last save
+    - backups: Lists all available backups organized by operation type
+    
+    BACKUP SYSTEM:
+    All backups are automatically stored in the backups/ directory:
+    - backups/destroy/ - Files backed up before switching to minimal mode
+    - backups/restore/ - Files backed up before restoring demo mode
     
     The minimal application includes:
     - Basic authentication system
@@ -807,13 +867,14 @@ Examples:
   uv run python oppdemo.py restore   # Restore demo files
   uv run python oppdemo.py destroy   # Switch to minimal app
   uv run python oppdemo.py diff      # Show differences
+  uv run python oppdemo.py backups   # List all backups
         """
     )
     
     parser.add_argument(
         "command",
         nargs="?",
-        choices=["save", "restore", "destroy", "diff", "help"],
+        choices=["save", "restore", "destroy", "diff", "backups", "help"],
         help="Command to execute"
     )
     
@@ -838,6 +899,8 @@ Examples:
         destroy_demo_files()
     elif args.command == "diff":
         diff_demo_files()
+    elif args.command == "backups":
+        list_backups()
     else:
         print("❌ Invalid command")
         show_help()

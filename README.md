@@ -304,6 +304,9 @@ uv run python oppdemo.py destroy
 # Compare current files with backup
 uv run python oppdemo.py diff
 
+# List all available backups
+uv run python oppdemo.py backups
+
 # Show help
 uv run python oppdemo.py help
 ```
@@ -351,6 +354,15 @@ uv run python oppman.py help
 ### Demo Commands (Legacy Support)
 
 **Note**: The old `oppman.py demo` commands have been moved to `oppdemo.py` for better separation of concerns. If you run `oppman.py demo save`, `oppman.py demo restore`, etc., you'll get helpful messages directing you to use `oppdemo.py` instead.
+
+### Backup Management
+
+All backup files are automatically organized in the `backups/` directory:
+
+- **`backups/destroy/`** - Files backed up before switching to minimal mode
+- **`backups/restore/`** - Files backed up before restoring demo mode
+
+Each backup includes a timestamp for easy identification. Use `uv run python oppdemo.py backups` to list all available backups.
 
 ## 📊 Test Data
 
