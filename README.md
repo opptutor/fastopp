@@ -32,7 +32,8 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
 * API endpoints to connect to other frontend frameworks
   * auto-generated documentation for API endpoints
   * designed to connect to Flutter and React in the future, but we do not have examples
-* **oppman.py** management tool with some functionality similar to Django manage
+* **oppman.py** core management tool for database, users, and application setup
+* **oppdemo.py** demo file management tool for switching between demo and minimal modes
 
 ## Target Audience
 
@@ -271,7 +272,7 @@ Use these credentials to access the admin panel:
 
 ## 🛠️ Management Commands
 
-### Database Operations
+### Core Application Management (oppman.py)
 
 ```bash
 # Initialize everything (database + superuser + users + products)
@@ -286,6 +287,25 @@ uv run python oppman.py products        # Add sample products only
 # Database management
 uv run python oppman.py backup          # Backup database
 uv run python oppman.py delete          # Delete database (with backup)
+```
+
+### Demo File Management (oppdemo.py)
+
+```bash
+# Save current demo files
+uv run python oppdemo.py save
+
+# Restore demo files from backup
+uv run python oppdemo.py restore
+
+# Switch to minimal application
+uv run python oppdemo.py destroy
+
+# Compare current files with backup
+uv run python oppdemo.py diff
+
+# Show help
+uv run python oppdemo.py help
 ```
 
 ### Server Management
@@ -328,6 +348,10 @@ uv run python oppman.py env
 uv run python oppman.py help
 ```
 
+### Demo Commands (Legacy Support)
+
+**Note**: The old `oppman.py demo` commands have been moved to `oppdemo.py` for better separation of concerns. If you run `oppman.py demo save`, `oppman.py demo restore`, etc., you'll get helpful messages directing you to use `oppdemo.py` instead.
+
 ## 📊 Test Data
 
 The application comes with pre-loaded test data:
@@ -341,9 +365,16 @@ The application comes with pre-loaded test data:
 
 Sample products with various categories and prices for testing the admin interface.
 
-## 🔄 Database Migrations
+## 🛠️ Tool Separation
 
-The project uses Alembic for database migrations, providing Django-like migration functionality:
+FastOpp now uses two separate management tools for better organization:
+
+- **`oppman.py`**: Core application management (database, users, server, migrations)
+- **`oppdemo.py`**: Demo file management (save/restore demo state, switch between modes)
+
+This separation allows developers to focus on core functionality while keeping demo management separate.
+
+## 🔄 Database Migrations
 
 ### Migration Workflow
 
@@ -402,6 +433,16 @@ The project uses Alembic for database migrations, providing Django-like migratio
      uv run uvicorn main:app --reload --port 8001
      ```
 
+7. **Demo commands not working**
+
+     ```bash
+     # Demo commands have moved to oppdemo.py
+     uv run python oppdemo.py help
+     
+     # If you run the old commands, you'll get helpful redirection
+     uv run python oppman.py demo save  # This will redirect you to oppdemo.py
+     ```
+
 ### Quick Reset
 
 If something goes wrong, you can reset everything:
@@ -418,9 +459,37 @@ uv run python oppman.py init
 uv run python oppman.py env
 ```
 
-## 📚 Documentation
+## 🔄 Demo vs Minimal Mode
 
-### Video Tutorials
+FastOpp supports two application modes:
+
+### Demo Mode (Default)
+- Full-featured application with AI chat, dashboard, design examples
+- Sample data and comprehensive UI components
+- Ideal for learning and showcasing features
+
+### Minimal Mode
+- Basic FastAPI application with authentication
+- Clean slate for building your own application
+- Includes admin panel and basic structure
+
+### Switching Between Modes
+
+```bash
+# Save current demo state
+uv run python oppdemo.py save
+
+# Switch to minimal mode
+uv run python oppdemo.py destroy
+
+# Restore demo mode
+uv run python oppdemo.py restore
+
+# Check what's different
+uv run python oppdemo.py diff
+```
+
+## 📚 Documentation
 
 * [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
