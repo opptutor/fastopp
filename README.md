@@ -65,6 +65,45 @@ know Python, but are not strong in or do not like JavaScript.
   You want to put AI into a business workflow that you are familiar with and show other
   people to get more help.
 
+## FAQ and Concerns
+
+### I'm concerned that this project is new and I don't want to waste time if it dies
+
+The project is intended to teach use of FastAPI with LLMs.  The knowledge you gain will be
+highly relevant to employers as long as Python and LLMs continue to be used together.
+We intend that you eventually move off of Jinja2 templates and use the built-in API
+for interfaces with React-variants or something like Flutter for mobile or web apps.
+The project is intended to get your started on your path.  Even if it dies, but your
+knowledge will live on.
+
+### I'm concerned about security
+
+To be honest, we are not confident in the security architecture and model.  It is
+sufficient for learning purposes, but you need to look into security yourself
+and use another model if your project takes off.  FastOpp will get you started
+quickly, but it is not intended for long-term production use.
+
+### Should I use PostgreSQL instead of SQLite?
+
+Yes. We use SQLite to get you started because there are less installation dependencies.
+If you use the database in production,
+we recommend switching to PostgreSQL.
+
+### Should I use NGINX instead of serving the HTML templates from FastAPI?
+
+Yes. We use FastAPI in deployment tutorials to get you started. NGINX is better.
+FastAPI is very usable without NGINX if you do not have many simultaneous users.
+
+### Should I change the LLM from LLama3.3-70b-instruct:free?
+
+Yes. The free LLM is set for easy setup. We do not use it in production.  
+At a minimum, you should
+change this to the paid version of LLama3.3-70b-instruct or your
+app will have very limited functionality.  If you password-protect your
+app, you can control costs.  If only a few people use the app, the
+free version will work.  LLama3.3-70b is pretty good, not great. It's primary
+quality is that it is much cheaper than top-tier great LLMs like [GPT-5](https://openrouter.ai/openai/gpt-5).
+
 ## Screenshots of Included Design Examples and Functionality Demos
 
 FastOpp can be viewed as an opinionated design framework that adds an UI to an SQL
@@ -119,20 +158,19 @@ Admin panel is restricted to logged-in users.
 
 ## Basic Design System and Reference Template
 
-FastOpp comes with an optional basic UI design system to accelerate AI application development. 
+FastOpp comes with an optional basic UI design system to accelerate AI application development.
 
 * based on Tailwind CSS, DaisyUI, AlpineJS and HTMX
-
 
 ## 🚀 Quick Start (For Team Members)
 
 ### Prerequisites
 
-- Python 3.12+
+* Python 3.12+
   If Python 3.12+ is not on your Mac, consider [installing pyenv](https://youtu.be/1F2IK7CU76U?feature=shared)
-  and install the newest 3.12.x with pyenv. Although the latest stable Python is 3.13.5, we're using 3.12.x
+  and install the newest 3.12.x with pyenv. Although the latest stable Python is 3.13.7, we're using 3.12.x
   right now for maximum package compatibility.
-- [uv](https://docs.astral.sh/uv/) package manager
+* [uv](https://docs.astral.sh/uv/) package manager
 
 ### 1. Clone and Setup
 
@@ -165,7 +203,6 @@ ENVIRONMENT=development
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
 ```
-
 
 **Or manually create `.env`:**
 
@@ -333,14 +370,14 @@ The project uses Alembic for database migrations, providing Django-like migratio
    ```
 
 3. **Environment issues**
- 
+
      ```bash
      # Check environment configuration
      uv run python oppman.py env
      ```
 
 4. **Database issues**
- 
+
      ```bash
      # Backup and reset
      uv run python oppman.py backup
@@ -356,7 +393,7 @@ The project uses Alembic for database migrations, providing Django-like migratio
    ```
 
 6. **Port already in use**
- 
+
      ```bash
      # Stop any running servers
      uv run python oppman.py stopserver
@@ -395,7 +432,6 @@ We believe this can be reduced further with either Turso or S3 and Litestream.
 [See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
 * [Deploy to fly.io](docs/fly_deployment.md)
-* [Critical issue with database migrations on fly.io](docs/ALEMBIC_CONFIGURATION_CHANGES.md)
 
 ## Improve LLM Performance by Selecting a Better LLM
 
