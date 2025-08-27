@@ -420,11 +420,14 @@ uv run python oppman.py env
 
 ## 📚 Documentation
 
+### Video Tutorials
+
+* [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
+* [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
+* [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
+
 ### Developer Tutorials and HowTos
 
-* video: [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
-* video: [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
-* video: [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
 * [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
 
