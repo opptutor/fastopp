@@ -74,7 +74,7 @@ The project is intended to teach use of FastAPI with LLMs.  The knowledge you ga
 highly relevant to employers as long as Python and LLMs continue to be used together.
 We intend that you eventually move off of Jinja2 templates and use the built-in API
 for interfaces with React-variants or something like Flutter for mobile or web apps.
-The project is intended to get your started on your path.  Even if it dies, but your
+The project is intended to get you started on your path.  Even if it dies, your
 knowledge will live on.
 
 ### I'm concerned about security
@@ -190,10 +190,10 @@ Create a `.env` file in your project root:
 
 **Required Environment Variables:**
 
-- `DATABASE_URL`: Database connection string
-- `SECRET_KEY`: Secret key for JWT tokens and session management
-- `ENVIRONMENT`: Set to "development" for development mode
-- `OPENROUTER_API_KEY`: API key for OpenRouter (required for AI demo features)
+* `DATABASE_URL`: Database connection string
+* `SECRET_KEY`: Secret key for JWT tokens and session management
+* `ENVIRONMENT`: Set to "development" for development mode
+* `OPENROUTER_API_KEY`: API key for OpenRouter (required for AI demo features)
 
 ```bash
 # Create environment file with secure defaults
@@ -224,13 +224,13 @@ uv run python oppman.py init
 
 This single command will:
 
-- Initialize migrations
-- Create initial migration
-- Apply migrations
-- Initialize database with sample data
-- Create superuser and test data
+* Initialize migrations
+* Create initial migration
+* Apply migrations
+* Initialize database with sample data
+* Create superuser and test data
 
-**Alternative: Step-by-Step Setup**
+#### Alternative: Step-by-Step Setup
 
 If you prefer to understand each step:
 
@@ -259,16 +259,16 @@ uv run python oppman.py runserver
 
 Visit these URLs in your browser:
 
-- **Homepage**: `http://localhost:8000/`
-- **Admin Panel**: `http://localhost:8000/admin/`
-- **API Docs**: `http://localhost:8000/docs`
+* **Homepage**: `http://localhost:8000/`
+* **Admin Panel**: `http://localhost:8000/admin/`
+* **API Docs**: `http://localhost:8000/docs`
 
 #### Admin Panel Login
 
 Use these credentials to access the admin panel:
 
-- **Email**: `admin@example.com`
-- **Password**: `admin123`
+* **Email**: `admin@example.com`
+* **Password**: `admin123`
 
 ## 🛠️ Management Commands
 
@@ -359,8 +359,8 @@ uv run python oppman.py help
 
 All backup files are automatically organized in the `backups/` directory:
 
-- **`backups/destroy/`** - Files backed up before switching to minimal mode
-- **`backups/restore/`** - Files backed up before restoring demo mode
+* **`backups/destroy/`** - Files backed up before switching to minimal mode
+* **`backups/restore/`** - Files backed up before restoring demo mode
 
 Each backup includes a timestamp for easy identification. Use `uv run python oppdemo.py backups` to list all available backups.
 
@@ -370,8 +370,8 @@ The application comes with pre-loaded test data:
 
 ### Users
 
-- **Superuser**: `admin@example.com` / `admin123`
-- **Test Users**: `john@example.com`, `jane@example.com`, `bob@example.com` / `test123`
+* **Superuser**: `admin@example.com` / `admin123`
+* **Test Users**: `john@example.com`, `jane@example.com`, `bob@example.com` / `test123`
 
 ### Products
 
@@ -381,8 +381,8 @@ Sample products with various categories and prices for testing the admin interfa
 
 FastOpp now uses two separate management tools for better organization:
 
-- **`oppman.py`**: Core application management (database, users, server, migrations)
-- **`oppdemo.py`**: Demo file management (save/restore demo state, switch between modes)
+* **`oppman.py`**: Core application management (database, users, server, migrations)
+* **`oppdemo.py`**: Demo file management (save/restore demo state, switch between modes)
 
 This separation allows developers to focus on core functionality while keeping demo management separate.
 
@@ -479,14 +479,16 @@ uv run python oppman.py env
 FastOpp supports two application modes:
 
 ### Demo Mode (Default)
-- Full-featured application with AI chat, dashboard, design examples
-- Sample data and comprehensive UI components
-- Ideal for learning and showcasing features
+
+* Full-featured application with AI chat, dashboard, design examples
+* Sample data and comprehensive UI components
+* Ideal for learning and showcasing features
 
 ### Minimal Mode
-- Basic FastAPI application with authentication
-- Clean slate for building your own application
-- Includes admin panel and basic structure
+
+* Basic FastAPI application with authentication
+* Clean slate for building your own application
+* Includes admin panel and basic structure with password-protected pages
 
 ### Switching Between Modes
 
