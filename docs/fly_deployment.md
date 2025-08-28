@@ -241,6 +241,9 @@ fly secrets set SECRET_KEY=$(openssl rand -hex 32)
 fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/app.db"
 # note, by default, FastOpp uses the name test.db
 # fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/test.db"
+# additionally, if you want to use the AI chat demo, you must add your
+# openrouter key
+# OPENROUTER_API_KEY=your-key-from-openrouter
 ```
 
 ### 6) Deploy
