@@ -20,6 +20,8 @@ It does not use PostgreSQL or Nginx.
 
 It uses Fly.io, since it's cheap, repeatable, and volume-backed. Run uvicorn directly. Store SQLite at /data/app.db.
 
+NOTE: By default, FastOpp uses /data/test.db
+
 ## Pricing
 
 You can deploy your app in whatever manner you need. Deploying to Fly.io is one example. It is intended to be a low-cost example.
@@ -237,6 +239,8 @@ You can confirm these settings using the steps in the Confirm Memory and Swap Se
 ```bash
 fly secrets set SECRET_KEY=$(openssl rand -hex 32)
 fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/app.db"
+# note, by default, FastOpp uses the name test.db
+# fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/test.db"
 ```
 
 ### 6) Deploy
