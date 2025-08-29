@@ -105,7 +105,7 @@ app, you can control costs.  If only a few people use the app, the
 free version will work.  LLama3.3-70b is pretty good, not great. It's primary
 quality is that it is much cheaper than top-tier great LLMs like [GPT-5](https://openrouter.ai/openai/gpt-5).
 
-###  Can I use FastOpp in my own business?
+### Can I use FastOpp in my own business?
 
 Yes.  FastOpp itself is under the MIT license. You can modify FastOpp and close it off if that helps
 your business or personal goals.  Refer to pyproject.toml for a list of FastOpp dependencies and confirm compliance for your use.
@@ -396,9 +396,10 @@ uv run python oppman.py help
 **Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old commands like `oppman.py init`, `oppman.py users`, `oppman.py products`, etc., still work but show deprecation warnings directing you to use `oppdemo.py` instead.
 
 For example:
-- `uv run python oppman.py init` → `uv run python oppdemo.py init`
-- `uv run python oppman.py users` → `uv run python oppdemo.py users`
-- `uv run python oppman.py products` → `uv run python oppdemo.py products`
+
+* `uv run python oppman.py init` → `uv run python oppdemo.py init`
+* `uv run python oppman.py users` → `uv run python oppdemo.py users`
+* `uv run python oppman.py products` → `uv run python oppdemo.py products`
 
 ### Backup Management
 
@@ -427,24 +428,21 @@ Sample products with various categories and prices for testing the admin interfa
 FastOpp now uses two separate management tools for better organization and separation of concerns:
 
 ### oppman.py - Core Application Management
+
 **oppman.py** is similar to Django's manage.py and focuses on core application management:
+
 * **Server Management**: Start/stop development and production servers
 * **Database Management**: Backup, delete, and migration operations
 * **Environment Management**: Configuration checks and utilities
 * **Core Operations**: Essential application lifecycle management
 
 ### oppdemo.py - Demo Management
+
 **oppdemo.py** handles all demo-related functionality:
+
 * **Demo File Management**: Save/restore demo state, switch between demo and minimal modes
 * **Demo Data Initialization**: All sample data creation (users, products, webinars, registrants)
 * **Demo State Control**: Comprehensive demo application management
-
-### Benefits of Separation
-* **Clear Responsibilities**: Each tool has a focused purpose
-* **Better Organization**: Easier to find and use specific functionality
-* **Maintainability**: Simpler to maintain and extend each tool independently
-* **User Experience**: Clear guidance on which tool to use for what purpose
-* **Migration Path**: Smooth transition with deprecation warnings for existing users
 
 ## 🔄 Database Migrations
 
@@ -508,29 +506,25 @@ FastOpp now uses two separate management tools for better organization and separ
     uv run uvicorn main:app --reload --port 8001
     ```
 
-7. **Demo commands not working**
-
-     ```bash
-     # Demo data initialization commands have moved to oppdemo.py
-     uv run python oppdemo.py help
-     
-     # If you run the old commands, you'll get helpful deprecation warnings
-     uv run python oppman.py init      # Shows deprecation warning, redirects to oppdemo.py
-     uv run python oppman.py users     # Shows deprecation warning, redirects to oppdemo.py
-     uv run python oppman.py products  # Shows deprecation warning, redirects to oppdemo.py
-     ```
-
 ### Quick Reset
 
-If something goes wrong, you can reset everything:
+FastOpp is a learning tool designed for tinkering, you can play around
+with the demo and then restore the entire demo or just the database to a working state:
 
 ```bash
 # Backup current database
 uv run python oppman.py backup
 
-# Delete and reinitialize
-uv run python oppman.py delete
-uv run python oppdemo.py init
+# Delete database and reinitialize
+uv run python oppman.py delete # delete SQL database
+
+# initialize blank database
+uv run python oppdemo.py db
+
+or
+
+# initializes and puts in fake data
+uv run python oppdemo.py init 
 
 # Verify setup
 uv run python oppman.py env
@@ -560,7 +554,7 @@ UPLOAD_DIR=/app/uploads
 # Files stored in: /app/uploads/photos/
 # URLs served from: /static/uploads/photos/
 
-# Fly.io deployment with persistent volume
+# Fly.io deployment with persistent Fly Volume mounted at /data
 UPLOAD_DIR=/data/uploads
 # Files stored in: /data/uploads/photos/
 # URLs served from: /static/uploads/photos/
@@ -610,41 +604,14 @@ uv run python oppdemo.py restore
 uv run python oppdemo.py diff
 ```
 
-## 🔄 Command Migration Guide
-
-### Recent Changes (August 2025)
-
-FastOpp has been refactored to better separate concerns between core application management and demo functionality:
-
-#### What Changed
-* **oppman.py** now focuses on core application management (like Django's manage.py)
-* **oppdemo.py** now handles all demo-related functionality
-* Demo data initialization commands moved from oppman.py to oppdemo.py
-
-#### Migration Path
-* **Existing commands still work** but show deprecation warnings
-* **Clear guidance** provided for new command locations
-* **Smooth transition** with no breaking changes
-
-#### Quick Reference
-| Old Command | New Command | Status |
-|-------------|-------------|---------|
-| `oppman.py init` | `oppdemo.py init` | ✅ Moved with deprecation warning |
-| `oppman.py users` | `oppdemo.py users` | ✅ Moved with deprecation warning |
-| `oppman.py products` | `oppdemo.py products` | ✅ Moved with deprecation warning |
-| `oppman.py webinars` | `oppdemo.py webinars` | ✅ Moved with deprecation warning |
-
-#### Benefits
-* **Better Organization**: Clear separation of concerns
-* **Easier Maintenance**: Each tool has a focused purpose
-* **Improved UX**: Clear guidance on which tool to use
-* **Future-Proof**: Better foundation for future enhancements
-
 ## 📚 Documentation
+
+### YouTube Video Tutorials
 
 * [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
+* [](https://youtu.be/YKC3ZSA2Eh8)
 
 ### Written Developer Tutorials and HowTos
 
