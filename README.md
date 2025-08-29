@@ -14,7 +14,7 @@ Django and Flask are not designed for optimized async LLM applications.
 
 ## Overview
 
-Although both Django and Flask can absolutely be used for these
+Although both Django and Flask can absolutely be used for complex AI
 applications and are great in many, many ways, there are often rough patches during
 development of asynchronous AI applications that communicate with backend LLMs available
 at OpenAI, Anthropic, and OpenRouter.
@@ -104,6 +104,11 @@ app will have very limited functionality.  If you password-protect your
 app, you can control costs.  If only a few people use the app, the
 free version will work.  LLama3.3-70b is pretty good, not great. It's primary
 quality is that it is much cheaper than top-tier great LLMs like [GPT-5](https://openrouter.ai/openai/gpt-5).
+
+###  Can I use FastOpp in my own business?
+
+Yes.  FastOpp itself is under the MIT license. You can modify FastOpp and close it off if that helps
+your business or personal goals.  Refer to pyproject.toml for a list of FastOpp dependencies and confirm compliance for your use.
 
 ## Screenshots of Included Design Examples and Functionality Demos
 
