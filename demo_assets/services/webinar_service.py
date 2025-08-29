@@ -1,6 +1,7 @@
 """
 Webinar service for handling webinar registrant business logic
 """
+import os
 from pathlib import Path
 from typing import Optional
 from uuid import UUID
@@ -72,7 +73,7 @@ class WebinarService:
             # Generate unique filename
             file_extension = Path(filename).suffix if filename else '.jpg'
             unique_filename = f"{uuid.uuid4()}{file_extension}"
-            file_path = Path("static/uploads/photos") / unique_filename
+            file_path = Path(os.getenv("UPLOAD_DIR", "static/uploads")) / "photos" / unique_filename
             
             # Save file
             with open(file_path, "wb") as buffer:
