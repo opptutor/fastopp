@@ -30,7 +30,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
 
 # Create upload directories
-UPLOAD_DIR = Path("static/uploads")
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "static/uploads"))
 UPLOAD_DIR.mkdir(exist_ok=True)
 PHOTOS_DIR = UPLOAD_DIR / "photos"
 PHOTOS_DIR.mkdir(exist_ok=True)
@@ -40,7 +40,12 @@ PHOTOS_DIR.mkdir(exist_ok=True)
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
-# Mount static files
+# Mount uploads directory based on environment (MUST come before /static mount)
+if os.getenv("UPLOAD_DIR") and os.getenv("UPLOAD_DIR") != "static/uploads":
+    # In production environments, mount the uploads directory separately
+    app.mount("/static/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
+
+# Mount static files (MUST come after /static/uploads to avoid conflicts)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
