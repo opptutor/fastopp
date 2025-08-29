@@ -201,6 +201,7 @@ Make sure this is included, too.
 ```toml
 [env]
   ENVIRONMENT = "production"
+  UPLOAD_DIR = "/data/uploads"
 
 [[mounts]]
   source = "data"
