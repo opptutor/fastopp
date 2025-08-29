@@ -195,6 +195,13 @@ Create a `.env` file in your project root:
 * `ENVIRONMENT`: Set to "development" for development mode
 * `OPENROUTER_API_KEY`: API key for OpenRouter (required for AI demo features)
 
+**Optional Environment Variables:**
+
+* `UPLOAD_DIR`: Directory for storing uploaded files (defaults to `static/uploads` if not set)
+  * **Local Development**: Not set (uses default `static/uploads`)
+  * **Production Deployments**: Set to persistent storage path (e.g., `/data/uploads`, `/app/uploads`)
+  * **URL Compatibility**: Files are always served from `/static/uploads/photos/` regardless of storage location
+
 ```bash
 # Create environment file with secure defaults
 cat > .env << EOF
@@ -525,6 +532,46 @@ uv run python oppman.py env
 ```
 
 **Note**: The `init` command has been moved to `oppdemo.py`. The old `oppman.py init` command still works but shows a deprecation warning.
+
+## 📁 File Uploads and Storage
+
+FastOpp includes a flexible file upload system that works across different deployment environments:
+
+### How It Works
+
+* **Local Development**: Files stored in `static/uploads/` directory (default behavior)
+* **Production Deployments**: Files stored in configurable directory via `UPLOAD_DIR` environment variable
+* **URL Consistency**: All uploads served from `/static/uploads/photos/` regardless of storage location
+
+### Configuration Examples
+
+```bash
+# Local development (no environment variable needed)
+# Files stored in: static/uploads/photos/
+# URLs served from: /static/uploads/photos/
+
+# Docker deployment
+UPLOAD_DIR=/app/uploads
+# Files stored in: /app/uploads/photos/
+# URLs served from: /static/uploads/photos/
+
+# Fly.io deployment with persistent volume
+UPLOAD_DIR=/data/uploads
+# Files stored in: /data/uploads/photos/
+# URLs served from: /static/uploads/photos/
+
+# Kubernetes deployment
+UPLOAD_DIR=/persistent/uploads
+# Files stored in: /persistent/uploads/photos/
+# URLs served from: /static/uploads/photos/
+```
+
+### Benefits
+
+* **Environment-agnostic**: Works in any deployment environment
+* **Backward compatible**: Local development unchanged
+* **Persistent storage**: Production deployments can use persistent volumes
+* **URL consistency**: Frontend code doesn't need to change
 
 ## 🔄 Demo vs Minimal Mode
 
