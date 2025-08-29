@@ -606,6 +606,19 @@ uv run python oppdemo.py diff
 
 ## 📚 Documentation
 
+### Comprehensive Guides
+
+For detailed documentation, see the [docs/](docs/) folder:
+
+* [Setup Guide](docs/SETUP.md) - Environment setup and database configuration
+* [Architecture Overview](docs/ARCHITECTURE.md) - System design and organization
+* [Database Management](docs/DATABASE.md) - Migrations and database operations
+* [Development Guide](docs/DEVELOPMENT.md) - Adding features and best practices
+* [Features Overview](docs/FEATURES.md) - Available functionality
+* [Authentication Guide](docs/AUTHENTICATION.md) - User management and permissions
+* [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
+* [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment
+
 ### YouTube Video Tutorials
 
 * [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
@@ -613,18 +626,13 @@ uv run python oppdemo.py diff
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 
-### Written Developer Tutorials and HowTos
-
-* [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
-* [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
-
 ## Cheap Deployment
 
 Fly is the cheapest solution we've found thus far at under $0.25/month with a database.
 We believe this can be reduced further with either Turso or S3 and Litestream.
 [See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
-* [Deploy to fly.io](docs/fly_deployment.md)
+* [Deploy to fly.io](docs/DEPLOYMENT.md)
 
 ## Improve LLM Performance by Selecting a Better LLM
 
@@ -639,9 +647,6 @@ for better performance and still be about 20x cheaper than premier OpenAI models
 ### Overview and Deployment
 
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
-* [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
-* [Production vs Development](docs/production_vs_development.md) - Environment differences
-* [Authentication System](docs/authentication.md) - Authentication and authorization details
 
 ## Contributing To This Project
 
@@ -649,8 +654,7 @@ for better performance and still be about 20x cheaper than premier OpenAI models
 
 ## Development Plans
 
-* [Oppkey Development Plans](docs/plan/oppkey_development_plans.md) - includes assessment plans
-* [Call for Volunteers](docs/plan/call_for_volunteers.md)
+* [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment plans
 
 ## Guidelines
 
