@@ -308,6 +308,14 @@ def save_demo_files():
             print("  ✅ models.py")
             files_copied += 1
         
+        # Backup main.py (application entrypoint)
+        print("📄 Backing up main.py...")
+        main_src = Path("main.py")
+        if main_src.exists():
+            shutil.copy2(main_src, demo_assets / "main.py")
+            print("  ✅ main.py")
+            files_copied += 1
+        
         # Backup sample data scripts
         print("📝 Backing up sample data scripts...")
         script_files = [
