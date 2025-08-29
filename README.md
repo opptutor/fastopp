@@ -611,7 +611,7 @@ uv run python oppdemo.py diff
 * [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
-* [](https://youtu.be/YKC3ZSA2Eh8)
+* [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8)
 
 ### Written Developer Tutorials and HowTos
 
