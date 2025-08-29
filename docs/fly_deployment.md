@@ -283,6 +283,15 @@ fly ssh issue --agent
 fly ssh console -C "uv run python oppman.py init"
 ```
 
+If you want to run the webinar demo, you also need to copy the fake people pictures
+from `static/uploads/photos` into `/data/uploads/photos`
+
+```bash
+# copy fake data initial photos into Fly Volume
+fly ssh console
+cp static/uploads/photos/* /data/uploads/photos/
+```
+
 ### Confirm Memory and Swap Settings
 
 To verify inside the instance, ssh in with:
