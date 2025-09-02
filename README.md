@@ -599,19 +599,10 @@ uv run python oppdemo.py diff
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 
-### Improve LLM Performance by Selecting a Better LLM
-
-The demo is set to use free models, which have lower performance.
-Edit `services/chat_service.py` in this project
-and change the LLM model from "meta-llama/llama-3.3-70b-instruct:free"
-to another model such as "meta-llama/llama-3.3-70b-instruct" without the free
-for better performance and still be about 20x cheaper than premier OpenAI models.
-(as of August 15, 2025)
-[Browse OpenRouter cheap models](https://openrouter.ai/models?max_price=0.1).
-
 ### Tutorials
 
 * [Add new page](docs/tutorials/add_new_page.md)
+* [Change LLM](docs/tutorials/change_llm.md)
 
 ### Deployment
 
