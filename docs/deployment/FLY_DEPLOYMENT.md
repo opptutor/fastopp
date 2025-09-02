@@ -1,6 +1,6 @@
-# Production Deployment
+# Fly.io Deployment Guide
 
-This guide covers deploying your FastOpp application to production, including Fly.io deployment, environment configuration, and production server setup.
+This guide covers deploying your FastOpp application to Fly.io, including environment configuration, production server setup, and troubleshooting common deployment issues.
 
 ## Overview
 
@@ -358,6 +358,6 @@ After successful deployment:
 4. **Plan Scaling**: Prepare for increased traffic and load
 
 For more information, see:
-- [SETUP.md](SETUP.md) - Development environment setup
-- [DATABASE.md](DATABASE.md) - Database management and migrations
-- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
+- [POSTGRESQL_SETUP.md](POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
+- [DATABASE.md](../DATABASE.md) - Database management and migrations
+- [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture overview

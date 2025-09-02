@@ -1,6 +1,6 @@
-# Development Environment Setup
+# PostgreSQL Setup and Database Configuration
 
-This guide covers setting up your development environment for the FastOpp project, including database configuration, environment variables, and the differences between development and production setups.
+This guide covers setting up PostgreSQL for the FastOpp project, including database configuration, environment variables, and the differences between development and production setups.
 
 ## Quick Start
 
@@ -221,6 +221,6 @@ After setting up your environment:
 4. **Test Features**: Verify file uploads, AI chat, and admin functionality
 
 For more detailed information on specific components, see:
-- [DATABASE.md](DATABASE.md) - Database management and migrations
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment
-- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
+- [DATABASE.md](../DATABASE.md) - Database management and migrations
+- [FLY_DEPLOYMENT.md](FLY_DEPLOYMENT.md) - Fly.io deployment guide
+- [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture overview

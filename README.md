@@ -48,7 +48,7 @@ know Python, but are not strong in or do not like JavaScript.
 * You prefer typed languages and want to use Python optional type hints instead of relying only on dynamic typing
 * You prefer HTML files with Python code and variables embedded in the HTML instead of embedding HTML in the Python code on the server
 * You are using Django or Flask and are having problems with async LLM communication
-* You started with [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/). Your code became more complex and is now very difficult to manage
+* You started with [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/). Your code became more complex and is now difficult to manage
 
 ## Example Use Cases
 
@@ -601,13 +601,13 @@ uv run python oppdemo.py diff
 
 ## Docs folder
 
-* [Setup Guide](docs/SETUP.md) - Environment setup and database configuration
+* [PostgreSQL Setup](docs/deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
 * [Architecture Overview](docs/ARCHITECTURE.md) - System design and organization
 * [Database Management](docs/DATABASE.md) - Migrations and database operations
 * [Development Guide](docs/DEVELOPMENT.md) - Adding features and best practices
 * [Features Overview](docs/FEATURES.md) - Available functionality
 * [Authentication Guide](docs/AUTHENTICATION.md) - User management and permissions
-* [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
+* [Fly.io Deployment](docs/deployment/FLY_DEPLOYMENT.md) - Fly.io deployment guide
 * [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment
 
 ## Cheap Deployment
@@ -616,7 +616,7 @@ Fly is the cheapest solution we've found thus far at under $0.25/month with a da
 We believe this can be reduced further with either Turso or S3 and Litestream.
 [See discussion](https://github.com/Oppkey/fastopp/discussions/25).
 
-* [Deploy to fly.io](docs/DEPLOYMENT.md)
+* [Deploy to fly.io](docs/deployment/FLY_DEPLOYMENT.md)
 
 ## Improve LLM Performance by Selecting a Better LLM
 

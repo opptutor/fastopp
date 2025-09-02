@@ -454,6 +454,6 @@ After setting up your database:
 4. **Monitor Performance**: Check query performance and add indexes as needed
 
 For more information, see:
-- [SETUP.md](SETUP.md) - Development environment setup
-- [DEPLOYMENT.md](DEPLOYMENT.md) - Production deployment
+- [POSTGRESQL_SETUP.md](deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
+- [FLY_DEPLOYMENT.md](deployment/FLY_DEPLOYMENT.md) - Fly.io deployment guide
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview

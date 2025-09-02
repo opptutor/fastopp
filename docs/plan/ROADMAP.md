@@ -386,7 +386,7 @@ The FastOpp platform represents a unique opportunity to evaluate modern web deve
 The roadmap outlined here provides a structured approach to achieving these goals, with clear milestones and success metrics. Success will be measured not just in technical achievements, but in the development of a sustainable ecosystem for learning and innovation.
 
 For more information about the technical implementation, see:
-- [SETUP.md](../SETUP.md) - Development environment setup
+- [POSTGRESQL_SETUP.md](../deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture overview
 - [FEATURES.md](../FEATURES.md) - Application features and usage
 - [DEVELOPMENT.md](../DEVELOPMENT.md) - Development workflow and best practices

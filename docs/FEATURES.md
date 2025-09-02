@@ -469,7 +469,7 @@ After exploring the features:
 4. **Customize Admin Panel**: Adapt the interface for your needs
 
 For more information, see:
-- [SETUP.md](SETUP.md) - Development environment setup
+- [POSTGRESQL_SETUP.md](deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
 - [DATABASE.md](DATABASE.md) - Database management and migrations
 - [AUTHENTICATION.md](AUTHENTICATION.md) - User authentication and permissions
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview

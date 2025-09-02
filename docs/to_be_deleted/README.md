@@ -18,11 +18,11 @@ As part of the documentation consolidation effort, we've reduced the docs folder
 | File | Status | Merged Into |
 |------|--------|-------------|
 | `REFACTORING_SUMMARY.md` | ✅ Consolidated | `DEVELOPMENT.md` |
-| `ALEMBIC_CONFIGURATION_CHANGES.md` | ✅ Consolidated | `DEPLOYMENT.md` |
+| `ALEMBIC_CONFIGURATION_CHANGES.md` | ✅ Consolidated | `deployment/FLY_DEPLOYMENT.md` |
 | `basic_add_new_page.md` | ✅ Consolidated | `DEVELOPMENT.md` |
 | `streaming_chat.md` | ✅ Consolidated | `FEATURES.md` |
-| `postgresql_install.md` | ✅ Consolidated | `SETUP.md` |
-| `production_vs_development.md` | ✅ Consolidated | `SETUP.md` |
+| `postgresql_install.md` | ✅ Consolidated | `deployment/POSTGRESQL_SETUP.md` |
+| `production_vs_development.md` | ✅ Consolidated | `deployment/POSTGRESQL_SETUP.md` |
 | `database_loading_problems.md` | ✅ Consolidated | `DATABASE.md` |
 | `MIGRATION_GUIDE.md` | ✅ Consolidated | `DATABASE.md` |
 | `file_upload.md` | ✅ Consolidated | `FEATURES.md` |
@@ -37,8 +37,8 @@ As part of the documentation consolidation effort, we've reduced the docs folder
 
 The documentation has been reorganized into these main files:
 
-1. **`SETUP.md`** - Development environment setup, database configuration, environment variables
-2. **`DEPLOYMENT.md`** - Production deployment, Fly.io deployment, server setup
+1. **`deployment/POSTGRESQL_SETUP.md`** - PostgreSQL setup, database configuration, environment variables
+2. **`deployment/FLY_DEPLOYMENT.md`** - Fly.io deployment, server setup, troubleshooting
 3. **`DATABASE.md`** - Database management, migrations, troubleshooting, best practices
 4. **`AUTHENTICATION.md`** - Complete authentication system overview and implementation
 5. **`FEATURES.md`** - Application features, file management, AI chat, admin interface

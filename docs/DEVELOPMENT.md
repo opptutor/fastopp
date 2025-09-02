@@ -552,7 +552,7 @@ After setting up development workflow:
 4. **Prepare for Production**: Ensure code is production-ready
 
 For more information, see:
-- [SETUP.md](SETUP.md) - Development environment setup
+- [POSTGRESQL_SETUP.md](deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
 - [DATABASE.md](DATABASE.md) - Database management and migrations
 - [FEATURES.md](FEATURES.md) - Application features and usage
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview
