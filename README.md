@@ -260,7 +260,7 @@ uv run python oppman.py migrate upgrade
 uv run python oppdemo.py init
 ```
 
-**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old `oppman.py init` command still works but shows a deprecation warning.
+**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns.
 
 ### 4. Start Development Server
 
@@ -312,12 +312,6 @@ uv run python oppman.py migrate current # Check migration status
 uv run python oppman.py env             # Check environment configuration
 uv run python oppman.py demo            # Show demo command help
 uv run python oppman.py help            # Show comprehensive help
-
-# Demo data initialization (DEPRECATED - use oppdemo.py instead)
-# These commands are deprecated and will be removed in a future version
-uv run python oppman.py init            # Complete initialization (shows deprecation warning)
-uv run python oppman.py users           # Add test users (shows deprecation warning)
-uv run python oppman.py products        # Add sample products (shows deprecation warning)
 ```
 
 ### Demo Management (oppdemo.py)
@@ -391,19 +385,9 @@ uv run python oppman.py env
 uv run python oppman.py help
 ```
 
-### Demo Commands (Legacy Support)
-
-**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old commands like `oppman.py init`, `oppman.py users`, `oppman.py products`, etc., still work but show deprecation warnings directing you to use `oppdemo.py` instead.
-
-For example:
-
-* `uv run python oppman.py init` → `uv run python oppdemo.py init`
-* `uv run python oppman.py users` → `uv run python oppdemo.py users`
-* `uv run python oppman.py products` → `uv run python oppdemo.py products`
-
 ### Backup Management
 
-All backup files are automatically organized in the `backups/` directory:
+Backup files are automatically organized in the `backups/` directory:
 
 * **`backups/destroy/`** - Files backed up before switching to minimal mode
 * **`backups/restore/`** - Files backed up before restoring demo mode
@@ -498,11 +482,15 @@ FastOpp now uses two separate management tools for better organization and separ
     ```bash
     # Stop any running servers
     uv run python oppman.py stopserver
-     
+    
+    or
+    
     # Kill uvicorn processes manually
     pkill -f uvicorn
+
+    or
      
-    # Or use a different port
+    # use a different port
     uv run uvicorn main:app --reload --port 8001
     ```
 
@@ -529,8 +517,6 @@ uv run python oppdemo.py init
 # Verify setup
 uv run python oppman.py env
 ```
-
-**Note**: The `init` command has been moved to `oppdemo.py`. The old `oppman.py init` command still works but shows a deprecation warning.
 
 ## 📁 File Uploads and Storage
 
@@ -606,9 +592,14 @@ uv run python oppdemo.py diff
 
 ## 📚 Documentation
 
-### Comprehensive Guides
+### YouTube Video Tutorials
 
-For detailed documentation, see the [docs/](docs/) folder:
+* [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
+* [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
+* [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
+* [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
+
+## Docs folder
 
 * [Setup Guide](docs/SETUP.md) - Environment setup and database configuration
 * [Architecture Overview](docs/ARCHITECTURE.md) - System design and organization
@@ -618,13 +609,6 @@ For detailed documentation, see the [docs/](docs/) folder:
 * [Authentication Guide](docs/AUTHENTICATION.md) - User management and permissions
 * [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment
 * [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment
-
-### YouTube Video Tutorials
-
-* [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
-* [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
-* [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
-* [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 
 ## Cheap Deployment
 
