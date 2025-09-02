@@ -1,8 +1,8 @@
 [project]
 name = "fastopp"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Oppkey"]
-description = "Add your description here"
+description = "FastAPI starter package for students prototyping AI web applications."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
