@@ -48,7 +48,7 @@ know Python, but are not strong in or do not like JavaScript.
 * You prefer typed languages and want to use Python optional type hints instead of relying only on dynamic typing
 * You prefer HTML files with Python code and variables embedded in the HTML instead of embedding HTML in the Python code on the server
 * You are using Django or Flask and are having problems with async LLM communication
-* You started with [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/). Your code became more complex and is now very difficult to manage
+* You started with [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/). Your code became more complex and is now difficult to manage
 
 ## Example Use Cases
 
@@ -260,7 +260,7 @@ uv run python oppman.py migrate upgrade
 uv run python oppdemo.py init
 ```
 
-**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old `oppman.py init` command still works but shows a deprecation warning.
+**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns.
 
 ### 4. Start Development Server
 
@@ -312,12 +312,6 @@ uv run python oppman.py migrate current # Check migration status
 uv run python oppman.py env             # Check environment configuration
 uv run python oppman.py demo            # Show demo command help
 uv run python oppman.py help            # Show comprehensive help
-
-# Demo data initialization (DEPRECATED - use oppdemo.py instead)
-# These commands are deprecated and will be removed in a future version
-uv run python oppman.py init            # Complete initialization (shows deprecation warning)
-uv run python oppman.py users           # Add test users (shows deprecation warning)
-uv run python oppman.py products        # Add sample products (shows deprecation warning)
 ```
 
 ### Demo Management (oppdemo.py)
@@ -391,19 +385,9 @@ uv run python oppman.py env
 uv run python oppman.py help
 ```
 
-### Demo Commands (Legacy Support)
-
-**Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns. The old commands like `oppman.py init`, `oppman.py users`, `oppman.py products`, etc., still work but show deprecation warnings directing you to use `oppdemo.py` instead.
-
-For example:
-
-* `uv run python oppman.py init` → `uv run python oppdemo.py init`
-* `uv run python oppman.py users` → `uv run python oppdemo.py users`
-* `uv run python oppman.py products` → `uv run python oppdemo.py products`
-
 ### Backup Management
 
-All backup files are automatically organized in the `backups/` directory:
+Backup files are automatically organized in the `backups/` directory:
 
 * **`backups/destroy/`** - Files backed up before switching to minimal mode
 * **`backups/restore/`** - Files backed up before restoring demo mode
@@ -498,11 +482,15 @@ FastOpp now uses two separate management tools for better organization and separ
     ```bash
     # Stop any running servers
     uv run python oppman.py stopserver
-     
+    
+    or
+    
     # Kill uvicorn processes manually
     pkill -f uvicorn
+
+    or
      
-    # Or use a different port
+    # use a different port
     uv run uvicorn main:app --reload --port 8001
     ```
 
@@ -529,8 +517,6 @@ uv run python oppdemo.py init
 # Verify setup
 uv run python oppman.py env
 ```
-
-**Note**: The `init` command has been moved to `oppdemo.py`. The old `oppman.py init` command still works but shows a deprecation warning.
 
 ## 📁 File Uploads and Storage
 
@@ -613,44 +599,22 @@ uv run python oppdemo.py diff
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 
-### Written Developer Tutorials and HowTos
+### Tutorials
 
-* [Beginner Tutorial: Add New Page](docs/basic_add_new_page.md)
-* [Migration Guide - Add stuff to database](docs/MIGRATION_GUIDE.md) - Database migration management
+* [Add new page](docs/tutorials/add_new_page.md)
+* [Change LLM](docs/tutorials/change_llm.md)
 
-## Cheap Deployment
+### Deployment
 
-Fly is the cheapest solution we've found thus far at under $0.25/month with a database.
-We believe this can be reduced further with either Turso or S3 and Litestream.
-[See discussion](https://github.com/Oppkey/fastopp/discussions/25).
+* [Deploy to fly.io](docs/deployment/FLY_DEPLOYMENT.md)
+* [fly deployment costs discussion](https://github.com/Oppkey/fastopp/discussions/25)
 
-* [Deploy to fly.io](docs/fly_deployment.md)
-
-## Improve LLM Performance by Selecting a Better LLM
-
-The demo is set to use free models, which have lower performance.
-Edit `services/chat_service.py` in this project
-and change the LLM model from "meta-llama/llama-3.3-70b-instruct:free"
-to another model such as "meta-llama/llama-3.3-70b-instruct" without the free
-for better performance and still be about 20x cheaper than premier OpenAI models.
-(as of August 15, 2025)
-[Browse OpenRouter cheap models](https://openrouter.ai/models?max_price=0.1).
-
-### Overview and Deployment
+### Architecture and Overview
 
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
-* [PostgreSQL Installation Guide](docs/postgresql_install.md) - Database setup for production
-* [Production vs Development](docs/production_vs_development.md) - Environment differences
-* [Authentication System](docs/authentication.md) - Authentication and authorization details
-
-## Contributing To This Project
-
-* [Contribute to Demos](demo_assets/README.md)
-
-## Development Plans
-
-* [Oppkey Development Plans](docs/plan/oppkey_development_plans.md) - includes assessment plans
-* [Call for Volunteers](docs/plan/call_for_volunteers.md)
+* [Database](docs/DATABASE.md)
+* [Authentication](docs/AUTHENTICATION.md)
+* [Features](docs/FEATURES.md)
 
 ## Guidelines
 
