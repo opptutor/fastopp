@@ -1,6 +1,131 @@
-# Development Workflow
+# Add New Page
 
-## Environment Setup
+This guide covers adding new pages, testing, debugging, and best practices for the FastOpp application.
+
+## Adding New Pages
+
+### Overview
+
+The Migration Guide page is a static documentation page that doesn't require any database models. It's purely a frontend page that displays information about how to use the existing migration system.
+
+### Key Steps
+
+1. Create a new template for the page
+2. Add a route for the page
+3. Update the header navigation
+4. Add a card to the homepage
+
+### Example: Adding Migration Guide Page
+
+#### 1. Create Template
+
+Create `templates/migration-guide.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Guide - FastOpp</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <div x-data="{ mobileMenuOpen: false }">
+        <!-- Navigation content -->
+    </div>
+
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-5xl font-bold mb-6">Migration Guide</h1>
+            <p class="text-xl mb-8">Learn how to manage database migrations in your FastAPI application</p>
+            <div class="flex justify-center space-x-4">
+                <a href="#quick-start" class="bg-white text-green-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Quick Start
+                </a>
+                <a href="#commands" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-800 transition-colors">
+                    Commands
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="container mx-auto px-4 py-16">
+        <!-- Quick Start Section -->
+        <section id="quick-start" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Quick Start Guide</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Step cards -->
+            </div>
+        </section>
+
+        <!-- Commands Section -->
+        <section id="commands" class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Migration Commands</h2>
+            <!-- Command tables -->
+        </section>
+    </div>
+</body>
+</html>
+```
+
+#### 2. Add Route
+
+Update `routes/pages.py`:
+
+```python
+@router.get("/migration-guide")
+async def migration_guide(request: Request):
+    """Migration Guide page"""
+    return templates.TemplateResponse("migration-guide.html", {"request": request})
+```
+
+#### 3. Update Navigation
+
+Update `templates/partials/header.html`:
+
+```html
+<nav class="hidden md:flex space-x-8">
+    <a href="/" class="text-gray-300 hover:text-white transition-colors">Home</a>
+    <a href="/migration-guide" class="text-gray-300 hover:text-white transition-colors">Migration Guide</a>
+    <a href="/webinar-demo" class="text-gray-300 hover:text-white transition-colors">Webinar Demo</a>
+    <!-- Other navigation items -->
+</nav>
+```
+
+#### 4. Add Homepage Card
+
+Update `templates/index.html`:
+
+```html
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    <!-- Existing cards -->
+    
+    <!-- Migration Guide Card -->
+    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-6 text-white shadow-lg hover:shadow-xl transition-shadow">
+        <div class="flex items-center mb-4">
+            <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-xl font-semibold">Migration Guide</h3>
+        </div>
+        <p class="text-green-100 mb-4">Learn how to manage database migrations with Alembic in your FastAPI application.</p>
+        <a href="/migration-guide" class="inline-block bg-white text-green-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            Get Started
+        </a>
+    </div>
+</div>
+```
+
+## Development Workflow
+
+### 1. Environment Setup
 
 Ensure your development environment is properly configured:
 
@@ -15,7 +140,7 @@ python oppman.py migrate current
 uv sync
 ```
 
-## Development Server
+### 2. Development Server
 
 Start the development server:
 
@@ -27,7 +152,7 @@ python oppman.py runserver
 uv run uvicorn main:app --reload
 ```
 
-## Database Management
+### 3. Database Management
 
 ```bash
 # Create new migration
@@ -40,7 +165,7 @@ python oppman.py migrate upgrade
 python oppman.py migrate current
 ```
 
-## Testing Changes
+### 4. Testing Changes
 
 ```bash
 # Test database operations
@@ -55,7 +180,7 @@ python -m scripts.check_users
 
 ## Development Patterns
 
-### Model-View-Service (MVS) Architecture
+### 1. Model-View-Service (MVS) Architecture
 
 Follow the established MVS pattern:
 
@@ -63,7 +188,7 @@ Follow the established MVS pattern:
 - **Views** (`routes/`): HTTP endpoints and request handling
 - **Services** (`services/`): Business logic and data operations
 
-### Route Organization
+### 2. Route Organization
 
 Organize routes by functionality:
 
@@ -85,7 +210,7 @@ async def login():
     pass
 ```
 
-### Service Layer
+### 3. Service Layer
 
 Implement business logic in services:
 
@@ -103,7 +228,7 @@ class ProductService:
         pass
 ```
 
-### Template Structure
+### 4. Template Structure
 
 Use consistent template organization:
 
@@ -124,7 +249,7 @@ templates/
 
 ## Testing and Debugging
 
-### Testing New Features
+### 1. Testing New Features
 
 #### Manual Testing
 1. Start development server
@@ -145,7 +270,7 @@ uv run python -m pytest tests/test_pages.py
 uv run python -m pytest --cov=.
 ```
 
-### Debugging Techniques
+### 2. Debugging Techniques
 
 #### Logging
 ```python
@@ -186,7 +311,7 @@ debugpy.listen(("0.0.0.0", 5678))
 </div>
 ```
 
-### Common Issues and Solutions
+### 3. Common Issues and Solutions
 
 #### HTMX Loading Issues
 If automatic loading doesn't work:
@@ -226,7 +351,7 @@ print(f"Template exists: {os.path.exists(template_path)}")
 
 ## Code Standards
 
-### Python Style
+### 1. Python Style
 
 Follow PEP 8 guidelines:
 
@@ -241,7 +366,7 @@ def getUserById(userId):
     return db.query(User).filter(User.id==userId).first()
 ```
 
-### Type Hints
+### 2. Type Hints
 
 Use type hints consistently:
 
@@ -261,7 +386,7 @@ async def create_user(
     return user
 ```
 
-### Error Handling
+### 3. Error Handling
 
 Implement proper error handling:
 
@@ -280,7 +405,7 @@ async def get_user(user_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 ```
 
-### Documentation
+### 4. Documentation
 
 Document your code:
 
@@ -308,7 +433,7 @@ async def process_webinar_registration(
 
 ## Performance Optimization
 
-### Database Queries
+### 1. Database Queries
 
 Optimize database operations:
 
@@ -324,7 +449,7 @@ users = await db.execute(stmt)
 users = await db.query(User).filter(User.is_active == True).all()
 ```
 
-### Caching
+### 2. Caching
 
 Implement caching for expensive operations:
 
@@ -349,7 +474,7 @@ async def get_cached_data(key: str):
     return data
 ```
 
-### Async Operations
+### 3. Async Operations
 
 Use async/await properly:
 
@@ -373,7 +498,7 @@ async def get_user_data(user_id: str):
 
 ## Deployment Preparation
 
-### Environment Configuration
+### 1. Environment Configuration
 
 Prepare for production:
 
@@ -387,7 +512,7 @@ ENVIRONMENT=production
 DEBUG=false
 ```
 
-### Database Migrations
+### 2. Database Migrations
 
 Ensure migrations are ready:
 
@@ -402,7 +527,7 @@ python oppman.py migrate create "Production preparation"
 python oppman.py migrate upgrade
 ```
 
-### Static Files
+### 3. Static Files
 
 Prepare static assets:
 
@@ -425,3 +550,9 @@ After setting up development workflow:
 2. **Implement Testing**: Add automated tests for new functionality
 3. **Optimize Performance**: Monitor and improve application performance
 4. **Prepare for Production**: Ensure code is production-ready
+
+For more information, see:
+- [POSTGRESQL_SETUP.md](deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
+- [DATABASE.md](DATABASE.md) - Database management and migrations
+- [FEATURES.md](FEATURES.md) - Application features and usage
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview

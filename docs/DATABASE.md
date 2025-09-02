@@ -19,6 +19,7 @@ uv run python oppman.py migrate init
 ```
 
 This will:
+
 - Initialize Alembic in your project
 - Create `alembic/` directory and `alembic.ini`
 - Configure the database URL for SQLite
@@ -96,44 +97,50 @@ uv run python oppman.py migrate setup
 ### Adding a New Table
 
 1. **Add model to `models.py`**:
-```python
-class Category(SQLModel, table=True):
-    __tablename__ = "categories"
-    
-    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str = Field(max_length=100, nullable=False)
-    description: Optional[str] = Field(max_length=500)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-```
+
+    ```python
+    class Category(SQLModel, table=True):
+        __tablename__ = "categories"
+        
+        id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
+        name: str = Field(max_length=100, nullable=False)
+        description: Optional[str] = Field(max_length=500)
+        created_at: datetime = Field(default_factory=datetime.utcnow)
+    ```
 
 2. **Create migration**:
-```bash
-uv run python oppman.py migrate create "Add Category model"
-```
 
-3. **Apply migration**:
-```bash
-uv run python oppman.py migrate upgrade
-```
+    ```bash
+    uv run python oppman.py migrate create "Add Category model"
+    ```
+
+3. **Apply migration**
+
+    ```bash
+    uv run python oppman.py migrate upgrade
+    ```
 
 ### Modifying Existing Tables
 
-1. **Update model in `models.py`**:
-```python
-class Product(SQLModel, table=True):
-    # ... existing fields ...
-    category_id: Optional[uuid.UUID] = Field(foreign_key="categories.id", nullable=True)
-```
+1. **Update model in `models.py`**
 
-2. **Create migration**:
-```bash
-uv run python oppman.py migrate create "Add category_id to Product"
-```
+    ```python
+    class Product(SQLModel, table=True):
+        # ... existing fields ...
+        category_id: Optional[uuid.UUID] = Field(foreign_key="categories.id", nullable=True)
+    ```
 
-3. **Apply migration**:
-```bash
-uv run python oppman.py migrate upgrade
-```
+2. **Create migration**
+
+    ```bash
+    uv run python oppman.py migrate create "Add category_id to Product"
+    ```
+
+3. **Apply migration**
+
+    ```bash
+    uv run python oppman.py migrate upgrade
+    ```
 
 ## Database Configuration
 
@@ -161,7 +168,7 @@ DATABASE_URL=postgresql+asyncpg://user:password@localhost/fastopp_db
 
 ### Structure
 
-```
+```text
 alembic/
 ├── env.py              # Migration environment configuration
 ├── script.py.mako      # Migration template
@@ -452,8 +459,3 @@ After setting up your database:
 2. **Add Sample Data**: Use `oppdemo.py` to populate with test data
 3. **Test CRUD Operations**: Verify create, read, update, delete functionality
 4. **Monitor Performance**: Check query performance and add indexes as needed
-
-For more information, see:
-- [POSTGRESQL_SETUP.md](deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
-- [FLY_DEPLOYMENT.md](deployment/FLY_DEPLOYMENT.md) - Fly.io deployment guide
-- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture overview

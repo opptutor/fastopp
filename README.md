@@ -599,26 +599,7 @@ uv run python oppdemo.py diff
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 
-## Docs folder
-
-* [PostgreSQL Setup](docs/deployment/POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
-* [Architecture Overview](docs/ARCHITECTURE.md) - System design and organization
-* [Database Management](docs/DATABASE.md) - Migrations and database operations
-* [Development Guide](docs/DEVELOPMENT.md) - Adding features and best practices
-* [Features Overview](docs/FEATURES.md) - Available functionality
-* [Authentication Guide](docs/AUTHENTICATION.md) - User management and permissions
-* [Fly.io Deployment](docs/deployment/FLY_DEPLOYMENT.md) - Fly.io deployment guide
-* [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment
-
-## Cheap Deployment
-
-Fly is the cheapest solution we've found thus far at under $0.25/month with a database.
-We believe this can be reduced further with either Turso or S3 and Litestream.
-[See discussion](https://github.com/Oppkey/fastopp/discussions/25).
-
-* [Deploy to fly.io](docs/deployment/FLY_DEPLOYMENT.md)
-
-## Improve LLM Performance by Selecting a Better LLM
+### Improve LLM Performance by Selecting a Better LLM
 
 The demo is set to use free models, which have lower performance.
 Edit `services/chat_service.py` in this project
@@ -628,17 +609,21 @@ for better performance and still be about 20x cheaper than premier OpenAI models
 (as of August 15, 2025)
 [Browse OpenRouter cheap models](https://openrouter.ai/models?max_price=0.1).
 
-### Overview and Deployment
+### Tutorials
+
+* [Add new page](docs/tutorials/add_new_page.md)
+
+### Deployment
+
+* [Deploy to fly.io](docs/deployment/FLY_DEPLOYMENT.md)
+* [fly deployment costs discussion](https://github.com/Oppkey/fastopp/discussions/25)
+
+### Architecture and Overview
 
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
-
-## Contributing To This Project
-
-* [Contribute to Demos](demo_assets/README.md)
-
-## Development Plans
-
-* [Development Roadmap](docs/plan/ROADMAP.md) - Project timeline and student recruitment plans
+* [Database](docs/DATABASE.md)
+* [Authentication](docs/AUTHENTICATION.md)
+* [Features](docs/FEATURES.md)
 
 ## Guidelines
 
