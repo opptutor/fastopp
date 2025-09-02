@@ -10,10 +10,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- DaisyUI CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5.1.5/dist/full.min.css" rel="stylesheet" type="text/css" />
     
     <!-- HTMX CDN -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.6"></script>
     
     <!-- Alpine.js CDN -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -116,6 +116,13 @@
         
         .chat-bubble em {
             font-style: italic;
+        }
+        
+        /* Enhanced chat bubble styling */
+        .chat-bubble {
+            padding: 1rem 1.25rem !important;
+            border-radius: 1.25rem !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
     
@@ -376,7 +383,7 @@
                         </div>
                         <button @click="sendMessage()"
                                 :disabled="isLoading || !inputMessage.trim()"
-                                class="btn bg-gradient-to-r from-ai-blue to-ai-purple text-white border-0 hover:from-blue-600 hover:to-purple-600"
+                                class="btn bg-gradient-to-r from-ai-blue to-ai-purple text-white border-0 hover:from-blue-600 hover:to-purple-600 flex items-center gap-2 px-6 py-3 rounded-xl"
                                 :class="{ 'loading': isLoading }">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
