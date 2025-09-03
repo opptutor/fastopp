@@ -40,6 +40,19 @@ PHOTOS_DIR.mkdir(exist_ok=True)
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
+# Add proxy headers middleware for production deployments
+@app.middleware("http")
+async def proxy_headers_middleware(request: Request, call_next):
+    """Middleware to handle proxy headers for production deployments"""
+    # Check if we're behind a proxy (Railway, Fly, etc.)
+    if request.headers.get("x-forwarded-proto") == "https":
+        request.scope["scheme"] = "https"
+    
+    # Don't modify scope["type"] - it should remain "http" for HTTP requests
+    
+    response = await call_next(request)
+    return response
+
 # Mount uploads directory based on environment (MUST come before /static mount)
 if os.getenv("UPLOAD_DIR") and os.getenv("UPLOAD_DIR") != "static/uploads":
     # In production environments, mount the uploads directory separately
