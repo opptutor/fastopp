@@ -118,9 +118,7 @@ output of an LLM.
 
 ### Clickable Cards with Mouseover
 
-![home](docs/images/home.webp)
-
-![cards](docs/images/cards.webp)
+![home](docs/images/readme/home.webp)
 
 ### Change Images Without Page Reload
 
@@ -128,7 +126,7 @@ output of an LLM.
 
 ### Hero
 
-![hero](docs/images/hero.webp)
+![hero](docs/images/readme/hero.webp)
 
 ### Database Admin List
 
