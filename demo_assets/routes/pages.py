@@ -15,7 +15,7 @@ router = APIRouter()
 @router.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     """Home page"""
-    return templates.TemplateResponse("index.html", {"request": request, "title": "Welcome to FastOpp"})
+    return templates.TemplateResponse("index.html", {"request": request, "title": "FastOpp - Easier AI Web Apps"})
 
 
 @router.get("/design-demo", response_class=HTMLResponse)
@@ -24,17 +24,17 @@ async def design_demo(request: Request):
     return templates.TemplateResponse("design-demo.html", {"request": request, "title": "FastOpp Design Demo"})
 
 
-@router.get("/dashboard-demo", response_class=HTMLResponse)
-async def dashboard_demo(request: Request):
-    """Product dashboard demo page"""
-    return templates.TemplateResponse("dashboard-demo.html", {"request": request, "title": "Product Dashboard Demo"})
+@router.get("/database-demo", response_class=HTMLResponse)
+async def database_demo(request: Request):
+    """Product database demo page"""
+    return templates.TemplateResponse("database-demo.html", {"request": request, "title": "Product Database Demo"})
 
 
 @router.get("/webinar-registrants", response_class=HTMLResponse)
 async def webinar_registrants(request: Request, current_user: User = Depends(get_current_staff_or_admin_from_cookies)):
     """Webinar registrants management page"""
     return templates.TemplateResponse("webinar-registrants.html", {
-        "request": request, 
+        "request": request,
         "title": "Webinar Registrants",
         "current_page": "webinar-registrants"
     })
@@ -44,7 +44,7 @@ async def webinar_registrants(request: Request, current_user: User = Depends(get
 async def webinar_demo(request: Request):
     """Marketing page showcasing webinar attendees and community"""
     return templates.TemplateResponse("webinar-demo.html", {
-        "request": request, 
+        "request": request,
         "title": "Webinar Demo",
         "current_page": "webinar-demo"
     })
@@ -100,4 +100,4 @@ async def license_page(request: Request):
     return templates.TemplateResponse("license.html", {
         "request": request,
         "title": "MIT License"
-    }) 
+    })

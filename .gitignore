@@ -32,3 +32,12 @@ static/uploads/*
 # Ignore migration files but keep the versions directory structure
 alembic/versions/*.py
 alembic/versions_backup_*/
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
