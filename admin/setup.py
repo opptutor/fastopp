@@ -12,7 +12,10 @@ from .views import UserAdmin, ProductAdmin, WebinarRegistrantsAdmin, AuditLogAdm
 def setup_admin(app: FastAPI, secret_key: str):
     """Setup and configure the admin interface"""
     # Check if we're in production (HTTPS environment)
-    is_production = os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("PRODUCTION") or os.getenv("FORCE_HTTPS")
+    is_production = (os.getenv("RAILWAY_ENVIRONMENT") or 
+                    os.getenv("PRODUCTION") or 
+                    os.getenv("FORCE_HTTPS") or
+                    os.getenv("ENVIRONMENT") == "production")
     
     # Configure admin with HTTPS support for production
     if is_production:
