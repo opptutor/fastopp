@@ -556,7 +556,7 @@ def restore_demo_files():
         print("2. Start the application: uv run python main.py")
         print("3. Visit the demo pages:")
         print("   - http://localhost:8000/ai-demo")
-        print("   - http://localhost:8000/dashboard-demo")
+        print("   - http://localhost:8000/database-demo")
         print("   - http://localhost:8000/design-demo")
         print("   - http://localhost:8000/webinar-demo")
         
