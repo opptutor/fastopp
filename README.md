@@ -598,6 +598,7 @@ uv run python oppdemo.py diff
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
+* [Free FastAPI Deployment - No Credit Card - Railway](https://youtu.be/7vxroD-tyo8) - published Sept 3, 2025
 
 ### Tutorials
 
