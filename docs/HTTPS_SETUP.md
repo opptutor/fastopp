@@ -11,6 +11,9 @@ RAILWAY_ENVIRONMENT=production
 # Generic production
 PRODUCTION=true
 
+# Environment identifier (existing pattern in codebase)
+ENVIRONMENT=production
+
 # Force HTTPS mode
 FORCE_HTTPS=true
 ```
