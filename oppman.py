@@ -5,6 +5,7 @@ A core tool for managing database migrations, user management, and application s
 Demo commands have been moved to oppdemo.py for better separation of concerns.
 """
 import argparse
+import asyncio
 import os
 import shutil
 import sys
@@ -19,6 +20,12 @@ try:
     # Core management scripts only (demo scripts moved to oppdemo.py)
     from scripts.migrate.cli import run_migrate_command, show_migration_help
     from scripts.check_env import check_environment
+    # Core database and user management scripts
+    from scripts.init_db import init_db
+    from scripts.create_superuser import create_superuser
+    from scripts.check_users import check_users
+    from scripts.test_auth import test_auth
+    from scripts.change_password import list_users, change_password_interactive
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure all script files are in the scripts/ directory")
@@ -162,6 +169,47 @@ def delete_migration_files() -> bool:
         return False
 
 
+# Core database and user management functions
+async def run_init():
+    """Initialize a new database"""
+    print("🔄 Initializing database...")
+    await init_db()
+    print("✅ Database initialization complete")
+
+
+async def run_superuser():
+    """Create superuser"""
+    print("🔄 Creating superuser...")
+    await create_superuser()
+    print("✅ Superuser creation complete")
+
+
+async def run_check_users():
+    """Check existing users and their permissions"""
+    print("🔄 Checking users...")
+    await check_users()
+    print("✅ User check complete")
+
+
+async def run_test_auth():
+    """Test the authentication system"""
+    print("🔄 Testing authentication system...")
+    await test_auth()
+    print("✅ Authentication test complete")
+
+
+async def run_change_password():
+    """Change user password interactively"""
+    print("🔐 Changing user password...")
+    await change_password_interactive()
+
+
+async def run_list_users():
+    """List all users"""
+    print("👥 Listing users...")
+    await list_users()
+
+
 def run_server():
     """Start the development server with uvicorn"""
     print("🚀 Starting development server...")
@@ -264,28 +312,20 @@ COMMANDS:
     delete      Delete current database (with backup)
     backup      Backup current database
     migrate     Database migration management (see examples below)
+    db          Initialize database (create tables)
+    
+    # User management
+    superuser   Create superuser account
+    check_users Check existing users and their permissions
+    test_auth   Test the authentication system
+    change_password Change user password interactively
+    list_users  List all users in the database
     
     # Environment and utilities
     env         Check environment configuration
     demo        Demo commands have been moved to oppdemo.py
     help        Show this help message
     
-    # Demo data initialization (DEPRECATED - use oppdemo.py instead)
-    # These commands are deprecated and will be removed in a future version
-    # Use 'uv run python oppdemo.py <command>' instead
-    init        Complete initialization (database + superuser + users + products + webinars + registrants)
-    db          Initialize database only
-    superuser   Create superuser only
-    users       Add test users only
-    products    Add sample products only
-    webinars    Add sample webinars only
-    download_photos  Download sample photos for webinar registrants
-    registrants Add sample webinar registrants with photos
-    clear_registrants Clear and add fresh webinar registrants with photos
-    check_users Check existing users and their permissions
-    test_auth   Test the authentication system
-    change_password Change user password interactively
-    list_users  List all users in the database
 
 EXAMPLES:
     # Core application management
@@ -304,20 +344,13 @@ EXAMPLES:
     # Environment management
     uv run python oppman.py env            # Check environment configuration
     
-    # Demo data initialization (DEPRECATED - use oppdemo.py instead)
-    # These commands are deprecated and will be removed in a future version
-    # Use 'uv run python oppdemo.py <command>' instead
-    uv run python oppdemo.py init          # Full initialization
-    uv run python oppdemo.py users         # Add test users
-    uv run python oppdemo.py products      # Add sample products
-    uv run python oppdemo.py webinars      # Add sample webinars
-    uv run python oppdemo.py download_photos  # Download sample photos
-    uv run python oppdemo.py registrants  # Add sample registrants
-    uv run python oppdemo.py clear_registrants  # Clear and add fresh registrants
-    uv run python oppdemo.py check_users  # Check existing users
-    uv run python oppdemo.py test_auth    # Test authentication
-    uv run python oppdemo.py change_password  # Change user password
-    uv run python oppdemo.py list_users   # List all users
+    # Database and user management
+    uv run python oppman.py db             # Initialize database
+    uv run python oppman.py superuser      # Create superuser
+    uv run python oppman.py check_users    # Check existing users
+    uv run python oppman.py test_auth      # Test authentication
+    uv run python oppman.py change_password # Change user password
+    uv run python oppman.py list_users     # List all users
     
     # Demo file management (use oppdemo.py)
     uv run python oppdemo.py save          # Save demo files
@@ -349,7 +382,7 @@ PERMISSION LEVELS:
 PASSWORD MANAGEMENT:
     - change_password: Interactive password change for any user
     - list_users: View all users and their status
-    - Usage: uv run python oppdemo.py change_password (DEPRECATED: use oppdemo.py)
+    - Usage: uv run python oppdemo.py change_password
     - Direct script: uv run python scripts/change_password.py --email user@example.com --password newpass
 
 WEBINAR REGISTRANTS:
@@ -357,7 +390,7 @@ WEBINAR REGISTRANTS:
     - Login required: Staff or admin access
     - Features: Photo upload, registrant management
     - Sample data: 5 registrants with professional photos
-    - Commands: download_photos, registrants, clear_registrants (DEPRECATED: use oppdemo.py)
+    - Commands: Use oppdemo.py for all demo-related functionality
 
 DATABASE:
     - Development: SQLite (test.db)
@@ -369,8 +402,8 @@ SERVER:
     - API docs: http://localhost:8000/docs
     - Webinar registrants: http://localhost:8000/webinar-registrants
 
-NOTE: Demo data initialization commands are deprecated in oppman.py.
-Use 'uv run python oppdemo.py <command>' instead for all demo-related functionality.
+NOTE: All demo-related functionality has been moved to oppdemo.py.
+Use 'uv run python oppdemo.py <command>' for demo data initialization and management.
     """
     print(help_text)
 
@@ -393,11 +426,9 @@ Examples:
         nargs="?",
         choices=[
             # Core application management
-            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help",
-            # Deprecated demo commands (redirected to oppdemo.py)
-            "init", "db", "superuser", "users", "products", "webinars",
-            "download_photos", "registrants", "clear_registrants", "check_users", "test_auth",
-            "change_password", "list_users", "demo"
+            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help", "demo",
+            # Core database and user management
+            "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
         ],
         help="Command to execute"
     )
@@ -469,33 +500,28 @@ Examples:
         check_environment()
         return
     
-    # Handle deprecated demo commands - redirect to oppdemo.py
-    deprecated_commands = [
-        "init", "db", "superuser", "users", "products", "webinars",
-        "download_photos", "registrants", "clear_registrants", "check_users",
-        "test_auth", "change_password", "list_users"
-    ]
+    # Handle core database and user management commands
+    core_commands = ["db", "superuser", "check_users", "test_auth", "change_password", "list_users"]
     
-    if args.command in deprecated_commands:
-        print("⚠️  DEPRECATION WARNING: 'oppman.py {}' is deprecated.".format(args.command))
-        print("   Use 'uv run python oppdemo.py {}' instead.".format(args.command))
-        print()
-        print("🔄 Redirecting to oppdemo.py...")
-        print()
+    if args.command in core_commands:
+        # Run async commands
+        async def run_command():
+            if args.command == "db":
+                await run_init()
+            elif args.command == "superuser":
+                await run_superuser()
+            elif args.command == "check_users":
+                await run_check_users()
+            elif args.command == "test_auth":
+                await run_test_auth()
+            elif args.command == "change_password":
+                await run_change_password()
+            elif args.command == "list_users":
+                await run_list_users()
         
-        # Run the command using oppdemo.py
-        import subprocess
-        try:
-            subprocess.run([
-                "uv", "run", "python", "oppdemo.py", args.command
-            ], check=True)
-            return
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to run command in oppdemo.py: {e}")
-            sys.exit(1)
-        except FileNotFoundError:
-            print("❌ oppdemo.py not found. Please ensure it exists in the current directory.")
-            sys.exit(1)
+        # Run the async command
+        asyncio.run(run_command())
+        return
 
 
 if __name__ == "__main__":
