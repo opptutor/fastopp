@@ -21,6 +21,8 @@ test.db.*
 # Backup files
 # Ignore timestamped backups like main.py.20250808_144836
 /main.py.*
+# Ignore backups directory
+backups/
 
 # User-uploaded files
 # Ignore everything under uploads except sample_photos and a directory placeholder

@@ -17,20 +17,24 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
+    # Core scripts (shared with oppman.py)
     from scripts.init_db import init_db
     from scripts.create_superuser import create_superuser
-    from scripts.add_test_users import add_test_users
-    from scripts.add_sample_products import add_sample_products
-    from scripts.add_sample_webinars import add_sample_webinars
-    from scripts.add_sample_webinar_registrants import add_sample_registrants
-    from scripts.clear_and_add_registrants import clear_and_add_registrants
-    from scripts.download_sample_photos import download_sample_photos
     from scripts.check_users import check_users
     from scripts.test_auth import test_auth
     from scripts.change_password import list_users, change_password_interactive
+    
+    # Demo-specific scripts (moved to demo_scripts/ directory)
+    from demo_scripts.add_test_users import add_test_users
+    from demo_scripts.add_sample_products import add_sample_products
+    from demo_scripts.add_sample_webinars import add_sample_webinars
+    from demo_scripts.add_sample_webinar_registrants import add_sample_registrants
+    from demo_scripts.clear_and_add_registrants import clear_and_add_registrants
+    from demo_scripts.download_sample_photos import download_sample_photos
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure all script files are in the scripts/ directory")
+    print("Demo scripts should be in demo_scripts/ directory")
     sys.exit(1)
 
 
@@ -195,6 +199,7 @@ def save_demo_files():
     (demo_assets / "routes").mkdir(exist_ok=True)
     (demo_assets / "services").mkdir(exist_ok=True)
     (demo_assets / "scripts").mkdir(exist_ok=True)
+    (demo_assets / "admin").mkdir(exist_ok=True)
     
     files_copied = 0
     
@@ -331,6 +336,19 @@ def save_demo_files():
                 shutil.copy2(src, dst)
                 print(f"  ✅ {script_file}")
                 files_copied += 1
+        
+        # Backup admin files
+        print("🔧 Backing up admin files...")
+        admin_src = Path("admin")
+        if admin_src.exists():
+            admin_dst = demo_assets / "admin"
+            if admin_dst.exists():
+                shutil.rmtree(admin_dst)
+            shutil.copytree(admin_src, admin_dst)
+            print("  ✅ admin/")
+            files_copied += 1
+        else:
+            print("  ℹ️  admin/ directory not found (skipping admin backup)")
         
         print("\n✅ Demo save completed successfully!")
         print(f"📊 Total files saved: {files_copied}")
@@ -546,6 +564,20 @@ def restore_demo_files():
         else:
             print("  ℹ️  Original working copy not found at ../original/fastopp (skipping supplement)")
         
+        # Restore admin files
+        print("🔧 Restoring admin files...")
+        admin_src = demo_assets / "admin"
+        admin_dest = Path("admin")
+        
+        if admin_src.exists():
+            if admin_dest.exists():
+                shutil.rmtree(admin_dest)
+            shutil.copytree(admin_src, admin_dest)
+            print("  ✅ Restored admin/")
+            files_restored += 1
+        else:
+            print("  ℹ️  demo_assets/admin not found (skipping admin restoration)")
+        
         print("\n✅ Demo restoration completed successfully!")
         print(f"📊 Total files restored: {files_restored}")
         print("\n📋 Next steps:")
@@ -655,6 +687,23 @@ def destroy_demo_files():
         else:
             print("  ❌ Error: base_assets/templates not found!")
             print("Please ensure base_assets/templates directory exists")
+            return False
+        
+        # Step 7: Replace admin directory with base_assets admin
+        print("🔧 Replacing admin directory with base_assets admin...")
+        admin_dir = Path("admin")
+        base_admin = Path("base_assets/admin")
+        
+        if admin_dir.exists():
+            shutil.rmtree(admin_dir)
+            print("  ✅ Removed existing admin/")
+        
+        if base_admin.exists():
+            shutil.copytree(base_admin, admin_dir)
+            print("  ✅ Copied base_assets/admin to admin/")
+        else:
+            print("  ❌ Error: base_assets/admin not found!")
+            print("Please ensure base_assets/admin directory exists")
             return False
         
         print("\n✅ Demo destruction completed successfully!")
