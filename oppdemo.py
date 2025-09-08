@@ -17,20 +17,24 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
+    # Core scripts (shared with oppman.py)
     from scripts.init_db import init_db
     from scripts.create_superuser import create_superuser
-    from scripts.add_test_users import add_test_users
-    from scripts.add_sample_products import add_sample_products
-    from scripts.add_sample_webinars import add_sample_webinars
-    from scripts.add_sample_webinar_registrants import add_sample_registrants
-    from scripts.clear_and_add_registrants import clear_and_add_registrants
-    from scripts.download_sample_photos import download_sample_photos
     from scripts.check_users import check_users
     from scripts.test_auth import test_auth
     from scripts.change_password import list_users, change_password_interactive
+    
+    # Demo-specific scripts (moved to demo_scripts/ directory)
+    from demo_scripts.add_test_users import add_test_users
+    from demo_scripts.add_sample_products import add_sample_products
+    from demo_scripts.add_sample_webinars import add_sample_webinars
+    from demo_scripts.add_sample_webinar_registrants import add_sample_registrants
+    from demo_scripts.clear_and_add_registrants import clear_and_add_registrants
+    from demo_scripts.download_sample_photos import download_sample_photos
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure all script files are in the scripts/ directory")
+    print("Demo scripts should be in demo_scripts/ directory")
     sys.exit(1)
 
 
