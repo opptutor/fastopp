@@ -350,8 +350,7 @@ EXAMPLES:
     uv run python oppman.py check_users    # Check existing users
     uv run python oppman.py test_auth      # Test authentication
     uv run python oppman.py change_password # Change user password
-    uv run python oppman.py list_users     # List all users
-    
+    uv run python oppman.py list_users     # List all users    
     # Demo file management (use oppdemo.py)
     uv run python oppdemo.py save          # Save demo files
     uv run python oppdemo.py restore       # Restore demo files
