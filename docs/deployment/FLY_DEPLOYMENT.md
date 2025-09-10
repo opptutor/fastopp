@@ -1,363 +1,389 @@
-# Fly.io Deployment Guide
+# Fly Deployment
 
-This guide covers deploying your FastOpp application to Fly.io, including environment configuration, production server setup, and troubleshooting common deployment issues.
+Your FastOpp program wants to fly! 
 
-## Overview
+## Overview 
 
-- **Development**: SQLite with aiosqlite (default) or PostgreSQL with asyncpg
-- **Production**: PostgreSQL with asyncpg + pgvector (optional)
-- **Configuration**: Environment variables for flexible database switching
-- **Server**: DigitalOcean Ubuntu 24.04 Droplet (production)
-- **Process Manager**: Gunicorn + Uvicorn (production)
+FastOpp provides an opinionated framework for FastAPI with the following features:
 
-## Fly.io Deployment
+* Admin panel similar to Django 
+* A Python program to work with the database
+* Admin panel example with custom styling
+* Django-style HTML templates with modern UI components
+* Replaceable style templates to get started
+* API endpoints to connect to other frontend frameworks
+* Auto-generated documentation for API endpoints
 
-### Problem Description
+ You can deploy it yourself. It needs to be able to run uvicorn and mount a persistent volume for a single SQLite file.
+ 
+It does not use PostgreSQL or Nginx.
 
-When deploying to Fly.io, we encountered a critical issue with database migrations:
+It uses Fly.io, since it's cheap, repeatable, and volume-backed. Run uvicorn directly. Store SQLite at /data/test.db.
 
-```
-sqlalchemy.exc.MissingGreenlet: greenlet_spawn has not been called; can't call await_only() here. Was IO attempted in an unexpected place?
-```
+NOTE: By default, FastOpp uses /data/test.db
 
-### Root Cause
+## Pricing
 
-The issue occurred because:
+You can deploy your app in whatever manner you need. Deploying to Fly.io is one example. It is intended to be a low-cost example.
 
-1. **App uses async SQLAlchemy**: Our FastAPI app uses `sqlite+aiosqlite:////data/test.db` for async database operations
-2. **Alembic needs sync operations**: Database migrations must run synchronously, not in async context
-3. **URL mismatch**: Alembic was trying to use the async driver during migrations, causing context errors
+You will be using the "Pay As You Go Plan."
 
-### Solution: URL Conversion in env.py
+You will be using Fly Machine and Fly Volume.
 
-We modified `alembic/env.py` to automatically convert async SQLite URLs to regular SQLite URLs during migrations.
+* Fly Machines are fast-launching VMs; they can be started and stopped at subsecond speeds.
+* Fly Volumes are local persistent storage for Fly Machines.
 
-#### Before (Problematic)
-```python
-# alembic/env.py
-def run_migrations_offline() -> None:
-    url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    # This would be: sqlite+aiosqlite:////data/test.db
-    context.configure(url=url, ...)
+You will be required to log in and add a payment method.
 
-def run_migrations_online() -> None:
-    database_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    # Same async URL causing issues
-    config.set_main_option("sqlalchemy.url", database_url)
-```
+### Fly Machine Pricing
 
-#### After (Fixed)
-```python
-# alembic/env.py
-def run_migrations_offline() -> None:
-    url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    
-    # Convert async SQLite URL to regular SQLite URL for migrations
-    if url and "aiosqlite" in url:
-        url = url.replace("sqlite+aiosqlite://", "sqlite://")
-    
-    context.configure(url=url, ...)
+Running 24/7: ~$3.19/month for a shared-cpu-1x, 512 MB RAM machine. Swap (512 MB via swap_size_mb = 512) has no separate charge.
 
-def run_migrations_online() -> None:
-    database_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url"))
-    
-    # Convert async SQLite URL to regular SQLite URL for migrations
-    if database_url and "aiosqlite" in url:
-        database_url = database_url.replace("sqlite+aiosqlite://", "sqlite://")
-    
-    config.set_main_option("sqlalchemy.url", database_url)
-```
+Stopped: $0 for CPU/RAM; you only pay $0.15/GB-month for root filesystem (rootfs). A swap file uses rootfs space (no extra line item), so if 512 MB of swap were counted in rootfs while stopped, that portion would be $0.075/month. 
 
-### What This Fixes
+### Fly Volume Pricing
 
-1. **App Runtime**: Still uses `sqlite+aiosqlite:////data/test.db` for normal async operations
-2. **Migrations**: Automatically converts to `sqlite:////data/test.db` for sync migration operations
-3. **No Code Changes**: The app code doesn't need to change, only the Alembic configuration
+Fly Volumes are billed the same whether your Machine is Running or Stopped. It's $0.15/GB-month.
 
-### Key Benefits
+## Let's Get Started
 
-- ✅ **Migrations work**: No more async context errors
-- ✅ **App unchanged**: FastAPI app continues using async SQLAlchemy
-- ✅ **Automatic**: URL conversion happens transparently during migrations
-- ✅ **Maintainable**: Single place to handle the conversion logic
+### 0) Prereqs
 
-## Environment Configuration
-
-### Fly.io Secrets
-
-Set these environment variables in Fly.io:
+- **macOS** with **Homebrew** installed
+- **Your FastAPI (FastOpp) repo** cloned locally
 
 ```bash
-DATABASE_URL=sqlite+aiosqlite:////data/test.db
-SECRET_KEY=your_very_secure_production_secret_key_here
-ENVIRONMENT=production
+brew install flyctl
+fly auth signup   # or: fly auth login
 ```
 
-### Local Development
+Opens up a webpage on fly.io. You can use Google or GitHub to create an account.
+
+> "Your flyctl should be connected now. Feel free to close this tab"
+
+### 1) Add deploy files to the repo
+
+Add a `Dockerfile` to the project root:
+
+```Dockerfile
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_SYSTEM_PYTHON=1 \
+    PORT=8000
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl build-essential \
+  && rm -rf /var/lib/apt/lists/*
+
+# install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+COPY pyproject.toml uv.lock* ./
+RUN uv sync --frozen --no-dev
+
+COPY . .
+EXPOSE 8000
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+```
+
+Add a `.dockerignore`:
+
+```gitignore
+.git
+.venv
+__pycache__/
+*.db
+```
+
+### 2) Initialize fly app (not deployed yet)
 
 ```bash
-DATABASE_URL=sqlite+aiosqlite:///./test.db
-SECRET_KEY=your_development_secret_key_here
-ENVIRONMENT=development
+fly launch --no-deploy
+# Answer:
+# - App name: <enter> or custom
+# - Region: choose one near you
+# - Use Postgres: No
+# - Create a Dockerfile: No (you already added one)
 ```
 
-Both work seamlessly with this configuration.
-
-## Production Server Setup
-
-### Server Requirements
-
-- **OS**: Ubuntu 24.04 LTS (recommended)
-- **RAM**: Minimum 2GB, 4GB recommended
-- **Storage**: 20GB+ for database and application files
-- **CPU**: 2+ cores recommended
-
-### Process Management
-
-#### Using Systemd
-
-Create a systemd service file:
-
-```ini
-# /etc/systemd/system/fastopp.service
-[Unit]
-Description=FastOpp FastAPI Application
-After=network.target
-
-[Service]
-Type=exec
-User=fastopp
-WorkingDirectory=/opt/fastopp
-Environment=PATH=/opt/fastopp/venv/bin
-ExecStart=/opt/fastopp/venv/bin/gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-#### Using Gunicorn + Uvicorn
+You should see something like this:
 
 ```bash
-# Install production dependencies
-uv add gunicorn
+jcasman@MacBook-Air-6 fastcfv % fly launch --no-deploy
+Scanning source code
+Detected a Dockerfile app
+Creating app in /Users/jcasman/Development/fastcfv
+We're about to launch your app on Fly.io. Here's what you're getting:
 
-# Start production server
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+Organization: Jesse Casman (fly launch defaults to the personal org)
+Name: fastcfv (derived from your directory name)
+Region: San Jose, California (US) (this is the fastest region for you)
+App Machines: shared-cpu-1x, 1GB RAM (most apps need about 1GB of RAM)
+Postgres: (not requested)
+Redis: (not requested)
+Tigris: (not requested)
 ```
 
-### Reverse Proxy (Nginx)
+#### Cost Reduction
 
-```nginx
-# /etc/nginx/sites-available/fastopp
-server {
-    listen 80;
-    server_name yourdomain.com;
+To further reduce costs, you can set memory to 512MB
 
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    location /static/ {
-        alias /opt/fastopp/static/;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-}
+```toml
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
 ```
 
-## SSL Configuration
+To increase the stability of the system, you can also add SWAP.
 
-### Let's Encrypt Setup
+
+
+### 3) Create and mount a persistent volume
+
+Note: Pick the same region you chose above. However, just use its short code, not the full name. For example, it's not "San Jose, California (US)", it's "sjc" - You can find your region code using:
 
 ```bash
-# Install Certbot
-sudo apt install certbot python3-certbot-nginx
-
-# Get SSL certificate
-sudo certbot --nginx -d yourdomain.com
-
-# Auto-renewal
-sudo crontab -e
-# Add: 0 12 * * * /usr/bin/certbot renew --quiet
+flyctl platform regions
 ```
 
-## Database Setup
-
-### PostgreSQL Installation
+Now run:
 
 ```bash
-# Install PostgreSQL
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-
-# Create database and user
-sudo -u postgres psql
-CREATE DATABASE fastopp_db;
-CREATE USER fastopp_user WITH PASSWORD 'your_secure_password';
-GRANT ALL PRIVILEGES ON DATABASE fastopp_db TO fastopp_user;
-\q
-
-# Enable pgvector extension (for AI features)
-sudo -u postgres psql -d fastopp_db -c "CREATE EXTENSION IF NOT EXISTS vector;"
+fly volumes create data --region <REGION> --size 1
 ```
 
-### Database Configuration
+Do not include `< >`
+
+Note: You will get this error, you can ignore.
+
+> Warning! Every volume is pinned to a specific physical host. You should create two or more volumes per application to avoid downtime.
+
+It will then ask
+
+> ? Do you still want to use the volumes feature? 
+
+Say Yes
+
+### 4) Edit fly.toml
+
+Open the generated `fly.toml`. Ensure these blocks exist:
+
+You probably have this:
+
+```toml
+app = "<your-app-name>"
+primary_region = '<your-region>'
+
+swap_size_mb = 512   <---- ADD THIS TO ADD SWAP
+
+[build]
+
+[http_service]
+internal_port = 8000
+force_https = true
+auto_stop_machines = 'stop'
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
+
+[[vm]]
+memory = '512mb'  <----- SUGGESTED MEMORY SIZE FOR FASTOPP
+cpu_kind = 'shared'
+cpus = 1
+```
+
+Make sure this is included, too.
+
+```toml
+[env]
+  ENVIRONMENT = "production"
+  UPLOAD_DIR = "/data/uploads"
+
+[[mounts]]
+  source = "data"
+  destination = "/data"
+
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+```
+
+### Setting Memory and Swap
+In testing, I've found that 256mb may not be enough to run the current FastOpp application and the database.
+
+You can increase the memory. You can also add swap. By all means, please test it yourself and configure your memory settings to what works for your version of the app.
+
+Wwap is disabled by default for Fly Machines. You must explicitly configure it in your fly.toml.
+
+I added:
+`swap_size_mb = 512`
+
+It should be included at the top level of your `fly.toml`, not nested under a [[vm]] block. Putting it inside [[vm]] won’t work.
+
+And then in [[vm]] I increased memory from 256 to 512:
+`memory = '512mb'`
+
+You can confirm these settings using the steps in the Confirm Memory and Swap Settings section later in this document.
+
+### 5) Set secrets and DB URL
 
 ```bash
-# /etc/postgresql/14/main/postgresql.conf
-# Adjust memory settings based on server resources
-shared_buffers = 256MB
-effective_cache_size = 1GB
-work_mem = 4MB
-maintenance_work_mem = 64MB
+fly secrets set SECRET_KEY=$(openssl rand -hex 32)
+fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/test.db"
+# note, by default, FastOpp uses the name test.db
+# fly secrets set DATABASE_URL="sqlite+aiosqlite:////data/test.db"
+# additionally, if you want to use the AI chat demo, you must add your
+# openrouter key
+# OPENROUTER_API_KEY=your-key-from-openrouter
 ```
 
-## Monitoring and Logging
-
-### Log Configuration
-
-```python
-# main.py
-import logging
-from logging.handlers import RotatingFileHandler
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        RotatingFileHandler('logs/fastopp.log', maxBytes=10485760, backupCount=5),
-        logging.StreamHandler()
-    ]
-)
-```
-
-### Health Checks
-
-```python
-# routes/api.py
-@router.get("/health")
-async def health_check():
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow(),
-        "version": "1.0.0"
-    }
-```
-
-## Backup Strategy
-
-### Database Backups
+### 6) Deploy
 
 ```bash
-# PostgreSQL backup script
-#!/bin/bash
-BACKUP_DIR="/opt/backups"
-DATE=$(date +%Y%m%d_%H%M%S)
-pg_dump fastopp_db > $BACKUP_DIR/fastopp_$DATE.sql
-
-# Keep only last 7 days
-find $BACKUP_DIR -name "fastopp_*.sql" -mtime +7 -delete
+fly deploy
 ```
 
-### Application Backups
+You can check the status with
 
 ```bash
-# Backup application files
-tar -czf /opt/backups/fastopp_app_$DATE.tar.gz /opt/fastopp
+fly status
 ```
 
-## Security Considerations
-
-### Firewall Configuration
+### 7) Single-machine only (SQLite requires one writer)
 
 ```bash
-# UFW firewall setup
-sudo ufw allow ssh
-sudo ufw allow 80
-sudo ufw allow 443
-sudo ufw enable
+fly scale count 1
 ```
 
-### Environment Security
+### 8) Issue an SSH certificate
 
-- Use strong, unique passwords
-- Rotate secrets regularly
-- Limit database user permissions
-- Enable SSL/TLS encryption
-- Regular security updates
-
-## Deployment Commands
-
-### Using oppman.py
+You'll be sending SSH commands to fly.io.
 
 ```bash
-# Check environment
-python oppman.py env
-
-# Run migrations
-python oppman.py migrate upgrade
-
-# Start production server
-python oppman.py production
-
-# Backup database
-python oppman.py backup
+fly ssh issue --agent
+# or: fly ssh issue
 ```
 
-### Manual Deployment
+🌶️ Hot tip: If you get an error like "error connecting to SSH server: ssh: handshake failed: ssh: unable to authenticate," please check that the app is started using `fly status`
+
+### 9) Setup up your database using oppman.py
 
 ```bash
-# Pull latest code
-git pull origin main
-
-# Install dependencies
-uv sync
-
-# Run migrations
-alembic upgrade head
-
-# Restart service
-sudo systemctl restart fastopp
+# upgrade schema
+fly ssh console -C "uv run python oppman.py init"
 ```
+
+If you want to run the webinar demo, you also need to copy the fake people pictures
+from `static/uploads/photos` into `/data/uploads/photos`
+
+```bash
+# copy fake data initial photos into Fly Volume
+fly ssh console
+cp static/uploads/photos/* /data/uploads/photos/
+```
+
+### Confirm Memory and Swap Settings
+
+To verify inside the instance, ssh in with:
+`fly ssh console`
+
+then check your meminfo:
+`cat /proc/meminfo | grep -i swap`
+
+```bash
+root@286031ea9e5268:/app# cat /proc/meminfo | egrep 'Mem|Swap'
+MemTotal:         470128 kB
+MemFree:          108764 kB
+MemAvailable:     316112 kB
+SwapCached:            0 kB
+SwapTotal:        524284 kB
+SwapFree:         524284 kB
+```
+
+Details on the output above:
+
+🖥️ Memory (RAM)
+
+MemTotal: 470128 kB (~459 MB)
+This is the total physical RAM allocated to the Fly machine. It matches our fly.toml setting of memory = "512mb", because Fly reserves a little overhead, so it's ~470 MB instead of the full 512 MB.
+
+MemFree: 108764 kB (~106 MB)
+This is memory currently unused.
+
+MemAvailable: 316112 kB (~308 MB)
+This is a better indicator of what’s actually usable. It includes free memory plus reclaimable caches/buffers. The app effectively has ~300 MB headroom before swapping would begin.
+
+💾 Swap
+
+SwapTotal: 524284 kB (~512 MB)
+This shows swap set at 512mb (swap_size_mb = 512), so the VM has half a gig of virtual memory to fall back on. If SwapTotal is 0, you have no swap enabled. If it shows a non-zero value, swap is active.
+
+SwapFree: 524284 kB (~512 MB)
+None of it has been touched yet (good — the system isn’t under memory pressure).
+
+SwapCached: 0 kB
+Nothing swapped out and cached in RAM, confirming swap hasn’t been used at all.
+
+✅ What this means
+
+The Fly machine is running with ~470 MB usable RAM and ~512 MB swap.
+
+At the moment, memory usage is well under control — there's ~300 MB available plus the entire swap untouched.
+
+If the app ever spikes beyond ~470 MB RAM, the kernel will push data into swap instead of immediately killing our process with an Out Of Memory error. A little bit of a safety net.
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **Migration Errors**: Check Alembic configuration and database connectivity
-2. **Permission Issues**: Verify file ownership and database user permissions
-3. **Memory Issues**: Adjust Gunicorn worker count and PostgreSQL memory settings
-4. **SSL Issues**: Verify certificate validity and Nginx configuration
-
-### Debug Mode
-
-For troubleshooting, temporarily enable debug mode:
+If you make changes to your Dockerfile and want to redeploy, you can make sure fly is not using a cached version by running the command
 
 ```bash
-# Set debug environment variable
-export DEBUG=true
-
-# Start with verbose logging
-gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level debug
+fly deploy --dockerfile Dockerfile
 ```
 
-## Next Steps
+## Extra Information
 
-After successful deployment:
+### Can fly.io handle persistent storage?
 
-1. **Monitor Performance**: Check logs and server metrics
-2. **Set Up Monitoring**: Implement application performance monitoring
-3. **Configure Alerts**: Set up notifications for critical issues
-4. **Plan Scaling**: Prepare for increased traffic and load
+Fly.io Machines provide ephemeral compute, meaning your data is lost when the machine restarts. Fly Volumes offer persistent storage by attaching a slice of an NVMe drive to a machine. This allows you to mount a volume to a specific path on your machine, enabling data persistence across restarts and deployments.
 
-For more information, see:
-- [POSTGRESQL_SETUP.md](POSTGRESQL_SETUP.md) - PostgreSQL setup and database configuration
-- [DATABASE.md](../DATABASE.md) - Database management and migrations
-- [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture overview
+Here's a breakdown:
+
+Fly Machines:
+Fly Machines are virtual machines that run your application code. They are designed to be lightweight and scalable, but their storage is ephemeral.
+
+Fly Volumes:
+Fly Volumes are persistent storage volumes that can be attached to Fly Machines. They are like physical disks, providing a place to store data that persists even when the machine restarts.
+
+Mounting:
+When you mount a volume, you specify a path on the machine's file system where the volume's contents will be accessible.
+
+Use Cases:
+Fly Volumes are useful for storing application data that needs to persist, such as user data, configuration files, or databases.
+
+In essence, Fly.io Machines + Mounted Volume provides a way to combine the scalability and speed of Fly Machines with the persistent storage of Fly Volumes, allowing you to build robust and scalable applications that can handle data persistence.
+
+## What is a Dockerfile?
+
+A Dockerfile is essentially a blueprint for building a Docker image. It's a plain text file containing a set of instructions that Docker executes in sequential order to create an image.
+
+A Dockerfile is a simple, plain text file. You create and edit it using any text editor you prefer (like VS Code, Notepad, or even a basic text editor in your terminal like vi or nano).
+
+Key points about creating a Dockerfile
+
+* Plain Text File: It's a regular text file.
+* No File Extension (by convention): It's usually named "Dockerfile" (with a capital "D") and has no file extension
+* Contains Instructions: The Dockerfile contains a series of commands that Docker executes in order to build the image. These instructions tell Docker things like:
+  * What base image to start with (FROM)
+  * What files to copy into the image (COPY)
+  * What commands to run during the build process (RUN)
+  * The default command to execute when a container is launched from the image (CMD)
