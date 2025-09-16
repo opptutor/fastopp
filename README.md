@@ -183,8 +183,6 @@ Use this guide to create your own repo from the FastOpp template, develop indepe
 * Create your own repo from the template
 * Clone your repo locally
 * Code, commit, and push to your repo
-* Optionally pull updates from FastOpp
-* Deploy your app (example: Fly.io)
 
 ### 1. Create your repo from the template
 
