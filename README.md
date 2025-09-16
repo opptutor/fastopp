@@ -166,7 +166,7 @@ FastOpp comes with an optional basic UI design system to accelerate AI applicati
 
 * based on Tailwind CSS, DaisyUI, AlpineJS and HTMX
 
-## 🚀 Quick Start (For Team Members)
+## 🚀 Quick Start (For Students)
 
 ### Prerequisites
 
@@ -176,18 +176,37 @@ FastOpp comes with an optional basic UI design system to accelerate AI applicati
   right now for maximum package compatibility.
 * [uv](https://docs.astral.sh/uv/) package manager
 
-### 1. Clone and Setup
+## What you’ll do
+
+Use this guide to create your own repo from the FastOpp template, develop independently, and deploy. Do not open pull requests to the FastOpp repo.
+
+* Create your own repo from the template
+* Clone your repo locally
+* Code, commit, and push to your repo
+* Optionally pull updates from FastOpp
+* Deploy your app (example: Fly.io)
+
+### 1. Create your repo from the template
+
+1. Open this repo: `https://github.com/Oppkey/FastOpp`
+2. Click blue button, upper right, called **Use this template** → **Create a new repository**
+3. Name it (e.g., `fastopp-<yourproject>`)
+4. Choose Public
+5. Click **Create repository from template**
+
+> Result: you now have your **own** repo. It is **not** a fork of FastOpp.
+
+### 2. Clone your repo
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd fastopp
+git clone https://github.com/<YOUR_USERNAME>/fastopp-<yourproject>.git
+cd fastopp-<yourproject>
 
 # Install dependencies
 uv sync
 ```
 
-### 2. Environment Configuration
+### 3. Environment Configuration
 
 Create a `.env` file in your project root:
 
@@ -225,7 +244,7 @@ ENVIRONMENT=development
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
-### 3. One-Command Setup
+### 4. One-Command Setup
 
 ```bash
 # Complete setup with one command
@@ -260,7 +279,7 @@ uv run python oppdemo.py init
 
 **Note**: Demo data initialization commands have been moved from `oppman.py` to `oppdemo.py` for better separation of concerns.
 
-### 4. Start Development Server
+### 5. Start Development Server
 
 ```bash
 # Start the server
