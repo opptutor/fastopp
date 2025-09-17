@@ -1,0 +1,73 @@
+name: Collect Traffic Metrics
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # Run daily at 2 AM UTC
+  workflow_dispatch:       # Allow manual runs
+
+jobs:
+  fetch-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch GitHub Traffic Metrics
+        env:
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          import os, requests, csv, datetime
+
+          headers = {"Authorization": f"token {os.environ['TOKEN']}"}
+          repo = os.environ["REPO"]
+
+          urls = {
+              "views": f"https://api.github.com/repos/{repo}/traffic/views",
+              "clones": f"https://api.github.com/repos/{repo}/traffic/clones",
+          }
+
+          today = datetime.date.today().isoformat()
+          os.makedirs("metrics", exist_ok=True)
+
+          for metric, url in urls.items():
+              r = requests.get(url, headers=headers)
+              r.raise_for_status()
+              data = r.json()
+
+              filename = f"metrics/{metric}.csv"
+              file_exists = os.path.exists(filename)
+
+              with open(filename, "a", newline="") as f:
+                  writer = csv.writer(f)
+                  if not file_exists:
+                      writer.writerow(["date", "count", "uniques"])
+                  # API returns last 14 days → find today's data
+                  key = "views" if metric == "views" else "clones"
+                  today_data = next(
+                      (d for d in data[key] if d["timestamp"].startswith(today)),
+                      None
+                  )
+                  if today_data:
+                      writer.writerow([
+                          today,
+                          today_data["count"],
+                          today_data["uniques"]
+                      ])
+
+      - name: Commit updated metrics
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add metrics/views.csv metrics/clones.csv
+          git commit -m "Update traffic metrics for $(date +'%Y-%m-%d')" || echo "No changes"
+          git push
