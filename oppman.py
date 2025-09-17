@@ -414,9 +414,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  uv run python oppman.py init      # Full initialization
   uv run python oppman.py db        # Initialize database only
   uv run python oppman.py delete    # Delete database with backup
+  uv run python oppdemo.py init     # Full initialization with sample data
         """
     )
     
@@ -427,7 +427,7 @@ Examples:
             # Core application management
             "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help", "demo",
             # Core database and user management
-            "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
+            "init", "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
         ],
         help="Command to execute"
     )
@@ -497,6 +497,25 @@ Examples:
     
     if args.command == "env":
         check_environment()
+        return
+    
+    # Handle init command with redirect message
+    if args.command == "init":
+        print("🔄 The 'init' command has been moved to oppdemo.py for better organization.")
+        print()
+        print("📊 To initialize the database and load with sample data, use:")
+        print("   uv run python oppdemo.py init")
+        print()
+        print("💡 This will:")
+        print("   - Initialize the database")
+        print("   - Create a superuser (admin@example.com / admin123)")
+        print("   - Add test users")
+        print("   - Add sample products and webinars")
+        print("   - Download sample photos")
+        print("   - Add webinar registrants with photos")
+        print()
+        print("🔧 For database-only initialization, use:")
+        print("   uv run python oppman.py db")
         return
     
     # Handle core database and user management commands
