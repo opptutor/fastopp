@@ -3,6 +3,7 @@
 # =========================
 import jwt
 import uuid
+import os
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -12,7 +13,7 @@ from db import AsyncSessionLocal
 from models import User
 
 # JWT Configuration
-SECRET_KEY = "SECRET_KEY_CHANGE_ME_IN_PRODUCTION"
+SECRET_KEY = os.getenv("SECRET_KEY", "SECRET_KEY_CHANGE_ME_IN_PRODUCTION")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -183,4 +184,4 @@ async def get_current_staff_or_admin_from_cookies(request: Request):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions - staff or admin access required"
         )
-    return user 
+    return user

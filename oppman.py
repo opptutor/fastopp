@@ -323,6 +323,7 @@ COMMANDS:
     
     # Environment and utilities
     env         Check environment configuration
+    secrets     Generate SECRET_KEY for .env file
     demo        Demo commands have been moved to oppdemo.py
     help        Show this help message
     
@@ -343,6 +344,7 @@ EXAMPLES:
     
     # Environment management
     uv run python oppman.py env            # Check environment configuration
+    uv run python oppman.py secrets        # Generate SECRET_KEY for .env file
     
     # Database and user management
     uv run python oppman.py db             # Initialize database
@@ -401,6 +403,23 @@ SERVER:
     - API docs: http://localhost:8000/docs
     - Webinar registrants: http://localhost:8000/webinar-registrants
 
+SECURITY & ENVIRONMENT SETUP:
+    🔐 SECRET_KEY Generation:
+       uv run python oppman.py secrets      # Generate secure SECRET_KEY
+       # Add the output to your .env file
+    
+    ⚠️  CRITICAL SECURITY WARNINGS:
+       - NEVER commit .env files to version control
+       - Add .env to your .gitignore file
+       - Keep your SECRET_KEY secure and private
+       - Use different SECRET_KEYs for different environments
+       - The .env file should NEVER be committed to GitHub
+    
+    📁 Required .env file structure:
+       SECRET_KEY=your_generated_secret_key_here
+       DATABASE_URL=sqlite:///./test.db
+       # Add other environment variables as needed
+
 NOTE: All demo-related functionality has been moved to oppdemo.py.
 Use 'uv run python oppdemo.py <command>' for demo data initialization and management.
     """
@@ -414,9 +433,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  uv run python oppman.py init      # Full initialization
   uv run python oppman.py db        # Initialize database only
   uv run python oppman.py delete    # Delete database with backup
+  uv run python oppdemo.py init     # Full initialization with sample data
         """
     )
     
@@ -425,9 +444,9 @@ Examples:
         nargs="?",
         choices=[
             # Core application management
-            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "help", "demo",
+            "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "secrets", "help", "demo",
             # Core database and user management
-            "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
+            "init", "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
         ],
         help="Command to execute"
     )
@@ -497,6 +516,36 @@ Examples:
     
     if args.command == "env":
         check_environment()
+        return
+    
+    if args.command == "secrets":
+        # Import and run the secrets generation
+        try:
+            from scripts.generate_secrets import main as generate_secrets_main
+            generate_secrets_main()
+        except ImportError as e:
+            print(f"❌ Import error: {e}")
+            print("Make sure scripts/generate_secrets.py exists")
+            sys.exit(1)
+        return
+    
+    # Handle init command with redirect message
+    if args.command == "init":
+        print("🔄 The 'init' command has been moved to oppdemo.py for better organization.")
+        print()
+        print("📊 To initialize the database and load with sample data, use:")
+        print("   uv run python oppdemo.py init")
+        print()
+        print("💡 This will:")
+        print("   - Initialize the database")
+        print("   - Create a superuser (admin@example.com / admin123)")
+        print("   - Add test users")
+        print("   - Add sample products and webinars")
+        print("   - Download sample photos")
+        print("   - Add webinar registrants with photos")
+        print()
+        print("🔧 For database-only initialization, use:")
+        print("   uv run python oppman.py db")
         return
     
     # Handle core database and user management commands
