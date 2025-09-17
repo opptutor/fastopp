@@ -222,11 +222,24 @@ Create a `.env` file in your project root:
   * **Production Deployments**: Set to persistent storage path (e.g., `/data/uploads`, `/app/uploads`)
   * **URL Compatibility**: Files are always served from `/static/uploads/photos/` regardless of storage location
 
+#### Generate Secure SECRET_KEY
+
+**Recommended**: Use the built-in secret generator for maximum security:
+
+```bash
+# Generate a cryptographically secure SECRET_KEY
+uv run python oppman.py secrets
+```
+
+This will output a line like `SECRET_KEY=...` that you can copy directly into your `.env` file.
+
+**Alternative methods:**
+
 ```bash
 # Create environment file with secure defaults
 cat > .env << EOF
 DATABASE_URL=sqlite+aiosqlite:///./test.db
-SECRET_KEY=dev_secret_key_$(openssl rand -hex 32)
+SECRET_KEY=$(uv run python oppman.py secrets | grep SECRET_KEY | cut -d'=' -f2)
 ENVIRONMENT=development
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
@@ -237,10 +250,17 @@ EOF
 ```bash
 # .env
 DATABASE_URL=sqlite+aiosqlite:///./test.db
-SECRET_KEY=dev_secret_key_change_in_production_$(openssl rand -hex 32)
+SECRET_KEY=your_generated_secret_key_here
 ENVIRONMENT=development
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
+
+**⚠️ Security Important:**
+
+* Never commit `.env` files to version control
+* Add `.env` to your `.gitignore` file
+* Keep your SECRET_KEY secure and private
+* Use different SECRET_KEYs for different environments
 
 ### 4. One-Command Setup
 
@@ -325,6 +345,7 @@ uv run python oppman.py migrate current # Check migration status
 
 # Environment and utilities
 uv run python oppman.py env             # Check environment configuration
+uv run python oppman.py secrets         # Generate SECRET_KEY for .env file
 uv run python oppman.py demo            # Show demo command help
 uv run python oppman.py help            # Show comprehensive help
 ```
@@ -395,6 +416,9 @@ uv run python oppman.py migrate history
 ```bash
 # Check environment configuration
 uv run python oppman.py env
+
+# Generate secure SECRET_KEY for .env file
+uv run python oppman.py secrets
 
 # Show all available commands
 uv run python oppman.py help
