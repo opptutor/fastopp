@@ -23,14 +23,18 @@ try:
 except Exception:
     webinar_router = None  # Optional during partial restores
 
+# Import dependency injection modules
+from dependencies.database import create_database_engine, create_session_factory
+from dependencies.config import get_settings
+
 # Load environment variables
 load_dotenv()
 
-# Get secret key from environment
-SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
+# Get settings using dependency injection
+settings = get_settings()
 
 # Create upload directories
-UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "static/uploads"))
+UPLOAD_DIR = Path(settings.upload_dir)
 UPLOAD_DIR.mkdir(exist_ok=True)
 PHOTOS_DIR = UPLOAD_DIR / "photos"
 PHOTOS_DIR.mkdir(exist_ok=True)
@@ -38,7 +42,7 @@ PHOTOS_DIR.mkdir(exist_ok=True)
 # from users import fastapi_users, auth_backend  # type: ignore
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=settings.secret_key)
 
 # Add proxy headers middleware for production deployments
 @app.middleware("http")
@@ -53,8 +57,23 @@ async def proxy_headers_middleware(request: Request, call_next):
     response = await call_next(request)
     return response
 
+# Setup dependencies
+def setup_dependencies(app: FastAPI):
+    """Setup application dependencies"""
+    # Create database engine and session factory
+    engine = create_database_engine(settings)
+    session_factory = create_session_factory(engine)
+    
+    # Store in app state for dependency injection
+    app.state.db_engine = engine
+    app.state.session_factory = session_factory
+    app.state.settings = settings
+
+# Setup dependencies
+setup_dependencies(app)
+
 # Mount uploads directory based on environment (MUST come before /static mount)
-if os.getenv("UPLOAD_DIR") and os.getenv("UPLOAD_DIR") != "static/uploads":
+if settings.upload_dir != "static/uploads":
     # In production environments, mount the uploads directory separately
     app.mount("/static/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 
@@ -66,7 +85,7 @@ security = HTTPBasic()
 
 
 # Setup admin interface
-setup_admin(app, SECRET_KEY)
+setup_admin(app, settings.secret_key)
 
 # Include routers
 app.include_router(chat_router, prefix="/api")
