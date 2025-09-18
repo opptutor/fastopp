@@ -631,7 +631,7 @@ uv run python oppdemo.py diff
 
 ## 📚 Documentation
 
-### YouTube Video Tutorials
+### Courseware - YouTube Video Tutorials
 
 * [FastAPI for AI LLM Apps with SQLAdmin, SQLModel - Quickstart Template for Frontend](https://youtu.be/_P9p0BGO64Q) - published August 15, 2025
 * [FastAPI with LLM and Database Beginner Tutorial](https://youtu.be/_NlY0zlcC6Q) - published August 18, 2025
