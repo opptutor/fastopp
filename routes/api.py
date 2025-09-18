@@ -5,16 +5,15 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from models import User
 from auth.core import get_current_staff_or_admin_from_cookies
+from dependencies.services import get_product_service
 
 router = APIRouter()
 
 
 @router.get("/products")
-async def get_products():
+async def get_products(product_service = Depends(get_product_service)):
     """API endpoint to fetch product data for the dashboard"""
-    from services.product_service import ProductService
-    
-    data = await ProductService.get_products_with_stats()
+    data = await product_service.get_products_with_stats()
     return JSONResponse(data)
 
 
