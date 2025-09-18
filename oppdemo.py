@@ -200,6 +200,7 @@ def save_demo_files():
     (demo_assets / "services").mkdir(exist_ok=True)
     (demo_assets / "scripts").mkdir(exist_ok=True)
     (demo_assets / "admin").mkdir(exist_ok=True)
+    (demo_assets / "dependencies").mkdir(exist_ok=True)
     
     files_copied = 0
     
@@ -349,6 +350,19 @@ def save_demo_files():
             files_copied += 1
         else:
             print("  ℹ️  admin/ directory not found (skipping admin backup)")
+        
+        # Backup dependencies (dependency injection system)
+        print("🔗 Backing up dependencies...")
+        dependencies_src = Path("dependencies")
+        if dependencies_src.exists():
+            dependencies_dst = demo_assets / "dependencies"
+            if dependencies_dst.exists():
+                shutil.rmtree(dependencies_dst)
+            shutil.copytree(dependencies_src, dependencies_dst)
+            print("  ✅ dependencies/")
+            files_copied += 1
+        else:
+            print("  ℹ️  dependencies/ directory not found (skipping dependencies backup)")
         
         print("\n✅ Demo save completed successfully!")
         print(f"📊 Total files saved: {files_copied}")
@@ -578,6 +592,20 @@ def restore_demo_files():
         else:
             print("  ℹ️  demo_assets/admin not found (skipping admin restoration)")
         
+        # Restore dependencies (dependency injection system)
+        print("🔗 Restoring dependencies...")
+        dependencies_src = demo_assets / "dependencies"
+        dependencies_dest = Path("dependencies")
+        
+        if dependencies_src.exists():
+            if dependencies_dest.exists():
+                shutil.rmtree(dependencies_dest)
+            shutil.copytree(dependencies_src, dependencies_dest)
+            print("  ✅ Restored dependencies/")
+            files_restored += 1
+        else:
+            print("  ℹ️  demo_assets/dependencies not found (skipping dependencies restoration)")
+        
         print("\n✅ Demo restoration completed successfully!")
         print(f"📊 Total files restored: {files_restored}")
         print("\n📋 Next steps:")
@@ -631,6 +659,15 @@ def destroy_demo_files():
             print("  ✅ Removed services/")
         else:
             print("  ℹ️  services/ directory not found")
+        
+        # Step 2.5: Remove dependencies directory (dependency injection system)
+        print("🔗 Removing dependencies directory...")
+        dependencies_dir = Path("dependencies")
+        if dependencies_dir.exists():
+            shutil.rmtree(dependencies_dir)
+            print("  ✅ Removed dependencies/")
+        else:
+            print("  ℹ️  dependencies/ directory not found")
         
         # Step 3: Delete SQLite database
         print("🗄️  Deleting SQLite database...")
@@ -914,6 +951,27 @@ def diff_demo_files():
                 differences['modified'].append("main.py")
         elif main_src.exists() and not main_backup.exists():
             differences['missing_backup'].append("main.py")
+        
+        # Compare dependencies
+        print("🔗 Comparing dependencies...")
+        dependencies_src = Path("dependencies")
+        dependencies_backup = demo_assets / "dependencies"
+        
+        if dependencies_src.exists() and dependencies_backup.exists():
+            for dep_file in dependencies_src.glob("*.py"):
+                backup_file = dependencies_backup / dep_file.name
+                if not backup_file.exists():
+                    differences['added'].append(f"dependencies/{dep_file.name}")
+                else:
+                    if not filecmp.cmp(dep_file, backup_file, shallow=False):
+                        differences['modified'].append(f"dependencies/{dep_file.name}")
+            
+            for backup_file in dependencies_backup.glob("*.py"):
+                src_file = dependencies_src / backup_file.name
+                if not src_file.exists():
+                    differences['deleted'].append(f"dependencies/{backup_file.name}")
+        elif dependencies_src.exists() and not dependencies_backup.exists():
+            differences['missing_backup'].append("dependencies/")
         
         # Display results
         print("\n📋 Demo Files Comparison Results:")
