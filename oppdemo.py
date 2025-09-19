@@ -306,20 +306,19 @@ def save_demo_files():
                 print(f"  ✅ {service_file}")
                 files_copied += 1
         
-        # Backup models
-        print("📊 Backing up models...")
-        models_src = Path("models.py")
-        if models_src.exists():
-            shutil.copy2(models_src, demo_assets / "models.py")
-            print("  ✅ models.py")
-            files_copied += 1
-        
-        # Backup main.py (application entrypoint)
-        print("📄 Backing up main.py...")
+        # Backup main.py and models.py (application entrypoint and models)
+        print("📄 Backing up main.py and models.py...")
         main_src = Path("main.py")
+        models_src = Path("models.py")
+        
         if main_src.exists():
             shutil.copy2(main_src, demo_assets / "main.py")
             print("  ✅ main.py")
+            files_copied += 1
+            
+        if models_src.exists():
+            shutil.copy2(models_src, demo_assets / "models.py")
+            print("  ✅ models.py")
             files_copied += 1
         
         # Backup sample data scripts
@@ -403,10 +402,23 @@ def restore_demo_files():
         Path("services").mkdir(parents=True, exist_ok=True)
         Path("scripts").mkdir(parents=True, exist_ok=True)
 
-        # Restore main.py (application entrypoint)
-        print("📄 Restoring main.py...")
+        # Restore main.py and models.py (application entrypoint and models)
+        print("📄 Restoring main.py and models.py...")
         main_src = demo_assets / "main.py"
+        models_src = demo_assets / "models.py"
         main_dest = Path("main.py")
+        models_dest = Path("models.py")
+        
+        # Restore models.py FIRST to avoid import errors
+        if models_src.exists():
+            if models_dest.exists():
+                backup_models = create_backup_path(models_dest, "restore")
+                shutil.copy2(models_dest, backup_models)
+                print(f"  ✅ Backed up current models.py to {backup_models}")
+            shutil.copy2(models_src, models_dest)
+            print("  ✅ Restored models.py")
+            files_restored += 1
+        
         if main_src.exists():
             if main_dest.exists():
                 backup_main = create_backup_path(main_dest, "restore")
@@ -632,12 +644,19 @@ def destroy_demo_files():
     print("🗑️  Destroying demo files and switching to minimal application...")
     
     try:
-        # Step 1: Copy main.py from base_assets to root
-        print("📄 Copying minimal main.py from base_assets...")
+        # Step 1: Copy main.py and models.py from base_assets to root
+        print("📄 Copying minimal files from base_assets...")
         base_main = Path("base_assets/main.py")
+        base_models = Path("base_assets/models.py")
+        
         if not base_main.exists():
             print("❌ Error: base_assets/main.py not found!")
             print("Please ensure base_assets directory exists with main.py")
+            return False
+            
+        if not base_models.exists():
+            print("❌ Error: base_assets/models.py not found!")
+            print("Please ensure base_assets directory exists with models.py")
             return False
         
         # Backup current main.py if it exists
@@ -647,9 +666,19 @@ def destroy_demo_files():
             shutil.copy2(current_main, backup_main)
             print(f"  ✅ Backed up current main.py to {backup_main}")
         
-        # Copy base main.py to root
+        # Backup current models.py if it exists
+        current_models = Path("models.py")
+        if current_models.exists():
+            backup_models = create_backup_path(current_models, "destroy")
+            shutil.copy2(current_models, backup_models)
+            print(f"  ✅ Backed up current models.py to {backup_models}")
+        
+        # Copy base files to root
         shutil.copy2(base_main, current_main)
         print("  ✅ Copied base_assets/main.py to main.py")
+        
+        shutil.copy2(base_models, current_models)
+        print("  ✅ Copied base_assets/models.py to models.py")
         
         # Step 2: Remove services directory
         print("🔧 Removing services directory...")

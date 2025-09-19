@@ -9,11 +9,11 @@ import shutil
 from pathlib import Path
 from datetime import datetime, timezone
 from db import AsyncSessionLocal
-from models import WebinarRegistrants
 
 
 async def add_sample_registrants():
     """Add sample webinar registrants to the database with photos"""
+    from models import WebinarRegistrants  # Import inside function to avoid module-level import error
     
     sample_registrants = [
         {
