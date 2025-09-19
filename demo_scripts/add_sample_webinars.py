@@ -4,12 +4,13 @@
 import asyncio
 from datetime import datetime, timedelta
 from db import AsyncSessionLocal
-from models import WebinarRegistrants
 from sqlmodel import select
 
 
 async def add_sample_webinars():
     """Add sample webinar registrants to the database"""
+    from models import WebinarRegistrants  # Import inside function to avoid module-level import error
+    
     async with AsyncSessionLocal() as session:
         
         # Sample webinar registrants with different groups and sales reps

@@ -9,12 +9,12 @@ import shutil
 from pathlib import Path
 from datetime import datetime, timezone
 from db import AsyncSessionLocal
-from models import WebinarRegistrants
 from sqlmodel import delete
 
 
 async def clear_and_add_registrants():
     """Clear existing registrants and add new ones with photos"""
+    from models import WebinarRegistrants  # Import inside function to avoid module-level import error
     
     sample_registrants = [
         {

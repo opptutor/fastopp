@@ -1,5 +1,6 @@
 # =========================
-# models.py
+# demo_assets/models.py
+# Full models for demo_assets - all models
 # =========================
 import uuid
 from datetime import datetime, timezone
@@ -64,4 +65,3 @@ class AuditLog(SQLModel, table=True):
     ip_address: Optional[str] = Field(default=None, nullable=True)
     user_agent: Optional[str] = Field(default=None, nullable=True)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-

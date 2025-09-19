@@ -312,7 +312,7 @@ COMMANDS:
     delete      Delete current database (with backup)
     backup      Backup current database
     migrate     Database migration management (see examples below)
-    db          Initialize database (create tables)
+    db          Initialize database (detects base_assets mode for minimal setup)
     
     # User management
     superuser   Create superuser account
@@ -396,6 +396,8 @@ WEBINAR REGISTRANTS:
 DATABASE:
     - Development: SQLite (test.db)
     - Backup format: test.db.YYYYMMDD_HHMMSS
+    - Base Assets Mode: Only creates 'users' table (minimal setup)
+    - Full Mode: Creates all tables (users, products, webinar_registrants, audit_logs)
 
 SERVER:
     - Development server: http://localhost:8000
