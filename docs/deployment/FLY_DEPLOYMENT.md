@@ -1,8 +1,8 @@
 # Fly Deployment
 
-Your FastOpp program wants to fly! 
+Your FastOpp program wants to fly!
 
-## Overview 
+## Overview
 
 FastOpp provides an opinionated framework for FastAPI with the following features:
 
@@ -15,7 +15,7 @@ FastOpp provides an opinionated framework for FastAPI with the following feature
 * Auto-generated documentation for API endpoints
 
  You can deploy it yourself. It needs to be able to run uvicorn and mount a persistent volume for a single SQLite file.
- 
+
 It does not use PostgreSQL or Nginx.
 
 It uses Fly.io, since it's cheap, repeatable, and volume-backed. Run uvicorn directly. Store SQLite at /data/test.db.
@@ -140,8 +140,6 @@ To further reduce costs, you can set memory to 512MB
 
 To increase the stability of the system, you can also add SWAP.
 
-
-
 ### 3) Create and mount a persistent volume
 
 Note: Pick the same region you chose above. However, just use its short code, not the full name. For example, it's not "San Jose, California (US)", it's "sjc" - You can find your region code using:
@@ -218,7 +216,21 @@ Make sure this is included, too.
     handlers = ["tls", "http"]
 ```
 
+### IMPORTANT: How to Make Photo Uploads Permanent on Fly.io (FastAPI Static Files + Fly Volume)
+
+> 📺 [Watch: Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume (YouTube)](https://youtu.be/YKC3ZSA2Eh8?si=lKJt3r8W-gylIW3R)
+
+When deploying FastOpp (or any FastAPI app) on Fly.io, you need to ensure that user-uploaded files like photos are stored on a persistent Fly Volume. Otherwise, uploads will be lost when your app restarts or redeploys.
+
+**Key steps:**
+- Mount a Fly Volume at `/data` (see the `[[mounts]]` block in your `fly.toml` above).
+- Set your FastAPI `UPLOAD_DIR` to `/data/uploads` (see the `[env]` block).
+- Serve static files from this directory in your FastAPI app.
+
+This setup ensures that uploaded files are saved to the persistent volume and survive restarts and deploys.
+
 ### Setting Memory and Swap
+
 In testing, I've found that 256mb may not be enough to run the current FastOpp application and the database.
 
 You can increase the memory. You can also add swap. By all means, please test it yourself and configure your memory settings to what works for your version of the app.
