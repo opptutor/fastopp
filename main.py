@@ -69,11 +69,8 @@ def setup_dependencies(app: FastAPI):
     app.state.session_factory = session_factory
     app.state.settings = settings
 
-# Setup dependencies on startup
-@app.on_event("startup")
-async def startup_event():
-    """Setup application dependencies on startup"""
-    setup_dependencies(app)
+# Setup dependencies
+setup_dependencies(app)
 
 # Mount uploads directory based on environment (MUST come before /static mount)
 if settings.upload_dir != "static/uploads":
@@ -91,7 +88,7 @@ security = HTTPBasic()
 setup_admin(app, settings.secret_key)
 
 # Include routers
-app.include_router(chat_router)
+app.include_router(chat_router, prefix="/api")
 app.include_router(api_router, prefix="/api")
 if auth_router:
     app.include_router(auth_router)

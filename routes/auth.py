@@ -1,12 +1,11 @@
 """
 Authentication routes
 """
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from dependencies.database import get_db_session
+from db import AsyncSessionLocal
 from models import User
 from auth.core import create_user_token
 from fastapi_users.password import PasswordHelper
@@ -27,7 +26,7 @@ async def login_page(request: Request):
 
 
 @router.post("/login")
-async def login_form(request: Request, session: AsyncSession = Depends(get_db_session)):
+async def login_form(request: Request):
     """Handle login form submission"""
     form = await request.form()
     username = form.get("username")
@@ -41,7 +40,7 @@ async def login_form(request: Request, session: AsyncSession = Depends(get_db_se
             "error": "Please provide both email and password"
         })
     
-    try:
+    async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(User).where(User.email == username)
         )
@@ -98,8 +97,6 @@ async def login_form(request: Request, session: AsyncSession = Depends(get_db_se
         response = RedirectResponse(url="/webinar-registrants", status_code=302)
         response.set_cookie(key="access_token", value=token, httponly=True, max_age=1800)  # 30 minutes
         return response
-    finally:
-        await session.close()
 
 
 @router.get("/logout")
