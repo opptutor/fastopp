@@ -12,7 +12,7 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     )
 
 
-def create_session_factory(engine = Depends(create_database_engine)):
+def create_session_factory(engine=Depends(create_database_engine)):
     """Create session factory from engine"""
     return async_sessionmaker(
         bind=engine,

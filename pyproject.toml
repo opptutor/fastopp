@@ -1,6 +1,6 @@
 [project]
 name = "fastopp"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Oppkey"]
 description = "FastAPI starter package for students prototyping AI web applications."
 readme = "README.md"
