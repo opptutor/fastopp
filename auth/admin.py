@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from sqladmin.authentication import AuthenticationBackend
 from fastapi import Request
 from sqlalchemy import select
-from db import AsyncSessionLocal
+from dependencies.database import get_db_session
 from models import User
 from fastapi_users.password import PasswordHelper
 
@@ -28,7 +28,8 @@ class AdminAuth(AuthenticationBackend):
             password_str = str(password)
         
         # Verify user against database
-        async with AsyncSessionLocal() as session:
+        session_factory = request.app.state.session_factory
+        async with session_factory() as session:
             result = await session.execute(
                 select(User).where(User.email == username)  # type: ignore
             )
@@ -161,7 +162,8 @@ class AdminAuth(AuthenticationBackend):
                 import uuid
                 user_uuid = uuid.UUID(user_id)
                 
-                async with AsyncSessionLocal() as session:
+                session_factory = request.app.state.session_factory
+                async with session_factory() as session:
                     result = await session.execute(
                         select(User).where(User.id == user_uuid)
                     )

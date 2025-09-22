@@ -9,7 +9,8 @@ from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from sqlalchemy import select
-from db import AsyncSessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
+from dependencies.database import get_db_session
 from models import User
 
 # JWT Configuration
@@ -41,7 +42,7 @@ def verify_token(token: str):
         return None
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), session: AsyncSession = Depends(get_db_session)):
     """Get current authenticated user"""
     token = credentials.credentials
     payload = verify_token(token)
@@ -70,25 +71,24 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    async with AsyncSessionLocal() as session:
-        result = await session.execute(select(User).where(User.id == user_uuid))
-        user = result.scalar_one_or_none()
-        
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Inactive user",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        return user
+    result = await session.execute(select(User).where(User.id == user_uuid))
+    user = result.scalar_one_or_none()
+    
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Inactive user",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return user
 
 
 async def get_current_superuser(current_user: User = Depends(get_current_user)):
@@ -119,7 +119,7 @@ def create_user_token(user: User):
     ) 
 
 
-async def get_current_user_from_cookies(request: Request):
+async def get_current_user_from_cookies(request: Request, session: AsyncSession = Depends(get_db_session)):
     """Get current authenticated user from cookies"""
     token = request.cookies.get("access_token")
     if not token:
@@ -155,25 +155,24 @@ async def get_current_user_from_cookies(request: Request):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    async with AsyncSessionLocal() as session:
-        result = await session.execute(select(User).where(User.id == user_uuid))
-        user = result.scalar_one_or_none()
-        
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="User not found",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Inactive user",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        return user
+    result = await session.execute(select(User).where(User.id == user_uuid))
+    user = result.scalar_one_or_none()
+    
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Inactive user",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return user
 
 
 async def get_current_staff_or_admin_from_cookies(request: Request):

@@ -7,14 +7,13 @@ from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import JWTStrategy, AuthenticationBackend
 from fastapi_users.db import SQLAlchemyUserDatabase
 from fastapi_users.manager import BaseUserManager
-from db import AsyncSessionLocal
+from dependencies.database import get_db_session
 from models import User
 from fastapi import Depends
 
 
-async def get_user_db():  # type: ignore
-    async with AsyncSessionLocal() as session:
-        yield SQLAlchemyUserDatabase(session, User)
+async def get_user_db(session = Depends(get_db_session)):  # type: ignore
+    yield SQLAlchemyUserDatabase(session, User)
 
 
 class UserManager(BaseUserManager[User, uuid.UUID]):

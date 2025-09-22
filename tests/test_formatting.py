@@ -12,12 +12,12 @@ load_dotenv()
 
 async def test_formatted_messages():
     """Test the AI chat with messages that should trigger formatting"""
-    
+
     api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
         print("❌ OPENROUTER_API_KEY not found")
         return False
-    
+
     # Test messages that should trigger different formatting
     test_messages = [
         "Can you explain what **bold text** and *italic text* look like?",
@@ -25,12 +25,12 @@ async def test_formatted_messages():
         "Write a Python function with ```code blocks```",
         "Create a list with:\n1. First item\n2. Second item\n3. Third item"
     ]
-    
+
     url = "http://localhost:8000/api/chat"
-    
+
     for i, message in enumerate(test_messages, 1):
         print(f"\n🧪 Test {i}: {message}")
-        
+
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(url, json={"message": message}) as response:
@@ -47,7 +47,7 @@ async def test_formatted_messages():
                         print(f"❌ Failed with status {response.status}")
         except Exception as e:
             print(f"❌ Error: {e}")
-    
+
     return True
 
 
@@ -55,9 +55,9 @@ async def main():
     """Run the formatting test"""
     print("🎨 Testing DaisyUI Message Formatting...")
     print("=" * 60)
-    
+
     success = await test_formatted_messages()
-    
+
     print("=" * 60)
     if success:
         print("🎉 Formatting test completed!")
@@ -67,4 +67,4 @@ async def main():
         print("❌ Test failed")
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

@@ -4,13 +4,18 @@
 import os
 from sqladmin import Admin
 from fastapi import FastAPI
-from db import async_engine
+from dependencies.database import create_database_engine
+from dependencies.config import get_settings
 from auth.admin import AdminAuth
 from .views import UserAdmin, ProductAdmin, WebinarRegistrantsAdmin, AuditLogAdmin
 
 
 def setup_admin(app: FastAPI, secret_key: str):
     """Setup and configure the admin interface for demo application (all features)"""
+    # Get settings and create database engine
+    settings = get_settings()
+    engine = create_database_engine(settings)
+    
     # Check if we're in production (HTTPS environment)
     is_production = (os.getenv("RAILWAY_ENVIRONMENT") or
                      os.getenv("PRODUCTION") or
@@ -21,7 +26,7 @@ def setup_admin(app: FastAPI, secret_key: str):
     if is_production:
         admin = Admin(
             app=app,
-            engine=async_engine,
+            engine=engine,
             authentication_backend=AdminAuth(secret_key=secret_key),
             base_url="/admin",
             title="FastOpp Admin",
@@ -30,7 +35,7 @@ def setup_admin(app: FastAPI, secret_key: str):
     else:
         admin = Admin(
             app=app,
-            engine=async_engine,
+            engine=engine,
             authentication_backend=AdminAuth(secret_key=secret_key)
         )
     

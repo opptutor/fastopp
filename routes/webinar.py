@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from models import User
 from auth.core import get_current_staff_or_admin_from_cookies
 from dependencies.services import get_webinar_service
+from services.webinar_service import WebinarService
 
 router = APIRouter()
 
@@ -17,7 +18,7 @@ async def upload_photo(
     photo: UploadFile = File(...),
     description: Optional[str] = Form(None),
     current_user: User = Depends(get_current_staff_or_admin_from_cookies),
-    webinar_service=Depends(get_webinar_service)
+    webinar_service: WebinarService = Depends(get_webinar_service)
 ):
     """Upload a photo for a webinar registrant"""
     
@@ -62,7 +63,7 @@ async def upload_photo(
 async def update_notes(
     registrant_id: str,
     notes: str = Form(...),
-    webinar_service=Depends(get_webinar_service)
+    webinar_service: WebinarService = Depends(get_webinar_service)
 ):
     """Update notes for a webinar registrant"""
     success, message = await webinar_service.update_notes(registrant_id, notes)
@@ -83,7 +84,7 @@ async def update_notes(
 @router.delete("/delete-photo/{registrant_id}")
 async def delete_photo(
     registrant_id: str,
-    webinar_service=Depends(get_webinar_service)
+    webinar_service: WebinarService = Depends(get_webinar_service)
 ):
     """Delete a photo for a webinar registrant"""
     success, message = await webinar_service.delete_photo(registrant_id)
