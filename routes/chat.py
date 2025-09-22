@@ -1,20 +1,20 @@
 """
 Chat routes for AI chat functionality
 """
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 from sse_starlette.sse import EventSourceResponse
-from services.chat_service import ChatService
+from dependencies.services import get_chat_service
 import json
 
 router = APIRouter()
 
 
 @router.get("/chat/test")
-async def test_chat_connection():
+async def test_chat_connection(chat_service=Depends(get_chat_service)):
     """Test endpoint to check OpenRouter API connection"""
     try:
-        result = await ChatService.test_connection()
+        result = await chat_service.test_connection()
         return JSONResponse(content=result)
     except Exception as e:
         return JSONResponse(
@@ -24,7 +24,10 @@ async def test_chat_connection():
 
 
 @router.post("/chat")
-async def chat_with_llama(request: Request):
+async def chat_with_llama(
+    request: Request,
+    chat_service=Depends(get_chat_service)
+):
     """Chat endpoint using OpenRouter API with Llama 3.3 70B (non-streaming)"""
     try:
         # Get the request body
@@ -38,7 +41,7 @@ async def chat_with_llama(request: Request):
             )
         
         # Use service to handle chat
-        response = await ChatService.chat_with_llama(user_message)
+        response = await chat_service.chat_with_llama(user_message)
         return JSONResponse(content=response)
         
     except json.JSONDecodeError:
@@ -54,7 +57,10 @@ async def chat_with_llama(request: Request):
 
 
 @router.post("/chat/stream")
-async def chat_with_llama_stream(request: Request):
+async def chat_with_llama_stream(
+    request: Request,
+    chat_service=Depends(get_chat_service)
+):
     """Streaming chat endpoint using OpenRouter API with Llama 3.3 70B"""
     try:
         # Get the request body
@@ -70,7 +76,7 @@ async def chat_with_llama_stream(request: Request):
         # Create SSE response
         async def event_generator():
             try:
-                async for chunk in ChatService.chat_with_llama_stream(user_message):
+                async for chunk in chat_service.chat_with_llama_stream(user_message):
                     yield {
                         "event": "message",
                         "data": json.dumps(chunk)

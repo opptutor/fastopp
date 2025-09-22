@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse
 from models import User
 from auth.core import get_current_staff_or_admin_from_cookies
+from dependencies.services import get_webinar_service
 
 router = APIRouter()
 
@@ -15,7 +16,8 @@ async def upload_photo(
     registrant_id: str,
     photo: UploadFile = File(...),
     description: Optional[str] = Form(None),
-    current_user: User = Depends(get_current_staff_or_admin_from_cookies)
+    current_user: User = Depends(get_current_staff_or_admin_from_cookies),
+    webinar_service=Depends(get_webinar_service)
 ):
     """Upload a photo for a webinar registrant"""
     
@@ -39,8 +41,7 @@ async def upload_photo(
     content = await photo.read()
     
     # Use service to handle upload
-    from services.webinar_service import WebinarService
-    success, message, _ = await WebinarService.upload_photo(
+    success, message, _ = await webinar_service.upload_photo(
         registrant_id, content, photo.filename or "photo.jpg"
     )
     
@@ -60,12 +61,11 @@ async def upload_photo(
 @router.post("/update-notes/{registrant_id}")
 async def update_notes(
     registrant_id: str,
-    notes: str = Form(...)
+    notes: str = Form(...),
+    webinar_service=Depends(get_webinar_service)
 ):
     """Update notes for a webinar registrant"""
-    from services.webinar_service import WebinarService
-    
-    success, message = await WebinarService.update_notes(registrant_id, notes)
+    success, message = await webinar_service.update_notes(registrant_id, notes)
     
     if success:
         return HTMLResponse(
@@ -81,11 +81,12 @@ async def update_notes(
 
 
 @router.delete("/delete-photo/{registrant_id}")
-async def delete_photo(registrant_id: str):
+async def delete_photo(
+    registrant_id: str,
+    webinar_service=Depends(get_webinar_service)
+):
     """Delete a photo for a webinar registrant"""
-    from services.webinar_service import WebinarService
-    
-    success, message = await WebinarService.delete_photo(registrant_id)
+    success, message = await webinar_service.delete_photo(registrant_id)
     
     if success:
         return HTMLResponse(

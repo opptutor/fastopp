@@ -1,13 +1,13 @@
 """
 Chat service for handling AI chat functionality using OpenRouter API
 """
-import os
 import json
 import aiohttp
 import markdown
 import logging
 from typing import Dict, Any, AsyncGenerator
 from fastapi import HTTPException
+from dependencies.config import Settings
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -25,8 +25,10 @@ LLM_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
 class ChatService:
     """Service for AI chat operations using OpenRouter API"""
 
-    @staticmethod
-    async def test_connection() -> Dict[str, Any]:
+    def __init__(self, settings: Settings):
+        self.settings = settings
+
+    async def test_connection(self) -> Dict[str, Any]:
         """
         Test method to check if the OpenRouter API is accessible
 
@@ -34,7 +36,7 @@ class ChatService:
             dict: Connection test result
         """
         try:
-            api_key = os.getenv("OPENROUTER_API_KEY")
+            api_key = self.settings.openrouter_api_key
             if not api_key:
                 return {"status": "error", "message": "No API key found", "api_key_length": 0}
             
@@ -87,8 +89,7 @@ class ChatService:
             print(f"DEBUG: Test exception: {e}")
             return {"status": "error", "message": f"Exception: {str(e)}"}
 
-    @staticmethod
-    async def chat_with_llama(user_message: str) -> Dict[str, Any]:
+    async def chat_with_llama(self, user_message: str) -> Dict[str, Any]:
         """
         Send a message to Llama 3.3 70B via OpenRouter API (non-streaming)
         
@@ -106,7 +107,7 @@ class ChatService:
                 raise HTTPException(status_code=400, detail="Message is required")
             
             # Get API key from environment
-            api_key = os.getenv("OPENROUTER_API_KEY")
+            api_key = self.settings.openrouter_api_key
             if not api_key:
                 raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
             
@@ -207,8 +208,7 @@ class ChatService:
             print(f"DEBUG: Unexpected error: {e}")
             raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-    @staticmethod
-    async def chat_with_llama_stream(user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
+    async def chat_with_llama_stream(self, user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
         """
         Stream a message to Llama 3.3 70B via OpenRouter API with server-side markdown processing
         
@@ -226,7 +226,7 @@ class ChatService:
                 raise HTTPException(status_code=400, detail="Message is required")
             
             # Get API key from environment
-            api_key = os.getenv("OPENROUTER_API_KEY")
+            api_key = self.settings.openrouter_api_key
             if not api_key:
                 raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
             
@@ -338,8 +338,7 @@ class ChatService:
             logger.error(f"Unexpected error in streaming: {e}", exc_info=True)
             raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-    @staticmethod
-    async def _mock_stream_response(user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
+    async def _mock_stream_response(self, user_message: str) -> AsyncGenerator[Dict[str, Any], None]:
         """
         Mock streaming response for testing when API is not available
         
