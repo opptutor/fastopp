@@ -28,6 +28,3 @@ def get_chat_service(
     """Dependency to get ChatService instance"""
     from services.chat_service import ChatService
     return ChatService(settings=settings)
-
-
-# Note: Other services will be added in Phase 1B
