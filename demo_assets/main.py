@@ -68,8 +68,11 @@ def setup_dependencies(app: FastAPI):
     app.state.db_engine = engine
     app.state.session_factory = session_factory
     app.state.settings = settings
+    
+    print(f"✅ Dependencies setup complete - session_factory: {session_factory}")
+    print(f"✅ App state after setup: {list(app.state.__dict__.keys())}")
 
-# Setup dependencies
+# Setup dependencies immediately
 setup_dependencies(app)
 
 # Mount uploads directory based on environment (MUST come before /static mount)
