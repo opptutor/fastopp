@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse
 from models import User
-from auth.core import get_current_staff_or_admin_from_cookies
+from dependencies.auth import get_current_staff_or_admin
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ async def upload_photo(
     registrant_id: str,
     photo: UploadFile = File(...),
     description: Optional[str] = Form(None),
-    current_user: User = Depends(get_current_staff_or_admin_from_cookies)
+    current_user: User = Depends(get_current_staff_or_admin)
 ):
     """Upload a photo for a webinar registrant"""
     

@@ -363,6 +363,19 @@ def save_demo_files():
         else:
             print("  ℹ️  dependencies/ directory not found (skipping dependencies backup)")
         
+        # Backup auth directory (authentication system)
+        print("🔐 Backing up auth directory...")
+        auth_src = Path("auth")
+        if auth_src.exists():
+            auth_dst = demo_assets / "auth"
+            if auth_dst.exists():
+                shutil.rmtree(auth_dst)
+            shutil.copytree(auth_src, auth_dst)
+            print("  ✅ auth/")
+            files_copied += 1
+        else:
+            print("  ℹ️  auth/ directory not found (skipping auth backup)")
+        
         print("\n✅ Demo save completed successfully!")
         print(f"📊 Total files saved: {files_copied}")
         print(f"📁 Save location: {demo_assets.absolute()}")
@@ -617,6 +630,20 @@ def restore_demo_files():
             files_restored += 1
         else:
             print("  ℹ️  demo_assets/dependencies not found (skipping dependencies restoration)")
+        
+        # Restore auth directory (authentication system)
+        print("🔐 Restoring auth directory...")
+        auth_src = demo_assets / "auth"
+        auth_dest = Path("auth")
+        
+        if auth_src.exists():
+            if auth_dest.exists():
+                shutil.rmtree(auth_dest)
+            shutil.copytree(auth_src, auth_dest)
+            print("  ✅ Restored auth/")
+            files_restored += 1
+        else:
+            print("  ℹ️  demo_assets/auth not found (skipping auth restoration)")
         
         print("\n✅ Demo restoration completed successfully!")
         print(f"📊 Total files restored: {files_restored}")

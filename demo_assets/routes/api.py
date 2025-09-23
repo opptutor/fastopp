@@ -4,7 +4,7 @@ API routes for data endpoints
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from models import User
-from auth.core import get_current_staff_or_admin_from_cookies
+from dependencies.auth import get_current_staff_or_admin
 from dependencies.services import get_product_service
 
 router = APIRouter()
@@ -18,7 +18,7 @@ async def get_products(product_service = Depends(get_product_service)):
 
 
 @router.get("/registrants")
-async def get_registrants(current_user: User = Depends(get_current_staff_or_admin_from_cookies)):
+async def get_registrants(current_user: User = Depends(get_current_staff_or_admin)):
     """Get all webinar registrants with their photos"""
     from services.webinar_service import WebinarService
     
