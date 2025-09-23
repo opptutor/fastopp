@@ -639,7 +639,7 @@ def restore_demo_files():
         return False
 
 
-def destroy_demo_files():
+async def destroy_demo_files():
     """Destroy demo files and switch to minimal base application"""
     print("🗑️  Destroying demo files and switching to minimal application...")
     
@@ -772,12 +772,40 @@ def destroy_demo_files():
             print("Please ensure base_assets/admin directory exists")
             return False
         
+        # Step 8: Copy auth directory from base_assets
+        print("🔐 Copying auth directory from base_assets...")
+        auth_dir = Path("auth")
+        base_auth = Path("base_assets/auth")
+        
+        if auth_dir.exists():
+            shutil.rmtree(auth_dir)
+            print("  ✅ Removed existing auth/")
+        
+        if base_auth.exists():
+            shutil.copytree(base_auth, auth_dir)
+            print("  ✅ Copied base_assets/auth to auth/")
+        else:
+            print("  ❌ Error: base_assets/auth not found!")
+            print("Please ensure base_assets/auth directory exists")
+            return False
+        
+        # Step 9: Initialize database for base_assets
+        print("🗄️  Initializing database for base_assets...")
+        try:
+            await run_init()
+            print("  ✅ Database initialized")
+        except Exception as e:
+            print(f"  ❌ Error initializing database: {e}")
+            print("  ℹ️  You can manually initialize with: uv run python oppdemo.py db")
+        
         print("\n✅ Demo destruction completed successfully!")
         print("🔄 Switched to minimal FastAPI application with authentication")
         print("\n📋 Next steps:")
-        print("1. Start the minimal application:")
+        print("1. Create a superuser (if needed):")
+        print("   uv run python oppdemo.py superuser")
+        print("2. Start the minimal application:")
         print("   uv run python main.py")
-        print("2. Visit the application:")
+        print("3. Visit the application:")
         print("   - http://localhost:8000/ (home page with navigation)")
         print("   - http://localhost:8000/login (authentication)")
         print("   - http://localhost:8000/protected (password-protected content)")
@@ -1230,7 +1258,7 @@ Examples:
     elif args.command == "restore":
         restore_demo_files()
     elif args.command == "destroy":
-        destroy_demo_files()
+        asyncio.run(destroy_demo_files())
     elif args.command == "diff":
         diff_demo_files()
     elif args.command == "backups":
