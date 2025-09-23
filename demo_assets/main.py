@@ -100,6 +100,12 @@ if webinar_router:
     app.include_router(webinar_router)
 
 
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "message": "FastOpp Demo app is running"}
+
+
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     """Handle HTTP exceptions and redirect to login if authentication fails"""
