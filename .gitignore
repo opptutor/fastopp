@@ -38,6 +38,10 @@ static/uploads/*
 alembic/versions/*.py
 alembic/versions_backup_*/
 
+# Cookies and session files
+cookies.txt
+*.cookies
+
 # macOS system files
 .DS_Store
 .DS_Store?
