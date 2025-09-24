@@ -35,6 +35,7 @@ fastopp/
 | Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
 | API Endpoints | Built-in FastAPI routes with automatic OpenAPI documentation | Django REST Framework |
 | HTML Templating | Jinja2 with HTMX + Alpine.js + DaisyUI (optimized for AI applications with server-sent events). in-progress.  Currently used too much JavaScript. Will simplify in the future. | Django Templates (Jinja2-like syntax) |
+| Dependency Injection | Built-in FastAPI `Depends()` system for services, database sessions, and configuration | No built-in DI. Requires manual service layer or third-party packages such as [django-injector](https://pypi.org/project/django-injector/) |
 
 ## Layer Responsibilities
 
