@@ -30,10 +30,11 @@ fastopp/
 | Production Web Server | FastAPI + uvicorn (for loads < 1,000 concurrent connections). Used NGINX on last Digital Ocean deploy. Using uvicorn on fly and railway | NGINX + Gunicorn |
 | Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
 | Development SQL Database | SQLite | SQLite |
-| Production SQL Database | PostgreSQL with pgvector | PostgreSQL + pgvector, asyncpg |
-| User Management | [FastAPI Users](https://github.com/fastapi-users/fastapi-users) | Django Admin |
+| Production SQL Database | PostgreSQL with pgvector. Though, we have used SQLite with FTS5 and FAISS in production | PostgreSQL + pgvector, asyncpg |
+| User Management & Authentication | Custom implementation with SQLModel/SQLAlchemy + FastAPI Users password hashing only | Django Admin |
 | Database Management | [SQLAdmin](https://aminalaee.github.io/sqladmin/) + Template | Django Admin |
-| Authentication | Custom JWT + Session Auth (with database user verification and FastAPI Users password hashing) | Django Admin Auth |
+| API Endpoints | Built-in FastAPI routes with automatic OpenAPI documentation | Django REST Framework |
+| HTML Templating | Jinja2 with HTMX + Alpine.js + DaisyUI (optimized for AI applications with server-sent events). in-progress.  Currently used too much JavaScript. Will simplify in the future. | Django Templates (Jinja2-like syntax) |
 
 ## Layer Responsibilities
 
