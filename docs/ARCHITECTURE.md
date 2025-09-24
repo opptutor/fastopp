@@ -27,7 +27,7 @@ fastopp/
 
 | Functional Concept| Component | Django Equivalent |
 | -- | -- | -- |
-| Production Web Server | FastAPI + uvicorn (for loads < 1,000 concurrent connections) | NGINX + Gunicorn |
+| Production Web Server | FastAPI + uvicorn (for loads < 1,000 concurrent connections). Used NGINX on last Digital Ocean deploy. Using uvicorn on fly and railway | NGINX + Gunicorn |
 | Development Web Server | uvicorn  | `manage.py runserver` in development. Django Framework |
 | Development SQL Database | SQLite | SQLite |
 | Production SQL Database | PostgreSQL with pgvector | PostgreSQL + pgvector, asyncpg |
