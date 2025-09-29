@@ -68,13 +68,19 @@ Thank you for your interest in contributing to FastOpp! This guide will help you
 
 1. **Fork the Repository** (same as above)
 
-2. **Create a Documentation Branch**
+2. **Set Up Upstream Remote and Create Documentation Branch**
    ```bash
-   # First, fetch the blog branch from upstream
-   git fetch origin docs/blog-only
+   # Add the upstream repository (original Oppkey/fastopp)
+   git remote add upstream https://github.com/Oppkey/fastopp.git
    
-   # Create a local tracking branch
-   git checkout -b docs/blog-only origin/docs/blog-only
+   # Fetch all branches from upstream
+   git fetch upstream
+   
+   # Create a local tracking branch for the blog
+   git checkout -b docs/blog-only upstream/docs/blog-only
+   
+   # Push the blog branch to your fork
+   git push origin docs/blog-only
    
    # Then create your feature branch from it
    git checkout -b docs/blog-contribution
