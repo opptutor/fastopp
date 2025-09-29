@@ -1,0 +1,194 @@
+---
+layout: default
+---
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-ai-blue to-ai-purple text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-6">{{ site.title }}</h1>
+            <p class="text-xl mb-8 max-w-3xl mx-auto">
+                {{ site.description }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://github.com/Oppkey/FastOpp" 
+                   class="bg-white text-ai-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                   target="_blank" rel="noopener">
+                    View on GitHub
+                </a>
+                <a href="{{ '/posts/' | relative_url }}" 
+                   class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-ai-blue transition-colors">
+                    Read Blog Posts
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Why FastOpp?</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                FastOpp provides an opinionated framework for FastAPI with Django-inspired features, 
+                perfect for students building AI applications.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-gradient-to-br from-ai-blue to-ai-purple rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">Admin Panel</h3>
+                <p class="text-gray-600">
+                    Django-style admin panel with role-based authentication, similar to Django admin but built for FastAPI.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-purple-500 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">SQL Database</h3>
+                <p class="text-gray-600">
+                    SQL database with Django-inspired models and migrations using SQLModel and Alembic.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">AI Integration</h3>
+                <p class="text-gray-600">
+                    Built for AI applications with async LLM communication and modern UI components.
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">Modern UI</h3>
+                <p class="text-gray-600">
+                    Tailwind CSS, DaisyUI, Alpine.js, and HTMX for beautiful, interactive interfaces.
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-indigo-500 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">API Endpoints</h3>
+                <p class="text-gray-600">
+                    Auto-generated API documentation and endpoints designed to connect with React and Flutter.
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+                <div class="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-4 text-gray-900">Fast Development</h3>
+                <p class="text-gray-600">
+                    Get started quickly with pre-built components and management tools like oppman.py and oppdemo.py.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Posts Section -->
+{% if site.posts.size > 0 %}
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Latest Posts</h2>
+            <p class="text-xl text-gray-600">
+                Stay updated with the latest FastOpp developments and tutorials.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for post in site.posts limit:3 %}
+            <article class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                {% if post.image %}
+                <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                {% endif %}
+                <div class="p-6">
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <time datetime="{{ post.date | date_to_xmlschema }}">
+                            {{ post.date | date: "%B %d, %Y" }}
+                        </time>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">
+                        <a href="{{ post.url | relative_url }}" class="hover:text-ai-blue transition-colors">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        {{ post.excerpt | strip_html | truncate: 120 }}
+                    </p>
+                    <a href="{{ post.url | relative_url }}" 
+                       class="inline-flex items-center text-ai-blue hover:text-blue-700 font-medium">
+                        Read more
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="{{ '/posts/' | relative_url }}" 
+               class="inline-block bg-ai-blue text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                View All Posts
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-ai-blue to-ai-purple text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+        <p class="text-xl mb-8 max-w-3xl mx-auto">
+            Create your own FastAPI AI application with FastOpp. Perfect for students, hobbyists, and entrepreneurs.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="https://github.com/Oppkey/FastOpp" 
+               class="bg-white text-ai-blue px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+               target="_blank" rel="noopener">
+                Use Template
+            </a>
+            <a href="https://github.com/Oppkey/FastOpp#-quick-start-for-students" 
+               class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-ai-blue transition-colors"
+               target="_blank" rel="noopener">
+                Quick Start Guide
+            </a>
+        </div>
+    </div>
+</section>
