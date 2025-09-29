@@ -70,6 +70,11 @@ Thank you for your interest in contributing to FastOpp! This guide will help you
 
 2. **Create a Documentation Branch**
    ```bash
+   # First, checkout the blog branch
+   git checkout docs/blog-only
+   git pull origin docs/blog-only
+   
+   # Then create your feature branch from it
    git checkout -b docs/blog-contribution
    # or
    git checkout -b fix-blog-typo
@@ -105,7 +110,7 @@ Thank you for your interest in contributing to FastOpp! This guide will help you
    - **Head repository**: `your-username/fastopp`
    - **Compare branch**: `docs/blog-contribution`
    
-   **Note**: You create your own branch (like `docs/blog-contribution`) but submit the PR to target the `docs/blog-only` branch, which is the protected branch used for GitHub Pages deployment.
+   **Note**: You start from the `docs/blog-only` branch, create your own feature branch from it, then submit the PR back to `docs/blog-only`. This ensures you have all the blog content and your changes are based on the latest blog state.
 
 ## 🏗️ Repository Structure
 
