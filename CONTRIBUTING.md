@@ -70,9 +70,11 @@ Thank you for your interest in contributing to FastOpp! This guide will help you
 
 2. **Create a Documentation Branch**
    ```bash
-   # First, checkout the blog branch
-   git checkout docs/blog-only
-   git pull origin docs/blog-only
+   # First, fetch the blog branch from upstream
+   git fetch origin docs/blog-only
+   
+   # Create a local tracking branch
+   git checkout -b docs/blog-only origin/docs/blog-only
    
    # Then create your feature branch from it
    git checkout -b docs/blog-contribution
