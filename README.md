@@ -16,10 +16,17 @@ FastOpp provides pre-built admin components that give FastAPI functionality comp
 
 ## Local Development
 
-To run this blog locally:
+To run this blog locally for development:
 
-1. **Install Jekyll**
+### Prerequisites
+
+1. **Install Ruby and Jekyll**
    ```bash
+   # Install Ruby (if not already installed)
+   # On macOS with Homebrew:
+   brew install ruby
+   
+   # Install Jekyll and Bundler
    gem install jekyll bundler
    ```
 
@@ -28,6 +35,8 @@ To run this blog locally:
    bundle install
    ```
 
+### Running the Development Server
+
 3. **Start the development server**
    ```bash
    bundle exec jekyll serve
@@ -35,6 +44,31 @@ To run this blog locally:
 
 4. **Visit the site**
    Open [http://localhost:4000](http://localhost:4000) in your browser
+
+### Troubleshooting
+
+**Port already in use error:**
+If you get "Address already in use" error:
+```bash
+# Find and kill the process using port 4000
+lsof -ti:4000 | xargs kill
+
+# Or use a different port
+bundle exec jekyll serve --port 4001
+```
+
+**Sass deprecation warnings:**
+The site uses modern Sass syntax to avoid deprecation warnings. If you see warnings, they're likely from the Minima theme and can be safely ignored.
+
+**Auto-regeneration:**
+The development server automatically regenerates the site when you make changes to files. No need to restart the server.
+
+### Development Features
+
+- **Live reload**: Changes are automatically reflected in the browser
+- **Sass compilation**: Custom styles in `assets/main.scss` are automatically compiled
+- **Markdown processing**: Posts and pages are processed with Kramdown
+- **SEO optimization**: Built-in SEO tags and sitemap generation
 
 ## Writing Posts
 

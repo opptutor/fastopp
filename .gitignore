@@ -50,3 +50,16 @@ cookies.txt
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Jekyll build files
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Jekyll dependencies
+vendor/
+.bundle/
+
+# Jekyll temporary files
+*.log

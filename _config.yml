@@ -1,7 +1,7 @@
 # Site settings
 title: FastOpp Blog
 description: "Easier AI Web Apps for Students - FastAPI starter package for students prototyping AI web applications"
-author: Craig Oda
+author: Oppkey
 email: craig@oppkey.com
 url: "https://oppkey.github.io"
 baseurl: "/fastopp"
@@ -10,6 +10,19 @@ baseurl: "/fastopp"
 markdown: kramdown
 highlighter: rouge
 theme: minima
+
+# Sass settings
+sass:
+  sass_dir: assets
+  style: compressed
+  sourcemap: development
+  load_paths:
+    - _sass
+  quiet_deps: true
+  silence_deprecations:
+    - import
+    - global-builtin
+    - color-functions
 
 # Collections
 collections:
@@ -24,7 +37,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "Craig Oda"
+      author: "Oppkey"
 
 # Plugins
 plugins:
@@ -42,6 +55,30 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
+  # FastOpp application files
+  - admin/
+  - alembic/
+  - auth/
+  - base_assets/
+  - demo_assets/
+  - demo_scripts/
+  - dependencies/
+  - docs/
+  - routes/
+  - scripts/
+  - services/
+  - static/
+  - templates/
+  - tests/
+  - alembic.ini
+  - db.py
+  - main.py
+  - models.py
+  - oppman.py
+  - oppdemo.py
+  - requirements.txt
+  - .python-version
+  - LICENSE
 
 # Include
 include:

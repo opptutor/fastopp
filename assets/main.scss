@@ -1,0 +1,102 @@
+---
+---
+
+@use "sass:color";
+
+// Import minima theme components using modern @use syntax
+@use "minima" as *;
+
+// Override deprecated color functions with modern equivalents
+$grey-color-light: color.scale($grey-color, $lightness: 40%) !default;
+$grey-color-dark: color.scale($grey-color, $lightness: -25%) !default;
+
+// Custom FastOpp theme colors
+$brand-color: #3B82F6 !default; // ai-blue
+$brand-color-light: color.scale($brand-color, $lightness: 40%) !default;
+$brand-color-dark: color.scale($brand-color, $lightness: -15%) !default;
+
+// Override minima variables with modern color functions
+.site-header {
+  .site-title {
+    color: color.scale($brand-color, $lightness: -15%);
+  }
+}
+
+.post-meta {
+  color: color.scale($text-color, $lightness: 18%);
+}
+
+.post-content {
+  blockquote {
+    background-color: color.scale($grey-color-light, $lightness: 6%);
+  }
+}
+
+// Custom FastOpp styling
+.site-header {
+  border-top: 3px solid $brand-color;
+}
+
+.site-title {
+  font-weight: 600;
+  color: $brand-color;
+}
+
+.site-nav {
+  .page-link {
+    color: $text-color;
+    
+    &:hover {
+      color: $brand-color;
+    }
+  }
+}
+
+.post-title {
+  color: $brand-color;
+  
+  a {
+    color: inherit;
+    
+    &:hover {
+      color: color.scale($brand-color, $lightness: -15%);
+    }
+  }
+}
+
+.post-meta {
+  color: color.scale($text-color, $lightness: 18%);
+}
+
+.post-content {
+  h1, h2, h3, h4, h5, h6 {
+    color: $brand-color;
+  }
+  
+  a {
+    color: $brand-color;
+    
+    &:hover {
+      color: color.scale($brand-color, $lightness: -15%);
+    }
+  }
+  
+  blockquote {
+    border-left: 4px solid $brand-color;
+    background-color: color.scale($grey-color-light, $lightness: 6%);
+  }
+  
+  code {
+    background-color: color.scale($grey-color-light, $lightness: 6%);
+    color: $brand-color;
+  }
+  
+  pre {
+    background-color: color.scale($grey-color-light, $lightness: 6%);
+    border: 1px solid color.scale($grey-color-light, $lightness: -10%);
+  }
+}
+
+.footer-col-wrapper {
+  color: color.scale($text-color, $lightness: 18%);
+}
