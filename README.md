@@ -16,18 +16,14 @@ FastOpp provides pre-built admin components that give FastAPI functionality comp
 
 ## Local Development
 
-To run this blog locally for development:
+> **⚠️ Important**: This blog uses GitHub Pages for deployment, which has specific version requirements. See [SETUP.md](SETUP.md) for detailed setup instructions that ensure compatibility.
 
-### Prerequisites
+### Quick Start
 
-1. **Install Ruby and Jekyll**
+1. **Install Ruby 3.3.4** (matches GitHub Pages exactly)
    ```bash
-   # Install Ruby (if not already installed)
-   # On macOS with Homebrew:
-   brew install ruby
-   
-   # Install Jekyll and Bundler
-   gem install jekyll bundler
+   rbenv install 3.3.4
+   rbenv local 3.3.4
    ```
 
 2. **Install dependencies**
@@ -35,40 +31,21 @@ To run this blog locally for development:
    bundle install
    ```
 
-### Running the Development Server
-
-3. **Start the development server**
+3. **Start development server**
    ```bash
    bundle exec jekyll serve
    ```
 
 4. **Visit the site**
-   Open [http://localhost:4000](http://localhost:4000) in your browser
+   Open [http://localhost:4000/fastopp/](http://localhost:4000/fastopp/) in your browser
 
-### Troubleshooting
+### Why Ruby 3.3.4?
 
-**Port already in use error:**
-If you get "Address already in use" error:
-```bash
-# Find and kill the process using port 4000
-lsof -ti:4000 | xargs kill
+GitHub Pages uses locked gem versions for security and stability. Using the exact same Ruby version (3.3.4) and gem versions ensures your local environment matches GitHub Pages exactly, preventing build failures and compatibility issues.
 
-# Or use a different port
-bundle exec jekyll serve --port 4001
-```
+**Current GitHub Pages versions**: [https://pages.github.com/versions.json](https://pages.github.com/versions.json)
 
-**Sass deprecation warnings:**
-The site uses modern Sass syntax to avoid deprecation warnings. If you see warnings, they're likely from the Minima theme and can be safely ignored.
-
-**Auto-regeneration:**
-The development server automatically regenerates the site when you make changes to files. No need to restart the server.
-
-### Development Features
-
-- **Live reload**: Changes are automatically reflected in the browser
-- **Sass compilation**: Custom styles in `assets/main.scss` are automatically compiled
-- **Markdown processing**: Posts and pages are processed with Kramdown
-- **SEO optimization**: Built-in SEO tags and sitemap generation
+For detailed setup instructions, troubleshooting, and development workflow, see [SETUP.md](SETUP.md).
 
 ## Writing Posts
 
@@ -97,12 +74,21 @@ The site will be available at: `https://oppkey.github.io/fastopp/`
 
 ## Contributing
 
-We welcome contributions to the FastOpp blog! Please:
+We welcome contributions to the FastOpp blog! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) guide for detailed instructions on:
+
+- Setting up your development environment
+- Contributing to blog posts and documentation
+- Understanding the repository structure
+- Following our coding standards and guidelines
+
+### Quick Start for Contributors
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
+
+For detailed setup and contribution guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
