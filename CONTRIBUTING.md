@@ -104,6 +104,8 @@ Thank you for your interest in contributing to FastOpp! This guide will help you
    - **Base branch**: `docs/blog-only` ← **Important!**
    - **Head repository**: `your-username/fastopp`
    - **Compare branch**: `docs/blog-contribution`
+   
+   **Note**: You create your own branch (like `docs/blog-contribution`) but submit the PR to target the `docs/blog-only` branch, which is the protected branch used for GitHub Pages deployment.
 
 ## 🏗️ Repository Structure
 
