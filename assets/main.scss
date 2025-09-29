@@ -1,38 +1,36 @@
 ---
 ---
 
-@use "sass:color";
-
-// Import minima theme components using modern @use syntax
-@use "minima" as *;
+// Import minima theme components
+@import "minima";
 
 // Define base colors first
 $grey-color: #828282 !default;
 $text-color: #111111 !default;
 
-// Override deprecated color functions with modern equivalents
-$grey-color-light: color.scale($grey-color, $lightness: 40%) !default;
-$grey-color-dark: color.scale($grey-color, $lightness: -25%) !default;
+// Override deprecated color functions with compatible equivalents
+$grey-color-light: lighten($grey-color, 40%) !default;
+$grey-color-dark: darken($grey-color, 25%) !default;
 
 // Custom FastOpp theme colors
 $brand-color: #3B82F6 !default; // ai-blue
-$brand-color-light: color.scale($brand-color, $lightness: 40%) !default;
-$brand-color-dark: color.scale($brand-color, $lightness: -15%) !default;
+$brand-color-light: lighten($brand-color, 40%) !default;
+$brand-color-dark: darken($brand-color, 15%) !default;
 
-// Override minima variables with modern color functions
+// Override minima variables with compatible color functions
 .site-header {
   .site-title {
-    color: color.scale($brand-color, $lightness: -15%);
+    color: darken($brand-color, 15%);
   }
 }
 
 .post-meta {
-  color: color.scale($text-color, $lightness: 18%);
+  color: lighten($text-color, 18%);
 }
 
 .post-content {
   blockquote {
-    background-color: color.scale($grey-color-light, $lightness: 6%);
+    background-color: lighten($grey-color-light, 6%);
   }
 }
 
@@ -63,13 +61,13 @@ $brand-color-dark: color.scale($brand-color, $lightness: -15%) !default;
     color: inherit;
     
     &:hover {
-      color: color.scale($brand-color, $lightness: -15%);
+      color: darken($brand-color, 15%);
     }
   }
 }
 
 .post-meta {
-  color: color.scale($text-color, $lightness: 18%);
+  color: lighten($text-color, 18%);
 }
 
 .post-content {
@@ -81,26 +79,26 @@ $brand-color-dark: color.scale($brand-color, $lightness: -15%) !default;
     color: $brand-color;
     
     &:hover {
-      color: color.scale($brand-color, $lightness: -15%);
+      color: darken($brand-color, 15%);
     }
   }
   
   blockquote {
     border-left: 4px solid $brand-color;
-    background-color: color.scale($grey-color-light, $lightness: 6%);
+    background-color: lighten($grey-color-light, 6%);
   }
   
   code {
-    background-color: color.scale($grey-color-light, $lightness: 6%);
+    background-color: lighten($grey-color-light, 6%);
     color: $brand-color;
   }
   
   pre {
-    background-color: color.scale($grey-color-light, $lightness: 6%);
-    border: 1px solid color.scale($grey-color-light, $lightness: -10%);
+    background-color: lighten($grey-color-light, 6%);
+    border: 1px solid darken($grey-color-light, 10%);
   }
 }
 
 .footer-col-wrapper {
-  color: color.scale($text-color, $lightness: 18%);
+  color: lighten($text-color, 18%);
 }
