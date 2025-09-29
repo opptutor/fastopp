@@ -6,6 +6,10 @@
 // Import minima theme components using modern @use syntax
 @use "minima" as *;
 
+// Define base colors first
+$grey-color: #828282 !default;
+$text-color: #111111 !default;
+
 // Override deprecated color functions with modern equivalents
 $grey-color-light: color.scale($grey-color, $lightness: 40%) !default;
 $grey-color-dark: color.scale($grey-color, $lightness: -25%) !default;
