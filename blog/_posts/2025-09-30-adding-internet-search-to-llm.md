@@ -7,6 +7,5 @@ author_bio: "Shotoku Taishi was the originator of a Japanese constitution in the
 image: /assets/images/search-icon.png
 excerpt: "This chat_with_history example has an a way to connect LLM to internet search"
 ---
-## Testing adding features to FastOpp
 
 ### [https://github.com/codetricity/chat-with-history](https://github.com/codetricity/chat-with-history)
