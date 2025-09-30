@@ -22,12 +22,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
-          bundler-cache: true
+          bundler-cache: false
           cache-version: 0
 
       - name: Build Jekyll site
         run: |
           cd blog
+          bundle install
           bundle exec jekyll build --destination ../_site
         env:
           JEKYLL_ENV: production
