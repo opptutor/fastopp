@@ -29,11 +29,15 @@ jobs:
           cd blog
           gem install bundler
           bundle install
+          echo "Bundle install completed"
+          bundle list
 
       - name: Build Jekyll site
         run: |
           cd blog
+          echo "Starting Jekyll build..."
           bundle exec jekyll build --destination ../_site
+          echo "Jekyll build completed"
         env:
           JEKYLL_ENV: production
 
