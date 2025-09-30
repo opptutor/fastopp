@@ -3,11 +3,12 @@ layout: post
 title: "Welcome to FastOpp - Easier AI Web Apps for Students"
 date: 2025-09-29
 author: Craig Oda
+author_bio: "Craig Oda is a partner at Oppkey and an active contributor to FastOpp"
 image: /assets/images/workshop.webp
 excerpt: "Introducing FastOpp, a FastAPI starter package designed for students prototyping AI web applications. Get Django-like functionality with FastAPI's async capabilities."
 ---
 
-Welcome to the FastOpp blog! I'm excited to introduce you to **FastOpp**, a FastAPI starter package designed specifically for students prototyping AI web applications.
+Welcome to the FastOpp blog. **FastOpp** is a FastAPI starter package designed specifically for students prototyping AI web applications.
 
 ## What is FastOpp?
 
