@@ -638,6 +638,8 @@ uv run python oppdemo.py diff
 * [Deploy FastAPI and SQLite to Fly for Cheap Hosting](https://youtu.be/k-6xxE6k7Fs) - published August 26, 2025
 * [Permanent Photo Uploads on Fly with FastAPI Static Files on Fly Volume](https://youtu.be/YKC3ZSA2Eh8) - published August 29, 2025
 * [Free FastAPI Deployment - No Credit Card - Railway](https://youtu.be/7vxroD-tyo8) - published Sept 3, 2025
+* [FastAPI Deploy to Leapcell - free hosting tier](https://youtu.be/xhOALd640tA)
+* [Free  Deploy to Leapcell with FastAPI, PostgreSQL and Object Storage](https://youtu.be/GoKpQTHE-1A)
 
 ### Tutorials
 
