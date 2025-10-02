@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oppman Admin - FastOpp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body class="bg-base-100">
+    <div class="navbar bg-base-200 shadow-lg">
+        <div class="navbar-start">
+            <a href="/" class="btn btn-ghost text-xl">FastOpp</a>
+        </div>
+        <div class="navbar-center">
+            <h1 class="text-xl font-bold">Oppman Admin Panel</h1>
+        </div>
+        <div class="navbar-end">
+            <a href="/admin/" class="btn btn-outline">SQLAdmin</a>
+            <a href="/" class="btn btn-primary">Home</a>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-6" x-data="oppmanAdmin()">
+        <!-- Success/Error Messages -->
+        <div id="messages" class="mb-6"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Password Management -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">🔐 Password Management</h2>
+                    <p class="text-sm text-base-content/70">Change user passwords securely</p>
+                    
+                    <form hx-post="/oppman/change-password" 
+                          hx-target="#password-result" 
+                          hx-indicator="#password-loading"
+                          class="space-y-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">User Email</span>
+                            </label>
+                            <select name="email" class="select select-bordered" required>
+                                <option value="">Select a user...</option>
+                                {% for user in users %}
+                                <option value="{{ user.email }}">{{ user.email }} 
+                                    {% if user.is_superuser %}(Superuser){% endif %}
+                                    {% if user.is_staff %}(Staff){% endif %}
+                                    {% if not user.is_active %}(Inactive){% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">New Password</span>
+                            </label>
+                            <input type="password" 
+                                   name="new_password" 
+                                   class="input input-bordered" 
+                                   placeholder="Enter new password (min 6 chars)"
+                                   minlength="6"
+                                   required>
+                        </div>
+                        
+                        <div class="card-actions justify-end">
+                            <button type="submit" class="btn btn-primary">
+                                <span id="password-loading" class="loading loading-spinner loading-sm htmx-indicator"></span>
+                                Change Password
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div id="password-result"></div>
+                </div>
+            </div>
+
+            <!-- Database Management -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-secondary">🗄️ Database Management</h2>
+                    <p class="text-sm text-base-content/70">Backup, delete, or initialize database</p>
+                    
+                    <div class="space-y-3">
+                        <form hx-post="/oppman/database" 
+                              hx-target="#db-result" 
+                              hx-indicator="#db-loading">
+                            <input type="hidden" name="command" value="backup">
+                            <button type="submit" class="btn btn-outline btn-sm w-full">
+                                <span id="db-loading" class="loading loading-spinner loading-sm htmx-indicator"></span>
+                                Backup Database
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/database" 
+                              hx-target="#db-result" 
+                              hx-indicator="#db-loading"
+                              onsubmit="return confirm('This will delete the database! Are you sure?')">
+                            <input type="hidden" name="command" value="delete">
+                            <button type="submit" class="btn btn-error btn-sm w-full">
+                                Delete Database
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/database" 
+                              hx-target="#db-result" 
+                              hx-indicator="#db-loading">
+                            <input type="hidden" name="command" value="db">
+                            <button type="submit" class="btn btn-info btn-sm w-full">
+                                Initialize Database
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div id="db-result"></div>
+                </div>
+            </div>
+
+            <!-- Migration Management -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-accent">🔄 Migration Management</h2>
+                    <p class="text-sm text-base-content/70">Manage database migrations</p>
+                    
+                    <div class="space-y-3">
+                        <form hx-post="/oppman/migrate" 
+                              hx-target="#migrate-result" 
+                              hx-indicator="#migrate-loading">
+                            <input type="hidden" name="command" value="current">
+                            <button type="submit" class="btn btn-outline btn-sm w-full">
+                                Check Current
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/migrate" 
+                              hx-target="#migrate-result" 
+                              hx-indicator="#migrate-loading">
+                            <input type="hidden" name="command" value="upgrade">
+                            <button type="submit" class="btn btn-success btn-sm w-full">
+                                Upgrade Database
+                            </button>
+                        </form>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Create Migration</span>
+                            </label>
+                            <form hx-post="/oppman/migrate" 
+                                  hx-target="#migrate-result" 
+                                  hx-indicator="#migrate-loading"
+                                  class="flex gap-2">
+                                <input type="hidden" name="command" value="create">
+                                <input type="text" 
+                                       name="message" 
+                                       class="input input-bordered input-sm flex-1" 
+                                       placeholder="Migration message"
+                                       required>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Create
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Show Migration</span>
+                            </label>
+                            <form hx-post="/oppman/migrate" 
+                                  hx-target="#migrate-result" 
+                                  hx-indicator="#migrate-loading"
+                                  class="flex gap-2">
+                                <input type="hidden" name="command" value="show">
+                                <input type="text" 
+                                       name="revision" 
+                                       class="input input-bordered input-sm flex-1" 
+                                       placeholder="Revision (or 'head')"
+                                       value="head">
+                                <button type="submit" class="btn btn-info btn-sm">
+                                    Show
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div id="migrate-result"></div>
+                </div>
+            </div>
+
+            <!-- User Management -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title text-warning">👥 User Management</h2>
+                    <p class="text-sm text-base-content/70">Manage users and authentication</p>
+                    
+                    <div class="space-y-3">
+                        <form hx-post="/oppman/user-management" 
+                              hx-target="#user-result" 
+                              hx-indicator="#user-loading">
+                            <input type="hidden" name="command" value="list_users">
+                            <button type="submit" class="btn btn-outline btn-sm w-full">
+                                List All Users
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/user-management" 
+                              hx-target="#user-result" 
+                              hx-indicator="#user-loading">
+                            <input type="hidden" name="command" value="check_users">
+                            <button type="submit" class="btn btn-info btn-sm w-full">
+                                Check Users
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/user-management" 
+                              hx-target="#user-result" 
+                              hx-indicator="#user-loading">
+                            <input type="hidden" name="command" value="test_auth">
+                            <button type="submit" class="btn btn-warning btn-sm w-full">
+                                Test Authentication
+                            </button>
+                        </form>
+                        
+                        <form hx-post="/oppman/user-management" 
+                              hx-target="#user-result" 
+                              hx-indicator="#user-loading">
+                            <input type="hidden" name="command" value="superuser">
+                            <button type="submit" class="btn btn-primary btn-sm w-full">
+                                Create Superuser
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div id="user-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Users Table -->
+        <div class="card bg-base-100 shadow-xl mt-6">
+            <div class="card-body">
+                <h2 class="card-title text-info">👥 Current Users</h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Active</th>
+                                <th>Superuser</th>
+                                <th>Staff</th>
+                                <th>Group</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="font-mono">{{ user.email }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge badge-success">✅</span>
+                                    {% else %}
+                                        <span class="badge badge-error">❌</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_superuser %}
+                                        <span class="badge badge-primary">✅</span>
+                                    {% else %}
+                                        <span class="badge badge-ghost">❌</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_staff %}
+                                        <span class="badge badge-secondary">✅</span>
+                                    {% else %}
+                                        <span class="badge badge-ghost">❌</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-outline">{{ user.group or 'N/A' }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function oppmanAdmin() {
+            return {
+                showMessage(message, type = 'info') {
+                    const messagesDiv = document.getElementById('messages');
+                    const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+                    messagesDiv.innerHTML = `<div class="alert ${alertClass}"><span>${message}</span></div>`;
+                    
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        messagesDiv.innerHTML = '';
+                    }, 5000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
