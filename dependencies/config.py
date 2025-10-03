@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     upload_dir: str = "static/uploads"
     openrouter_api_key: Optional[str] = None
     openai_api_key: Optional[str] = None
+    emergency_access_enabled: bool = False
 
     class Config:
         env_file = ".env"

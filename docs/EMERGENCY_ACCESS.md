@@ -9,6 +9,8 @@ The emergency access system provides a secure way to regain access to your admin
 - You forget your admin password
 - All admin accounts are locked or inaccessible
 - You need to reset user passwords but can't log in normally
+- The database hasn't been initialized yet (first-time setup)
+- You need to create the first superuser account
 
 ## Security Features
 
@@ -22,8 +24,10 @@ The emergency access system provides a secure way to regain access to your admin
 1. **Token Generation**: Creates a secure token from your SECRET_KEY using SHA-256 hashing
 2. **Environment Control**: Only works when `EMERGENCY_ACCESS_ENABLED=true`
 3. **Session Management**: Grants temporary access via session cookies
-4. **Password Reset**: Allows you to reset any user's password
-5. **Auto-disable**: Can be disabled immediately after use
+4. **Database Initialization**: Automatically creates database tables if they don't exist
+5. **Password Reset**: Allows you to reset any user's password
+6. **Superuser Creation**: Allows you to create new superuser accounts
+7. **Auto-disable**: Can be disabled immediately after use
 
 ## Usage Instructions
 
@@ -63,10 +67,11 @@ This will show you:
 ### Step 4: Create Superuser or Reset Password
 
 1. You'll be redirected to the emergency dashboard
-2. **Create Superuser** (if no superuser exists):
+2. **Database Initialization**: The system will automatically create database tables if they don't exist
+3. **Create Superuser** (if no superuser exists):
    - Enter email address and password
    - Click "Create Superuser"
-3. **Reset Password** (if superuser exists):
+4. **Reset Password** (if superuser exists):
    - Select the user whose password you want to reset
    - Enter a new password (minimum 6 characters)
    - Click "Reset Password"

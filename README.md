@@ -245,6 +245,18 @@ OPENROUTER_API_KEY=your_openrouter_api_key_here
 EOF
 ```
 
+**Using the example configuration:**
+
+```bash
+# Copy the example environment file
+cp example.env .env
+
+# Edit the .env file with your values
+nano .env  # or use your preferred editor
+```
+
+The `example.env` file contains all available configuration options with detailed comments and examples.
+
 **Or manually create `.env`:**
 
 ```bash

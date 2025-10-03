@@ -319,7 +319,7 @@ COMMANDS:
     delete      Delete current database (with backup)
     backup      Backup current database
     migrate     Database migration management (see examples below)
-    db          Initialize database (detects base_assets mode for minimal setup)
+    db          Initialize database (creates all tables)
     
     # User management
     superuser   Create superuser account
@@ -343,6 +343,7 @@ EXAMPLES:
     uv run python oppman.py production     # Start production server
     
     # Database management
+    uv run python oppman.py db             # Initialize database (creates all tables)
     uv run python oppman.py backup         # Backup database
     uv run python oppman.py delete         # Delete database (with backup)
     uv run python oppman.py migrate init   # Initialize migrations
@@ -350,23 +351,29 @@ EXAMPLES:
     uv run python oppman.py migrate upgrade  # Apply migrations
     uv run python oppman.py migrate current  # Show current migration
     
-    # Environment management
-    uv run python oppman.py env            # Check environment configuration
-    uv run python oppman.py secrets        # Generate SECRET_KEY for .env file
-    
-    # Database and user management
-    uv run python oppman.py db             # Initialize database
+    # User management
     uv run python oppman.py superuser      # Create superuser
     uv run python oppman.py check_users    # Check existing users
     uv run python oppman.py test_auth      # Test authentication
     uv run python oppman.py change_password # Change user password
     uv run python oppman.py list_users     # List all users
-    uv run python oppman.py emergency      # Generate emergency access token    
+    uv run python oppman.py emergency      # Generate emergency access token
+    
+    # Environment management
+    uv run python oppman.py env            # Check environment configuration
+    uv run python oppman.py secrets        # Generate SECRET_KEY for .env file
+    
     # Demo file management (use oppdemo.py)
     uv run python oppdemo.py save          # Save demo files
     uv run python oppdemo.py restore       # Restore demo files
     uv run python oppdemo.py destroy       # Switch to minimal app
     uv run python oppdemo.py diff          # Show differences
+
+IMPORTANT NOTES:
+    - oppman.py: Core application management (database, users, migrations)
+    - oppdemo.py: Demo-specific commands (init, products, webinars, file management)
+    - Both have 'db' and 'superuser' commands - use either one
+    - Emergency access is only available in oppman.py
 
 DEFAULT CREDENTIALS:
     Superuser: admin@example.com / admin123
