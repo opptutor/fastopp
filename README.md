@@ -656,6 +656,7 @@ uv run python oppdemo.py diff
 * [Architecture Overview](docs/ARCHITECTURE.md) - MVS Architecture and code organization
 * [Database](docs/DATABASE.md)
 * [Authentication](docs/AUTHENTICATION.md)
+* [Emergency Access](docs/EMERGENCY_ACCESS.md) - Password recovery system for admin access
 * [Features](docs/FEATURES.md)
 
 ## Guidelines

@@ -222,15 +222,6 @@
                                 Test Authentication
                             </button>
                         </form>
-                        
-                        <form hx-post="/oppman/user-management" 
-                              hx-target="#user-result" 
-                              hx-indicator="#user-loading">
-                            <input type="hidden" name="command" value="superuser">
-                            <button type="submit" class="btn btn-primary btn-sm w-full">
-                                Create Superuser
-                            </button>
-                        </form>
                     </div>
                     
                     <div id="user-result"></div>

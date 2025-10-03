@@ -26,6 +26,7 @@ try:
     from scripts.check_users import check_users
     from scripts.test_auth import test_auth
     from scripts.change_password import list_users, change_password_interactive
+    from scripts.emergency_access import main as emergency_access_main
 except ImportError as e:
     print(f"❌ Import error: {e}")
     print("Make sure all script files are in the scripts/ directory")
@@ -210,6 +211,12 @@ async def run_list_users():
     await list_users()
 
 
+def run_emergency_access():
+    """Generate emergency access token"""
+    print("🚨 Generating emergency access token...")
+    emergency_access_main()
+
+
 def run_server():
     """Start the development server with uvicorn"""
     print("🚀 Starting development server...")
@@ -320,6 +327,7 @@ COMMANDS:
     test_auth   Test the authentication system
     change_password Change user password interactively
     list_users  List all users in the database
+    emergency   Generate emergency access token for password recovery
     
     # Environment and utilities
     env         Check environment configuration
@@ -352,7 +360,8 @@ EXAMPLES:
     uv run python oppman.py check_users    # Check existing users
     uv run python oppman.py test_auth      # Test authentication
     uv run python oppman.py change_password # Change user password
-    uv run python oppman.py list_users     # List all users    
+    uv run python oppman.py list_users     # List all users
+    uv run python oppman.py emergency      # Generate emergency access token    
     # Demo file management (use oppdemo.py)
     uv run python oppdemo.py save          # Save demo files
     uv run python oppdemo.py restore       # Restore demo files
@@ -448,7 +457,7 @@ Examples:
             # Core application management
             "runserver", "stopserver", "production", "delete", "backup", "migrate", "env", "secrets", "help", "demo",
             # Core database and user management
-            "init", "db", "superuser", "check_users", "test_auth", "change_password", "list_users"
+            "init", "db", "superuser", "check_users", "test_auth", "change_password", "list_users", "emergency"
         ],
         help="Command to execute"
     )
@@ -552,6 +561,11 @@ Examples:
     
     # Handle core database and user management commands
     core_commands = ["db", "superuser", "check_users", "test_auth", "change_password", "list_users"]
+    
+    # Handle emergency access command (non-async)
+    if args.command == "emergency":
+        run_emergency_access()
+        return
     
     if args.command in core_commands:
         # Run async commands

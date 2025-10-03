@@ -13,13 +13,33 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import select
 from fastapi_users.password import PasswordHelper
+import hashlib
+import hmac
+import os
+from datetime import datetime
 
 from dependencies.auth import get_current_superuser
+from dependencies.config import get_settings, Settings
 from models import User
 from db import AsyncSessionLocal
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+
+
+def verify_emergency_token(token: str, secret_key: str) -> bool:
+    """Verify emergency access token using SECRET_KEY"""
+    try:
+        # Create expected token from SECRET_KEY
+        expected_token = hashlib.sha256(f"emergency_access_{secret_key}".encode()).hexdigest()
+        return hmac.compare_digest(token, expected_token)
+    except Exception:
+        return False
+
+
+def is_emergency_access_enabled() -> bool:
+    """Check if emergency access is enabled via environment variable"""
+    return os.getenv("EMERGENCY_ACCESS_ENABLED", "false").lower() in ("true", "1", "yes")
 
 
 async def change_user_password(email: str, new_password: str) -> dict:
@@ -226,7 +246,7 @@ async def run_user_management_command(
     current_user: User = Depends(get_current_superuser)
 ):
     """API endpoint to run user management commands"""
-    if command not in ["superuser", "check_users", "test_auth", "list_users"]:
+    if command not in ["check_users", "test_auth", "list_users"]:
         return JSONResponse({
             "success": False,
             "message": "Invalid user management command"
@@ -249,3 +269,189 @@ async def run_user_management_command(
     else:
         return JSONResponse(result)
 
+
+
+# =========================
+# EMERGENCY ACCESS ROUTES
+# =========================
+
+@router.get("/emergency", response_class=HTMLResponse)
+async def emergency_access_page(request: Request):
+    """Emergency access page for password recovery"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    return templates.TemplateResponse("emergency_access.html", {
+        "request": request,
+        "enabled": True
+    })
+
+
+@router.post("/emergency/verify")
+async def verify_emergency_access(
+    request: Request,
+    token: str = Form(...),
+    settings: Settings = Depends(get_settings)
+):
+    """Verify emergency access token and grant temporary access"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    if not verify_emergency_token(token, settings.secret_key):
+        return JSONResponse({
+            "success": False,
+            "message": "Invalid emergency access token"
+        })
+    
+    # Set emergency session
+    request.session["emergency_access"] = True
+    request.session["emergency_granted_at"] = str(datetime.now().timestamp())
+    
+    return JSONResponse({
+        "success": True,
+        "message": "Emergency access granted. You can now access admin functions.",
+        "redirect_url": "/oppman/"
+    })
+
+
+@router.get("/emergency/dashboard", response_class=HTMLResponse)
+async def emergency_dashboard(request: Request):
+    """Emergency dashboard with password reset functionality"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    # Check if emergency access is granted
+    if not request.session.get("emergency_access"):
+        return RedirectResponse(url="/oppman/emergency", status_code=302)
+    
+    # Get all users for password reset
+    users = await list_all_users()
+    
+    return templates.TemplateResponse("emergency_dashboard.html", {
+        "request": request,
+        "users": users,
+        "is_emergency": True
+    })
+
+
+@router.post("/emergency/reset-password")
+async def emergency_reset_password(
+    request: Request,
+    email: str = Form(...),
+    new_password: str = Form(...),
+    settings: Settings = Depends(get_settings)
+):
+    """Reset user password via emergency access"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    # Check if emergency access is granted
+    if not request.session.get("emergency_access"):
+        return JSONResponse({
+            "success": False,
+            "message": "Emergency access not granted"
+        })
+    
+    if len(new_password) < 6:
+        return JSONResponse({
+            "success": False,
+            "message": "Password must be at least 6 characters long"
+        })
+    
+    result = await change_user_password(email, new_password)
+    
+    # Check if this is an HTMX request
+    if 'hx-request' in request.headers:
+        if result["success"]:
+            return HTMLResponse(
+                f'<div class="alert alert-success" role="alert">✅ {result["message"]}</div>'
+            )
+        else:
+            return HTMLResponse(
+                f'<div class="alert alert-error" role="alert">❌ {result["message"]}</div>'
+            )
+    else:
+        return JSONResponse(result)
+
+
+@router.post("/emergency/create-superuser")
+async def emergency_create_superuser(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+    settings: Settings = Depends(get_settings)
+):
+    """Create superuser via emergency access"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    # Check if emergency access is granted
+    if not request.session.get("emergency_access"):
+        return JSONResponse({
+            "success": False,
+            "message": "Emergency access not granted"
+        })
+    
+    if len(password) < 6:
+        return JSONResponse({
+            "success": False,
+            "message": "Password must be at least 6 characters long"
+        })
+    
+    # Check if user already exists
+    async with AsyncSessionLocal() as session:
+        try:
+            result = await session.execute(
+                select(User).where(User.email == email)
+            )
+            existing_user = result.scalar_one_or_none()
+            
+            if existing_user:
+                return JSONResponse({
+                    "success": False,
+                    "message": f"User with email {email} already exists"
+                })
+            
+            # Create new superuser
+            password_helper = PasswordHelper()
+            hashed_password = password_helper.hash(password)
+            
+            new_user = User(
+                email=email,
+                hashed_password=hashed_password,
+                is_active=True,
+                is_superuser=True,
+                is_staff=True,
+                group="admin"
+            )
+            
+            session.add(new_user)
+            await session.commit()
+            
+            return JSONResponse({
+                "success": True,
+                "message": f"Superuser created successfully: {email}"
+            })
+            
+        except Exception as e:
+            await session.rollback()
+            return JSONResponse({
+                "success": False,
+                "message": f"Error creating superuser: {str(e)}"
+            })
+
+
+@router.post("/emergency/logout")
+async def logout_emergency_access(request: Request):
+    """Logout from emergency access and clear session"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    # Clear emergency session
+    request.session.pop("emergency_access", None)
+    request.session.pop("emergency_granted_at", None)
+    
+    return JSONResponse({
+        "success": True,
+        "message": "Emergency access logout successful. Session cleared."
+    })
