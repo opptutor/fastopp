@@ -121,61 +121,6 @@
                 </div>
             </div>
 
-            <!-- Database Management -->
-            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold text-gray-900">Database Management</h2>
-                        <p class="text-gray-600">Backup, delete, or initialize database</p>
-                    </div>
-                </div>
-                
-                <div class="space-y-4">
-                    <form hx-post="/oppman/database" 
-                          hx-target="#db-result" 
-                          hx-indicator="#db-loading">
-                        <input type="hidden" name="command" value="backup">
-                        <button type="submit" 
-                                class="w-full bg-green-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors flex items-center justify-center">
-                            <span id="db-loading" class="htmx-indicator">
-                                <svg class="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </span>
-                            Backup Database
-                        </button>
-                    </form>
-                    
-                    <form hx-post="/oppman/database" 
-                          hx-target="#db-result" 
-                          hx-indicator="#db-loading"
-                          onsubmit="return confirm('This will delete the database! Are you sure?')">
-                        <input type="hidden" name="command" value="delete">
-                        <button type="submit" 
-                                class="w-full bg-red-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-red-600 transition-colors">
-                            Delete Database
-                        </button>
-                    </form>
-                    
-                    <form hx-post="/oppman/database" 
-                          hx-target="#db-result" 
-                          hx-indicator="#db-loading">
-                        <input type="hidden" name="command" value="db">
-                        <button type="submit" 
-                                class="w-full bg-blue-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                            Initialize Database
-                        </button>
-                    </form>
-                </div>
-                
-                <div id="db-result" class="mt-6"></div>
-            </div>
 
             <!-- Migration Management -->
             <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">

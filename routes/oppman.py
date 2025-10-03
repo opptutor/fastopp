@@ -233,35 +233,6 @@ async def run_migration(
         return JSONResponse(result)
 
 
-@router.post("/database")
-async def run_database_command(
-    request: Request,
-    command: str = Form(...),
-    current_user: User = Depends(get_current_superuser)
-):
-    """API endpoint to run database commands"""
-    if command not in ["backup", "delete", "db"]:
-        return JSONResponse({
-            "success": False,
-            "message": "Invalid database command"
-        })
-    
-    result = run_oppman_command(command)
-    
-    # Check if this is an HTMX request
-    if 'hx-request' in request.headers:
-        if result["success"]:
-            return HTMLResponse(
-                f'<div class="alert alert-success" role="alert">✅ Database {command} completed successfully</div>'
-                f'<pre class="mt-2 p-2 bg-base-200 rounded"><code>{result["stdout"]}</code></pre>'
-            )
-        else:
-            return HTMLResponse(
-                f'<div class="alert alert-error" role="alert">❌ Database {command} failed</div>'
-                f'<pre class="mt-2 p-2 bg-base-200 rounded"><code>{result["stderr"]}</code></pre>'
-            )
-    else:
-        return JSONResponse(result)
 
 
 @router.post("/user-management")
