@@ -26,6 +26,10 @@ try:
     from routes.oppman import router as oppman_router
 except Exception:
     oppman_router = None  # Optional during partial restores
+try:
+    from routes.oppdemo import router as oppdemo_router
+except Exception:
+    oppdemo_router = None  # Optional during partial restores
 
 # Import dependency injection modules
 from dependencies.database import create_database_engine, create_session_factory
@@ -108,13 +112,18 @@ if webinar_router:
     app.include_router(webinar_router)
 if oppman_router:
     app.include_router(oppman_router, prefix="/oppman")
+if oppdemo_router:
+    app.include_router(oppdemo_router)
 
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     """Handle HTTP exceptions and redirect to login if authentication fails"""
     if exc.status_code in [401, 403]:
-        return RedirectResponse(url="/login", status_code=302)
+        # Preserve the original URL as a redirect parameter
+        original_url = str(request.url)
+        login_url = f"/login?next={original_url}"
+        return RedirectResponse(url=login_url, status_code=302)
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail},
