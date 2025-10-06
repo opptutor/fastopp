@@ -26,6 +26,10 @@ try:
     from routes.oppman import router as oppman_router
 except Exception:
     oppman_router = None  # Optional during partial restores
+try:
+    from routes.oppdemo import router as oppdemo_router
+except Exception:
+    oppdemo_router = None  # Optional during partial restores
 
 # Import dependency injection modules
 from dependencies.database import create_database_engine, create_session_factory
@@ -108,6 +112,8 @@ if webinar_router:
     app.include_router(webinar_router)
 if oppman_router:
     app.include_router(oppman_router, prefix="/oppman")
+if oppdemo_router:
+    app.include_router(oppdemo_router)
 
 
 @app.exception_handler(HTTPException)

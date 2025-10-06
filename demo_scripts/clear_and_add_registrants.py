@@ -4,6 +4,7 @@ Script to clear existing registrants and add new ones with photos
 """
 
 import asyncio
+import os
 import uuid
 import shutil
 from pathlib import Path
@@ -15,7 +16,7 @@ from sqlmodel import delete
 async def clear_and_add_registrants():
     """Clear existing registrants and add new ones with photos"""
     from models import WebinarRegistrants  # Import inside function to avoid module-level import error
-    
+
     sample_registrants = [
         {
             "name": "John Smith",
@@ -73,18 +74,18 @@ async def clear_and_add_registrants():
                       "Needs to implement OAuth2 and JWT token validation for compliance requirements.")
         }
     ]
-    
-    # Setup photo directories (resolve relative to project root and ensure parents exist)
-    project_root = Path(__file__).resolve().parent.parent
-    sample_photos_dir = project_root / "static" / "uploads" / "sample_photos"
-    photos_dir = project_root / "static" / "uploads" / "photos"
+
+    # Setup photo directories using environment variable
+    upload_dir = os.getenv("UPLOAD_DIR", "static/uploads")
+    sample_photos_dir = Path(upload_dir) / "sample_photos"
+    photos_dir = Path(upload_dir) / "photos"
     photos_dir.mkdir(parents=True, exist_ok=True)
-    
+
     async with AsyncSessionLocal() as session:
         # Clear existing registrants
         await session.execute(delete(WebinarRegistrants))
         print("✓ Cleared existing registrants")
-        
+
         for registrant_data in sample_registrants:
             # Copy sample photo if it exists
             photo_url = None
@@ -103,7 +104,7 @@ async def clear_and_add_registrants():
                 print(f"✓ Copied photo for {registrant_data['name']}")
             else:
                 print(f"⚠ Sample photo not found: {photo_filename}")
-            
+
             # Create new registrant
             registrant = WebinarRegistrants(
                 id=uuid.uuid4(),
@@ -116,13 +117,13 @@ async def clear_and_add_registrants():
                 notes=registrant_data['notes'],
                 photo_url=photo_url
             )
-            
+
             session.add(registrant)
             print(f"Added registrant: {registrant_data['name']} ({registrant_data['email']})")
-        
+
         await session.commit()
         print(f"\nSuccessfully added {len(sample_registrants)} sample webinar registrants with photos!")
 
 
 if __name__ == "__main__":
-    asyncio.run(clear_and_add_registrants()) 
+    asyncio.run(clear_and_add_registrants())
