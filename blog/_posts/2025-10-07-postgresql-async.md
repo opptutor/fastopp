@@ -4,7 +4,7 @@ title: "Architectural Consistency When Working with a PostgreSQL Async Database"
 date: 2025-10-07
 author: Craig Oda
 author_bio: "Craig Oda is a partner at Oppkey and an active contributor to FastOpp"
-image: /assets/images/workshop.webp
+image: /assets/images/2025_10/run.jpg
 excerpt: "How I learned that async databases need async migrations, and why the 'quick fix' approach doesn't scale"
 ---
 
