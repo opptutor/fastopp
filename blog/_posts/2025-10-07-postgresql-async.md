@@ -39,8 +39,8 @@ def run_migrations_online() -> None:
 
 I committed the solution after only testing it on SQLite locally and unfortunately forgot
 to test it on PostgreSQL.  Several months passed and my laziness came back to bite
-me and cost me many hours. As I am new to Alembic, I didn't know there was an
-async Alembic version. The logic of using synchronous calls for migrations seemed fine
+me and cost me many hours. As I am new to Alembic, I didn't think about
+async Alembic patterns. The logic of using synchronous calls for migrations seemed fine
 to me as migrations _felt_ synchronous.  I didn't think about this mismatch in architectures
 too deeply, shrugging it off as "the way things are."
 
@@ -154,7 +154,7 @@ curl -s http://localhost:8000/health
 - **Environment-based switching** between SQLite and PostgreSQL
 - **Modern async patterns** following SQLAlchemy 2.0 best practices
 
-### Production Ready**
+### Production Ready
 
 - **PostgreSQL support** for production deployments
 - **Async alembic migrations** work with both databases
