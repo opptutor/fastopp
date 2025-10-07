@@ -149,5 +149,5 @@ The modern approach - using async patterns throughout - is not just technically 
 
 Our FastOpp project now supports both SQLite (for development) and PostgreSQL (for production) with a single, consistent async architecture. No more driver conflicts, no more sync/async mixing, and no more "it works on my machine" problems.
 
-It appears that psycopg3, called psycopg, supports both async and sync. I don't think it's as popular
+It appears that [psycopg3](https://www.psycopg.org/psycopg3/) supports both async and sync. I don't think it's as popular
 as asyncpg.  However, I hope to try it out next.
