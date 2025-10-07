@@ -1,6 +1,9 @@
-# Emergency Access System
+# Emergency Access and First Time Setup for Serverless Deploys
 
 This document describes the emergency access system for FastOpp, which allows you to recover access to the oppman route when you forget your admin password.
+
+This can also be used to set up the admin user and database for serverless
+systems where you do not have shell or ssh command access.
 
 ## Overview
 
@@ -9,8 +12,16 @@ The emergency access system provides a secure way to regain access to your admin
 - You forget your admin password
 - All admin accounts are locked or inaccessible
 - You need to reset user passwords but can't log in normally
-- The database hasn't been initialized yet (first-time setup)
+- The database hasn't been initialized yet (first-time setup) and you do not have shell access
 - You need to create the first superuser account
+
+## Where Emergency Access is Needed for Setup
+
+| service | emergency access needed |
+| -- | -- |
+| Fly | no. provides shell and ssh |
+| Railway | no |
+| Leapcell | yes |
 
 ## Security Features
 
@@ -27,7 +38,7 @@ The emergency access system provides a secure way to regain access to your admin
 4. **Database Initialization**: Automatically creates database tables if they don't exist
 5. **Password Reset**: Allows you to reset any user's password
 6. **Superuser Creation**: Allows you to create new superuser accounts
-7. **Auto-disable**: Can be disabled immediately after use
+7. **Auto-disable**: Can and should be disabled immediately after use
 
 ## Usage Instructions
 
@@ -54,6 +65,7 @@ uv run python oppman.py emergency
 ```
 
 This will show you:
+
 - Your current SECRET_KEY
 - The generated emergency token
 - Instructions for using the system
