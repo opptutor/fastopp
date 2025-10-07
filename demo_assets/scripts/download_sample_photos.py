@@ -39,17 +39,20 @@ SAMPLE_PHOTOS = [
 
 def download_sample_photos():
     """Download sample photos for the demo"""
-    # Use environment variable if set, otherwise use default
-    upload_dir = os.getenv("UPLOAD_DIR", "static/uploads")
-    sample_dir = Path(upload_dir) / "sample_photos"
-    sample_dir.mkdir(parents=True, exist_ok=True)
+    from services.storage import get_storage
+    
+    # Use modular storage system
+    storage = get_storage()
+    
+    # Ensure sample_photos directory exists
+    storage.ensure_directories("sample_photos")
 
     print("Downloading sample photos...")
 
     for photo in SAMPLE_PHOTOS:
-        filename = sample_dir / photo["filename"]
-
-        if filename.exists():
+        photo_path = f"sample_photos/{photo['filename']}"
+        
+        if storage.file_exists(photo_path):
             print(f"✓ {photo['filename']} already exists")
             continue
 
@@ -57,15 +60,19 @@ def download_sample_photos():
             response = requests.get(photo["url"], timeout=10)
             response.raise_for_status()
 
-            with open(filename, "wb") as f:
-                f.write(response.content)
+            # Save using storage system
+            photo_url = storage.save_file(
+                content=response.content,
+                path=photo_path,
+                content_type="image/jpeg"
+            )
 
-            print(f"✓ Downloaded {photo['filename']}")
+            print(f"✓ Downloaded {photo['filename']} to {photo_url}")
 
         except Exception as e:
             print(f"✗ Failed to download {photo['filename']}: {e}")
 
-    print(f"\nSample photos downloaded to: {sample_dir}")
+    print(f"\nSample photos downloaded using {type(storage).__name__} storage")
     print("You can now use these in your initialization script!")
 
 
