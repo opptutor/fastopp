@@ -40,8 +40,9 @@ def run_migrations_online() -> None:
 I committed the solution after only testing it on SQLite locally and unfortunately forgot
 to test it on PostgreSQL.  Several months passed and my laziness came back to bite
 me and cost me many hours. As I am new to Alembic, I didn't know there was an
-async Alembic version and the logic of using synchronous calls for migrations seemed fine
-to me as migrations _felt_ synchronous.
+async Alembic version. The logic of using synchronous calls for migrations seemed fine
+to me as migrations _felt_ synchronous.  I didn't think about this mismatch in architectures
+too deeply, shrugging it off as "the way things are."
 
 ## The Real Problem: Architectural Mismatch
 
@@ -118,13 +119,13 @@ After implementing the async approach, here's what we achieved:
 ```bash
 # SQLite (development)
 export DATABASE_URL="sqlite+aiosqlite:///./test.db"
-uv run alembic upgrade head  # ✅ Works
-uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload  # ✅ Works
+uv run python oppman.py migrate upgrade  # ✅ Works
+uv run python oppman.py runserver  # ✅ Works
 
 # PostgreSQL (production)  
 export DATABASE_URL="postgresql+asyncpg://user@localhost:5432/fastopp"
-uv run alembic upgrade head  # ✅ Works
-uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload  # ✅ Works
+uv run python oppman.py migrate upgrade  # ✅ Works
+uv run python oppman.py runserver  # ✅ Works
 ```
 
 ### **Database Verification Results**
@@ -141,24 +142,27 @@ curl -s http://localhost:8000/health
 
 ## Benefits of the Async Approach
 
-### 🚀 **Performance Benefits**
+### Performance Benefits
+
 - **Async operations** throughout the application
 - **No sync/async context switching** overhead
 - **Better concurrency** for database operations
 
-### 🛠️ **Developer Experience**
+### Developer Experience
+
 - **Single driver approach** - no psycopg2 conflicts
 - **Environment-based switching** between SQLite and PostgreSQL
 - **Modern async patterns** following SQLAlchemy 2.0 best practices
 
-### 🔧 **Production Ready**
+### Production Ready**
+
 - **PostgreSQL support** for production deployments
 - **Async alembic migrations** work with both databases
 - **No breaking changes** to existing SQLite development workflow
 
 ## Why This Matters for Students
 
-If you're learning web development, here's the takeaway: **consistency is more important than clever workarounds**. 
+If you're learning web development, here's the takeaway: **consistency is more important than clever workarounds**.
 
 When you're building modern web applications:
 
@@ -196,14 +200,16 @@ as asyncpg.  However, I hope to try it out next.
 ## Migration Guide for Existing Users
 
 ### **No Action Required**
+
 - **SQLite development** continues to work exactly as before
 - **Optional**: Update `.env` to use `sqlite+aiosqlite://` for consistency
 - **For PostgreSQL testing**: Set `DATABASE_URL=postgresql+asyncpg://...`
 
 ### **For New Deployments**
+
 1. **Development**: Use `DATABASE_URL=sqlite+aiosqlite:///./test.db`
 2. **Production**: Use `DATABASE_URL=postgresql+asyncpg://user:pass@host:port/db`
-3. **Run migrations**: `uv run alembic upgrade head`
+3. **Run migrations**: `uv run python oppman.py migrate upgrade`
 
 ## Files Changed
 
