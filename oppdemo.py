@@ -28,7 +28,7 @@ except ImportError as e:
     print("Make sure all script files are in the scripts/ directory")
     sys.exit(1)
 
-# Demo-specific scripts (optional - may not exist if demo_scripts was deleted)
+# Demo-specific scripts (from demo_scripts/ directory)
 demo_scripts_available = True
 try:
     from demo_scripts.add_test_users import add_test_users
@@ -230,8 +230,6 @@ def save_demo_files():
     (demo_assets / "scripts").mkdir(exist_ok=True)
     (demo_assets / "admin").mkdir(exist_ok=True)
     (demo_assets / "dependencies").mkdir(exist_ok=True)
-    (demo_assets / "demo").mkdir(exist_ok=True)
-    (demo_assets / "demo" / "scripts").mkdir(exist_ok=True)
     
     files_copied = 0
     
@@ -373,14 +371,12 @@ def save_demo_files():
         print("📝 Backing up demo_scripts...")
         demo_scripts_src = Path("demo_scripts")
         if demo_scripts_src.exists():
-            # Create demo/scripts directory structure
-            demo_dir = demo_assets / "demo"
-            demo_dir.mkdir(exist_ok=True)
-            demo_scripts_dst = demo_dir / "scripts"
+            # Copy to demo_assets/scripts (scripts will be used directly from here)
+            demo_scripts_dst = demo_assets / "scripts"
             if demo_scripts_dst.exists():
                 shutil.rmtree(demo_scripts_dst)
             shutil.copytree(demo_scripts_src, demo_scripts_dst)
-            print("  ✅ demo/scripts/")
+            print("  ✅ scripts/ (demo scripts)")
             files_copied += 1
         else:
             print("  ℹ️  demo_scripts/ directory not found (skipping demo_scripts backup)")
@@ -617,7 +613,7 @@ def restore_demo_files():
         
         # Restore demo_scripts directory (demo-specific scripts)
         print("📝 Restoring demo_scripts...")
-        demo_scripts_src = demo_assets / "demo" / "scripts"
+        demo_scripts_src = demo_assets / "scripts"
         demo_scripts_dest = Path("demo_scripts")
         
         if demo_scripts_src.exists():
@@ -627,7 +623,7 @@ def restore_demo_files():
             print("  ✅ Restored demo_scripts/")
             files_restored += 1
         else:
-            print("  ℹ️  demo/scripts/ not found in backup (skipping demo_scripts restore)")
+            print("  ℹ️  scripts/ not found in backup (skipping demo_scripts restore)")
 
         # Supplement missing required files from original working copy if available
         print("🔍 Checking original working copy for missing files...")

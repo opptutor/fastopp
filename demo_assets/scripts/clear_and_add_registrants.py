@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to add sample webinar registrants with photos for testing the photo upload functionality
+Script to clear existing registrants and add new ones with photos
 """
 
 import asyncio
@@ -10,10 +10,11 @@ import shutil
 from pathlib import Path
 from datetime import datetime, timezone
 from db import AsyncSessionLocal
+from sqlmodel import delete
 
 
-async def add_sample_registrants():
-    """Add sample webinar registrants to the database with photos"""
+async def clear_and_add_registrants():
+    """Clear existing registrants and add new ones with photos"""
     from models import WebinarRegistrants  # Import inside function to avoid module-level import error
 
     sample_registrants = [
@@ -81,19 +82,15 @@ async def add_sample_registrants():
     photos_dir.mkdir(parents=True, exist_ok=True)
 
     async with AsyncSessionLocal() as session:
-        for registrant_data in sample_registrants:
-            # Check if registrant already exists
-            from sqlmodel import select
-            existing = await session.execute(
-                select(WebinarRegistrants).where(WebinarRegistrants.email == registrant_data['email'])
-            )
-            if existing.scalar_one_or_none():
-                print(f"Registrant {registrant_data['email']} already exists, skipping...")
-                continue
+        # Clear existing registrants
+        await session.execute(delete(WebinarRegistrants))
+        print("✓ Cleared existing registrants")
 
+        for registrant_data in sample_registrants:
             # Copy sample photo if it exists
             photo_url = None
             photo_filename = registrant_data.pop('photo_filename')
+            assert isinstance(photo_filename, str)
             sample_photo_path = sample_photos_dir / photo_filename
 
             if sample_photo_path.exists():
@@ -129,4 +126,4 @@ async def add_sample_registrants():
 
 
 if __name__ == "__main__":
-    asyncio.run(add_sample_registrants())
+    asyncio.run(clear_and_add_registrants())
