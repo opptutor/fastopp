@@ -23,19 +23,24 @@ try:
     from scripts.check_users import check_users
     from scripts.test_auth import test_auth
     from scripts.change_password import list_users, change_password_interactive
-    
-    # Demo-specific scripts (moved to demo_scripts/ directory)
+except ImportError as e:
+    print(f"❌ Import error: {e}")
+    print("Make sure all script files are in the scripts/ directory")
+    sys.exit(1)
+
+# Demo-specific scripts (from demo_scripts/ directory)
+demo_scripts_available = True
+try:
     from demo_scripts.add_test_users import add_test_users
     from demo_scripts.add_sample_products import add_sample_products
     from demo_scripts.add_sample_webinars import add_sample_webinars
     from demo_scripts.add_sample_webinar_registrants import add_sample_registrants
     from demo_scripts.clear_and_add_registrants import clear_and_add_registrants
     from demo_scripts.download_sample_photos import download_sample_photos
-except ImportError as e:
-    print(f"❌ Import error: {e}")
-    print("Make sure all script files are in the scripts/ directory")
-    print("Demo scripts should be in demo_scripts/ directory")
-    sys.exit(1)
+except ImportError:
+    demo_scripts_available = False
+    print("ℹ️  Demo scripts not available (demo_scripts/ directory not found)")
+    print("   Run 'uv run python oppdemo.py restore' to restore demo scripts")
 
 
 def ensure_backup_dir():
@@ -87,6 +92,10 @@ async def run_superuser():
 
 async def run_users():
     """Add test users"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Adding test users...")
     await add_test_users()
     print("✅ Test users creation complete")
@@ -94,6 +103,10 @@ async def run_users():
 
 async def run_products():
     """Add sample products"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Adding sample products...")
     await add_sample_products()
     print("✅ Sample products creation complete")
@@ -101,6 +114,10 @@ async def run_products():
 
 async def run_webinars():
     """Add sample webinars"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Adding sample webinars...")
     await add_sample_webinars()
     print("✅ Sample webinars creation complete")
@@ -108,6 +125,10 @@ async def run_webinars():
 
 async def run_download_photos():
     """Download sample photos for webinar registrants"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Downloading sample photos...")
     ensure_upload_dirs()
     download_sample_photos()
@@ -116,6 +137,10 @@ async def run_download_photos():
 
 async def run_registrants():
     """Add sample webinar registrants with photos"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Adding sample webinar registrants...")
     await add_sample_registrants()
     print("✅ Sample webinar registrants creation complete")
@@ -123,6 +148,10 @@ async def run_registrants():
 
 async def run_clear_registrants():
     """Clear and add fresh webinar registrants with photos"""
+    if not demo_scripts_available:
+        print("❌ Demo scripts not available. Run 'uv run python oppdemo.py restore' first.")
+        return
+    
     print("🔄 Clearing and adding fresh webinar registrants...")
     await clear_and_add_registrants()
     print("✅ Fresh webinar registrants creation complete")
@@ -337,6 +366,20 @@ def save_demo_files():
                 shutil.copy2(src, dst)
                 print(f"  ✅ {script_file}")
                 files_copied += 1
+        
+        # Backup demo_scripts directory (demo-specific scripts)
+        print("📝 Backing up demo_scripts...")
+        demo_scripts_src = Path("demo_scripts")
+        if demo_scripts_src.exists():
+            # Copy to demo_assets/scripts (scripts will be used directly from here)
+            demo_scripts_dst = demo_assets / "scripts"
+            if demo_scripts_dst.exists():
+                shutil.rmtree(demo_scripts_dst)
+            shutil.copytree(demo_scripts_src, demo_scripts_dst)
+            print("  ✅ scripts/ (demo scripts)")
+            files_copied += 1
+        else:
+            print("  ℹ️  demo_scripts/ directory not found (skipping demo_scripts backup)")
         
         # Backup admin files
         print("🔧 Backing up admin files...")
@@ -567,6 +610,20 @@ def restore_demo_files():
                 shutil.copy2(script_file, dest_file)
                 print(f"  ✅ Restored {script_file.name}")
                 files_restored += 1
+        
+        # Restore demo_scripts directory (demo-specific scripts)
+        print("📝 Restoring demo_scripts...")
+        demo_scripts_src = demo_assets / "scripts"
+        demo_scripts_dest = Path("demo_scripts")
+        
+        if demo_scripts_src.exists():
+            if demo_scripts_dest.exists():
+                shutil.rmtree(demo_scripts_dest)
+            shutil.copytree(demo_scripts_src, demo_scripts_dest)
+            print("  ✅ Restored demo_scripts/")
+            files_restored += 1
+        else:
+            print("  ℹ️  scripts/ not found in backup (skipping demo_scripts restore)")
 
         # Supplement missing required files from original working copy if available
         print("🔍 Checking original working copy for missing files...")
