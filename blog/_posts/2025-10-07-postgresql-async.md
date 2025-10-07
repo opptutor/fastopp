@@ -60,6 +60,8 @@ Instead of trying to convert between async and sync, I updated our migration sys
 
 ## The Solution: Pure Async Approach
 
+The key was updating `alembic/env.py` to use async patterns throughout:
+
 ```python
 # The RIGHT approach - AFTER
 import asyncio
@@ -80,6 +82,14 @@ async def run_async_migrations() -> None:
 def run_migrations_online() -> None:
     asyncio.run(run_async_migrations())
 ```
+
+### Technical Implementation Details
+
+- **Added async imports**: `asyncio`, `Connection`, `async_engine_from_config`
+- **Replaced sync patterns** with async alembic template approach
+- **Added `do_run_migrations()`** function for connection handling
+- **Added `run_async_migrations()`** function for async engine management
+- **Updated `run_migrations_online()`** to use `asyncio.run()`
 
 The key insight was this line:
 
@@ -109,11 +119,42 @@ After implementing the async approach, here's what we achieved:
 # SQLite (development)
 export DATABASE_URL="sqlite+aiosqlite:///./test.db"
 uv run alembic upgrade head  # ✅ Works
+uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload  # ✅ Works
 
 # PostgreSQL (production)  
 export DATABASE_URL="postgresql+asyncpg://user@localhost:5432/fastopp"
 uv run alembic upgrade head  # ✅ Works
+uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload  # ✅ Works
 ```
+
+### **Database Verification Results**
+
+```bash
+# PostgreSQL tables created successfully
+psql -d fastopp_test -c "\dt"
+# Result: users, products, webinar_registrants, audit_logs, alembic_version
+
+# Health check verification
+curl -s http://localhost:8000/health
+# Result: {"status":"healthy","message":"FastOpp Demo app is running"}
+```
+
+## Benefits of the Async Approach
+
+### 🚀 **Performance Benefits**
+- **Async operations** throughout the application
+- **No sync/async context switching** overhead
+- **Better concurrency** for database operations
+
+### 🛠️ **Developer Experience**
+- **Single driver approach** - no psycopg2 conflicts
+- **Environment-based switching** between SQLite and PostgreSQL
+- **Modern async patterns** following SQLAlchemy 2.0 best practices
+
+### 🔧 **Production Ready**
+- **PostgreSQL support** for production deployments
+- **Async alembic migrations** work with both databases
+- **No breaking changes** to existing SQLite development workflow
 
 ## Why This Matters for Students
 
@@ -151,3 +192,30 @@ Our FastOpp project now supports both SQLite (for development) and PostgreSQL (f
 
 It appears that [psycopg3](https://www.psycopg.org/psycopg3/) supports both async and sync. I don't think it's as popular
 as asyncpg.  However, I hope to try it out next.
+
+## Migration Guide for Existing Users
+
+### **No Action Required**
+- **SQLite development** continues to work exactly as before
+- **Optional**: Update `.env` to use `sqlite+aiosqlite://` for consistency
+- **For PostgreSQL testing**: Set `DATABASE_URL=postgresql+asyncpg://...`
+
+### **For New Deployments**
+1. **Development**: Use `DATABASE_URL=sqlite+aiosqlite:///./test.db`
+2. **Production**: Use `DATABASE_URL=postgresql+asyncpg://user:pass@host:port/db`
+3. **Run migrations**: `uv run alembic upgrade head`
+
+## Files Changed
+
+- `alembic/env.py` - Updated to async patterns
+- `example.env` - Added PostgreSQL configuration examples
+- `docs/deployment/POSTGRESQL_SETUP.md` - Updated installation instructions
+- `docs/DATABASE.md` - Updated troubleshooting with async patterns
+
+## Breaking Changes
+
+**None** - This is a backward-compatible enhancement that adds PostgreSQL support while maintaining full SQLite compatibility.
+
+## Additional Information
+
+[Pull request with extensive description of changes](https://github.com/Oppkey/fastopp/pull/140).
