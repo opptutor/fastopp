@@ -52,13 +52,11 @@ def ensure_backup_dir():
 
 def ensure_upload_dirs():
     """Ensure static upload directories exist regardless of current working directory."""
-    project_root = Path(__file__).resolve().parent
-    uploads_root = project_root / "static" / "uploads"
-    photos_dir = uploads_root / "photos"
-    sample_photos_dir = uploads_root / "sample_photos"
-    uploads_root.mkdir(parents=True, exist_ok=True)
-    photos_dir.mkdir(parents=True, exist_ok=True)
-    sample_photos_dir.mkdir(parents=True, exist_ok=True)
+    from services.storage import get_storage
+    
+    # Use modular storage system
+    storage = get_storage()
+    storage.ensure_directories("photos", "sample_photos")
 
 
 def create_backup_path(original_file: Path, operation: str) -> Path:
@@ -335,6 +333,19 @@ def save_demo_files():
                 print(f"  ✅ {service_file}")
                 files_copied += 1
         
+        # Backup storage system
+        print("💾 Backing up storage system...")
+        storage_src = Path("services/storage")
+        if storage_src.exists():
+            storage_dst = demo_assets / "services/storage"
+            if storage_dst.exists():
+                shutil.rmtree(storage_dst)
+            shutil.copytree(storage_src, storage_dst)
+            print("  ✅ services/storage/")
+            files_copied += 1
+        else:
+            print("  ℹ️  services/storage/ directory not found (skipping storage backup)")
+        
         # Backup main.py and models.py (application entrypoint and models)
         print("📄 Backing up main.py and models.py...")
         main_src = Path("main.py")
@@ -589,6 +600,20 @@ def restore_demo_files():
                 print(f"  ✅ Restored {service_file.name}")
                 files_restored += 1
         
+        # Restore storage system
+        print("💾 Restoring storage system...")
+        storage_src = demo_assets / "services/storage"
+        storage_dest = Path("services/storage")
+        
+        if storage_src.exists():
+            if storage_dest.exists():
+                shutil.rmtree(storage_dest)
+            shutil.copytree(storage_src, storage_dest)
+            print("  ✅ Restored services/storage/")
+            files_restored += 1
+        else:
+            print("  ℹ️  services/storage/ not found in backup (skipping storage restoration)")
+        
         # Restore models
         print("📊 Restoring models...")
         models_src = demo_assets / "models.py"
@@ -765,12 +790,12 @@ async def destroy_demo_files():
         shutil.copy2(base_models, current_models)
         print("  ✅ Copied base_assets/models.py to models.py")
         
-        # Step 2: Remove services directory
+        # Step 2: Remove services directory (including storage system)
         print("🔧 Removing services directory...")
         services_dir = Path("services")
         if services_dir.exists():
             shutil.rmtree(services_dir)
-            print("  ✅ Removed services/")
+            print("  ✅ Removed services/ (including storage system)")
         else:
             print("  ℹ️  services/ directory not found")
         
@@ -1071,6 +1096,29 @@ def diff_demo_files():
                 src_file = services_src / backup_file.name
                 if not src_file.exists():
                     differences['deleted'].append(f"services/{backup_file.name}")
+        
+        # Compare storage system
+        print("💾 Comparing storage system...")
+        storage_src = Path("services/storage")
+        storage_backup = demo_assets / "services/storage"
+        
+        if storage_src.exists() and storage_backup.exists():
+            for storage_file in storage_src.rglob("*.py"):
+                relative_path = storage_file.relative_to(storage_src)
+                backup_file = storage_backup / relative_path
+                if not backup_file.exists():
+                    differences['added'].append(f"services/storage/{relative_path}")
+                else:
+                    if not filecmp.cmp(storage_file, backup_file, shallow=False):
+                        differences['modified'].append(f"services/storage/{relative_path}")
+            
+            for backup_file in storage_backup.rglob("*.py"):
+                relative_path = backup_file.relative_to(storage_backup)
+                src_file = storage_src / relative_path
+                if not src_file.exists():
+                    differences['deleted'].append(f"services/storage/{relative_path}")
+        elif storage_src.exists() and not storage_backup.exists():
+            differences['missing_backup'].append("services/storage/")
         
         # Compare models.py
         print("📊 Comparing models...")
