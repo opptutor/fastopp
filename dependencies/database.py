@@ -45,9 +45,12 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
             connect_args['ssl'] = 'verify-full'
         
         # Add connection timeout settings for cloud providers
-        connect_args['command_timeout'] = 30
+        connect_args['command_timeout'] = 10
         connect_args['server_settings'] = {
-            'application_name': 'fastopp'
+            'application_name': 'fastopp',
+            'tcp_keepalives_idle': '600',
+            'tcp_keepalives_interval': '30',
+            'tcp_keepalives_count': '3'
         }
 
     return create_async_engine(
@@ -58,7 +61,8 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
         pool_size=5,
         max_overflow=10,
         pool_timeout=30,
-        pool_recycle=3600
+        pool_recycle=3600,
+        pool_pre_ping=True
     )
 
 

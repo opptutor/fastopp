@@ -48,19 +48,23 @@ async def init_db():
             connect_args['ssl'] = 'verify-full'
         
         # Add connection timeout settings for cloud providers
-        connect_args['command_timeout'] = 30
+        connect_args['command_timeout'] = 10
         connect_args['server_settings'] = {
-            'application_name': 'fastopp'
+            'application_name': 'fastopp',
+            'tcp_keepalives_idle': '600',
+            'tcp_keepalives_interval': '30',
+            'tcp_keepalives_count': '3'
         }
 
     engine = create_async_engine(
         clean_url, 
         echo=True, 
         connect_args=connect_args,
-        pool_size=1,
-        max_overflow=0,
+        pool_size=5,
+        max_overflow=10,
         pool_timeout=30,
-        pool_recycle=3600
+        pool_recycle=3600,
+        pool_pre_ping=True
     )
 
     async with engine.begin() as conn:
