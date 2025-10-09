@@ -27,8 +27,8 @@ async def init_db():
 
         # Create engine with minimal psycopg3 configuration
         connect_args = {
-            # Convert prepare_threshold from string to int if it exists in URL
-            "prepare_threshold": 0 if "prepare_threshold=0" in DATABASE_URL else None
+            # Force disable prepared statements for psycopg3
+            "prepare_threshold": 0
         }
         
         print(f"🔍 Connect args: {connect_args}")
