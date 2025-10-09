@@ -13,11 +13,10 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     # Extract SSL mode from URL parameters
     ssl_mode = query_params.get('sslmode', ['prefer'])[0]
 
-    # Remove sslmode from URL to avoid passing it to asyncpg
-    clean_query_params = {k: v for k, v in query_params.items() if k != 'sslmode'}
+    # Use the DATABASE_URL as-is (user will specify the driver in environment)
     clean_url = settings.database_url
     if 'sslmode=' in clean_url:
-        # Remove sslmode parameter from URL
+        # Remove sslmode from URL to avoid passing it to the driver
         if '?' in clean_url and 'sslmode=' in clean_url:
             base_url, query_string = clean_url.split('?', 1)
             query_parts = query_string.split('&')
@@ -27,23 +26,23 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
             else:
                 clean_url = base_url
 
-    # Create engine with simplified SSL configuration
+    # Create engine with psycopg3 SSL configuration
     connect_args = {}
     if parsed_url.scheme.startswith('postgresql'):
-        # Use minimal SSL configuration to avoid protocol errors
+        # psycopg3 SSL configuration - more reliable than asyncpg
         if ssl_mode == 'require':
-            connect_args['ssl'] = 'require'
+            connect_args['sslmode'] = 'require'
+        elif ssl_mode == 'prefer':
+            connect_args['sslmode'] = 'prefer'
         elif ssl_mode == 'disable':
-            connect_args['ssl'] = False
+            connect_args['sslmode'] = 'disable'
         else:
-            # Default to require for cloud providers (most reliable)
-            connect_args['ssl'] = 'require'
+            # Default to require for cloud providers
+            connect_args['sslmode'] = 'require'
         
-        # Minimal connection settings for stability
-        connect_args['command_timeout'] = 30
-        connect_args['server_settings'] = {
-            'application_name': 'fastopp'
-        }
+        # psycopg3 connection settings
+        connect_args['connect_timeout'] = 30
+        connect_args['application_name'] = 'fastopp'
 
     return create_async_engine(
         clean_url,
