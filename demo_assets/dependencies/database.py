@@ -9,11 +9,6 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     # Use the DATABASE_URL as-is (psycopg3 handles sslmode in URL properly)
     clean_url = settings.database_url
 
-    # Add prepare_threshold=None to URL if not already present
-    if 'prepare_threshold=' not in clean_url:
-        separator = '&' if '?' in clean_url else '?'
-        clean_url = f"{clean_url}{separator}prepare_threshold=None"
-
     # Create engine with minimal psycopg3 configuration
     connect_args = {}
 
