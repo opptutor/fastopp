@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy import event
 # from urllib.parse import urlparse  # Not needed for minimal config
 from .config import Settings, get_settings
 
@@ -17,12 +18,9 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     clean_url = settings.database_url
 
     # Create engine with minimal psycopg3 configuration
-    connect_args = {
-        # Disable prepared statements for psycopg3
-        "prepare_threshold": None
-    }
+    connect_args = {}
 
-    return create_async_engine(
+    engine = create_async_engine(
         clean_url,
         echo=settings.environment == "development",
         future=True,
@@ -33,6 +31,14 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
         pool_recycle=1800,  # 30 minutes recycle
         pool_pre_ping=True
     )
+
+    # Event listener to disable prepared statements for all connections
+    @event.listens_for(engine.sync_engine, "do_connect")
+    def _set_prepare_threshold(dialect, conn_rec, cargs, cparams):
+        # Inject driver-specific args before psycopg3 connects
+        cparams["prepare_threshold"] = None
+
+    return engine
 
 
 def create_session_factory(engine=Depends(create_database_engine)):
