@@ -50,10 +50,15 @@ def is_emergency_access_enabled() -> bool:
 async def ensure_database_initialized() -> bool:
     """Ensure database is initialized, create tables if they don't exist"""
     try:
-        # Check if users table exists
+        # Check if users table exists using database-agnostic approach
         async with AsyncSessionLocal() as session:
-            result = await session.execute(text("SELECT name FROM sqlite_master WHERE type='table' AND name='users'"))
-            table_exists = result.fetchone() is not None
+            # Try to query the users table directly - this works for both SQLite and PostgreSQL
+            try:
+                result = await session.execute(text("SELECT COUNT(*) FROM users LIMIT 1"))
+                table_exists = True
+            except Exception:
+                # Table doesn't exist, we need to create it
+                table_exists = False
             
             if not table_exists:
                 # Create all tables

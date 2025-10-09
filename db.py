@@ -48,13 +48,15 @@ if parsed_url.scheme.startswith('postgresql'):
         connect_args['ssl'] = 'verify-full'
     
     # Add connection timeout settings for cloud providers
-    connect_args['command_timeout'] = 10
+    connect_args['command_timeout'] = 30  # Increased from 10 to 30 seconds
     connect_args['server_settings'] = {
         'application_name': 'fastopp',
         'tcp_keepalives_idle': '600',
         'tcp_keepalives_interval': '30',
         'tcp_keepalives_count': '3'
     }
+    # Additional connection parameters for better reliability
+    connect_args['prepared_statement_cache_size'] = 0  # Disable prepared statement cache for better compatibility
 
 # Create async engine
 async_engine = create_async_engine(
@@ -64,7 +66,7 @@ async_engine = create_async_engine(
     connect_args=connect_args,
     pool_size=5,
     max_overflow=10,
-    pool_timeout=30,
+    pool_timeout=60,  # Increased from 30 to 60 seconds for cloud deployments
     pool_recycle=3600,
     pool_pre_ping=True
 )
