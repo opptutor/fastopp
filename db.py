@@ -21,10 +21,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 clean_url = DATABASE_URL
 
 # Create engine with minimal psycopg3 configuration
-connect_args = {
-    # Force disable prepared statements for psycopg3
-    "prepare_threshold": 0
-}
+connect_args = {}
 
 # Create async engine with conservative settings
 async_engine = create_async_engine(
@@ -32,6 +29,7 @@ async_engine = create_async_engine(
     echo=True,  # set to False in production
     future=True,
     connect_args=connect_args,
+    use_prepared_statements=False,  # Disable prepared statements for psycopg3
     pool_size=3,  # Reduced pool size for stability
     max_overflow=5,  # Reduced overflow for stability
     pool_timeout=30,  # Conservative timeout

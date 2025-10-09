@@ -10,16 +10,14 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     clean_url = settings.database_url
 
     # Create engine with minimal psycopg3 configuration
-    connect_args = {
-        # Force disable prepared statements for psycopg3
-        "prepare_threshold": 0
-    }
+    connect_args = {}
 
     return create_async_engine(
         clean_url,
         echo=settings.environment == "development",
         future=True,
         connect_args=connect_args,
+        use_prepared_statements=False,  # Disable prepared statements for psycopg3
         pool_size=3,  # Reduced pool size for stability
         max_overflow=5,  # Reduced overflow for stability
         pool_timeout=30,  # Conservative timeout
