@@ -77,8 +77,7 @@ async_engine = create_async_engine(
     pool_recycle=3600,
     pool_pre_ping=True,
     # Additional engine parameters for SSL stability
-    pool_reset_on_return='commit',
-    pool_validate=True
+    pool_reset_on_return='commit'
 )
 
 # Session factory
