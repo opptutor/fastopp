@@ -458,6 +458,38 @@ async def emergency_create_superuser(
             })
 
 
+@router.post("/emergency/drop-tables")
+async def emergency_drop_tables(request: Request):
+    """Drop all tables to clear prepared statements and reset database"""
+    if not is_emergency_access_enabled():
+        raise HTTPException(status_code=404, detail="Emergency access is disabled")
+    
+    # Check if user has emergency access
+    if not request.session.get("emergency_access"):
+        raise HTTPException(status_code=403, detail="Emergency access required")
+    
+    try:
+        async with AsyncSessionLocal() as session:
+            # Drop all tables in reverse dependency order to avoid foreign key constraints
+            await session.execute(text("DROP TABLE IF EXISTS audit_logs CASCADE"))
+            await session.execute(text("DROP TABLE IF EXISTS webinar_registrants CASCADE"))
+            await session.execute(text("DROP TABLE IF EXISTS products CASCADE"))
+            await session.execute(text("DROP TABLE IF EXISTS users CASCADE"))
+            
+            await session.commit()
+            
+            return JSONResponse({
+                "success": True,
+                "message": "All tables dropped successfully. Prepared statements cleared. You can now create a superuser."
+            })
+            
+    except Exception as e:
+        return JSONResponse({
+            "success": False,
+            "message": f"Error dropping tables: {str(e)}"
+        })
+
+
 @router.post("/emergency/logout")
 async def logout_emergency_access(request: Request):
     """Logout from emergency access and clear session"""
