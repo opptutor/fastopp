@@ -13,18 +13,8 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     # Extract SSL mode from URL parameters (not used in connect_args for psycopg3)
     # ssl_mode = query_params.get('sslmode', ['prefer'])[0]
 
-    # Use the DATABASE_URL as-is (user will specify the driver in environment)
+    # Use the DATABASE_URL as-is (psycopg3 handles sslmode in URL properly)
     clean_url = settings.database_url
-    if 'sslmode=' in clean_url:
-        # Remove sslmode from URL to avoid passing it to the driver
-        if '?' in clean_url and 'sslmode=' in clean_url:
-            base_url, query_string = clean_url.split('?', 1)
-            query_parts = query_string.split('&')
-            filtered_parts = [part for part in query_parts if not part.startswith('sslmode=')]
-            if filtered_parts:
-                clean_url = f"{base_url}?{'&'.join(filtered_parts)}"
-            else:
-                clean_url = base_url
 
     # Create engine with minimal psycopg3 configuration
     connect_args = {}
