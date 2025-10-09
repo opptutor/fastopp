@@ -57,10 +57,6 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
         }
         # Additional connection parameters for better reliability
         connect_args['prepared_statement_cache_size'] = 0  # Disable prepared statement cache for better compatibility
-        
-        # SSL-specific settings to prevent protocol errors
-        connect_args['ssl_context'] = None  # Let asyncpg handle SSL context
-        connect_args['record_class'] = None  # Use default record class
 
     return create_async_engine(
         clean_url,
