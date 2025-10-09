@@ -1,7 +1,7 @@
 # db.py - Simple database setup for base_assets
 import os
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from urllib.parse import urlparse
+# from urllib.parse import urlparse  # Not needed for minimal config
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -11,7 +11,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 
 # Parse the database URL to extract SSL parameters
-parsed_url = urlparse(DATABASE_URL)
+# parsed_url = urlparse(DATABASE_URL)  # Not needed for minimal config
 # query_params = parse_qs(parsed_url.query)  # Not needed for psycopg3
 
 # Extract SSL mode from URL parameters (not used in connect_args for psycopg3)
@@ -30,11 +30,8 @@ if 'sslmode=' in clean_url:
         else:
             clean_url = base_url
 
-# Create engine with psycopg3 configuration to avoid prepared statement issues
+# Create engine with minimal psycopg3 configuration
 connect_args = {}
-if parsed_url.scheme.startswith('postgresql'):
-    # Disable prepared statements to avoid psycopg3 issues
-    connect_args['prepared_statement_cache_size'] = 0
 
 # Create async engine with conservative settings
 async_engine = create_async_engine(
