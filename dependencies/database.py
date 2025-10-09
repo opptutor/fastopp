@@ -1,6 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse
 from .config import Settings, get_settings
 
 
@@ -8,10 +8,10 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     """Create database engine from settings with SSL support"""
     # Parse the database URL to extract SSL parameters
     parsed_url = urlparse(settings.database_url)
-    query_params = parse_qs(parsed_url.query)
+    # query_params = parse_qs(parsed_url.query)  # Not needed for psycopg3
 
-    # Extract SSL mode from URL parameters
-    ssl_mode = query_params.get('sslmode', ['prefer'])[0]
+    # Extract SSL mode from URL parameters (not used in connect_args for psycopg3)
+    # ssl_mode = query_params.get('sslmode', ['prefer'])[0]
 
     # Use the DATABASE_URL as-is (user will specify the driver in environment)
     clean_url = settings.database_url
@@ -26,8 +26,11 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
             else:
                 clean_url = base_url
 
-    # Create engine with no additional connection arguments
+    # Create engine with psycopg3 configuration to avoid prepared statement issues
     connect_args = {}
+    if parsed_url.scheme.startswith('postgresql'):
+        # Disable prepared statements to avoid psycopg3 issues
+        connect_args['prepared_statement_cache_size'] = 0
 
     return create_async_engine(
         clean_url,
