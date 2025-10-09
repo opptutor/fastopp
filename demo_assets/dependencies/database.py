@@ -10,7 +10,10 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     clean_url = settings.database_url
 
     # Create engine with minimal psycopg3 configuration
-    connect_args = {}
+    connect_args = {
+        # Convert prepare_threshold from string to int if it exists in URL
+        "prepare_threshold": 0 if "prepare_threshold=0" in settings.database_url else None
+    }
 
     return create_async_engine(
         clean_url,
