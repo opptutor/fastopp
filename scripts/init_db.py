@@ -26,7 +26,10 @@ async def init_db():
         print(f"🔍 Clean URL: {clean_url}")
 
         # Create engine with minimal psycopg3 configuration
-        connect_args = {}
+        connect_args = {
+            # Disable prepared statements for psycopg3
+            "prepare_threshold": None
+        }
         
         print(f"🔍 Connect args: {connect_args}")
 
@@ -34,7 +37,6 @@ async def init_db():
             clean_url, 
             echo=True, 
             connect_args=connect_args,
-            use_prepared_statements=False,  # Disable prepared statements for psycopg3
             pool_size=3,  # Reduced pool size for stability
             max_overflow=5,  # Reduced overflow for stability
             pool_timeout=30,  # Conservative timeout
