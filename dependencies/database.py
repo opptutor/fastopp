@@ -26,12 +26,8 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
             else:
                 clean_url = base_url
 
-    # Create engine with psycopg3 configuration
+    # Create engine with no additional connection arguments
     connect_args = {}
-    if parsed_url.scheme.startswith('postgresql'):
-        # psycopg3 connection settings (SSL is handled via URL sslmode parameter)
-        connect_args['connect_timeout'] = 30
-        connect_args['application_name'] = 'fastopp'
 
     return create_async_engine(
         clean_url,
