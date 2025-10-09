@@ -30,21 +30,10 @@ if 'sslmode=' in clean_url:
         else:
             clean_url = base_url
 
-# Create engine with psycopg3 SSL configuration
+# Create engine with psycopg3 configuration
 connect_args = {}
 if parsed_url.scheme.startswith('postgresql'):
-    # psycopg3 SSL configuration - more reliable than asyncpg
-    if ssl_mode == 'require':
-        connect_args['sslmode'] = 'require'
-    elif ssl_mode == 'prefer':
-        connect_args['sslmode'] = 'prefer'
-    elif ssl_mode == 'disable':
-        connect_args['sslmode'] = 'disable'
-    else:
-        # Default to require for cloud providers
-        connect_args['sslmode'] = 'require'
-    
-    # psycopg3 connection settings
+    # psycopg3 connection settings (SSL is handled via URL sslmode parameter)
     connect_args['connect_timeout'] = 30
     connect_args['application_name'] = 'fastopp'
 

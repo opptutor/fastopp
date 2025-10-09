@@ -21,8 +21,6 @@ argon2-cffi==23.1.0
     # via pwdlib
 argon2-cffi-bindings==25.1.0
     # via argon2-cffi
-asyncpg==0.30.0
-    # via fastopp
 attrs==25.3.0
     # via aiohttp
 bcrypt==4.3.0
