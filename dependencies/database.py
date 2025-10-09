@@ -30,7 +30,7 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     # Create engine with SSL configuration
     connect_args = {}
     if parsed_url.scheme.startswith('postgresql'):
-        # Configure SSL for PostgreSQL connections
+        # Configure SSL for PostgreSQL connections with better error handling
         if ssl_mode == 'require':
             connect_args['ssl'] = 'require'
         elif ssl_mode == 'prefer':
@@ -43,15 +43,24 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
             connect_args['ssl'] = 'verify-ca'
         elif ssl_mode == 'verify-full':
             connect_args['ssl'] = 'verify-full'
+        else:
+            # Default to prefer for cloud providers
+            connect_args['ssl'] = 'prefer'
         
         # Add connection timeout settings for cloud providers
-        connect_args['command_timeout'] = 10
+        connect_args['command_timeout'] = 30  # Increased from 10 to 30 seconds
         connect_args['server_settings'] = {
             'application_name': 'fastopp',
             'tcp_keepalives_idle': '600',
             'tcp_keepalives_interval': '30',
             'tcp_keepalives_count': '3'
         }
+        # Additional connection parameters for better reliability
+        connect_args['prepared_statement_cache_size'] = 0  # Disable prepared statement cache for better compatibility
+        
+        # SSL-specific settings to prevent protocol errors
+        connect_args['ssl_context'] = None  # Let asyncpg handle SSL context
+        connect_args['record_class'] = None  # Use default record class
 
     return create_async_engine(
         clean_url,
@@ -60,9 +69,12 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
         connect_args=connect_args,
         pool_size=5,
         max_overflow=10,
-        pool_timeout=30,
+        pool_timeout=60,  # Increased from 30 to 60 seconds for cloud deployments
         pool_recycle=3600,
-        pool_pre_ping=True
+        pool_pre_ping=True,
+        # Additional engine parameters for SSL stability
+        pool_reset_on_return='commit',
+        pool_validate=True
     )
 
 

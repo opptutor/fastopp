@@ -33,7 +33,7 @@ if 'sslmode=' in clean_url:
 # Create engine with SSL configuration
 connect_args = {}
 if parsed_url.scheme.startswith('postgresql'):
-    # Configure SSL for PostgreSQL connections
+    # Configure SSL for PostgreSQL connections with better error handling
     if ssl_mode == 'require':
         connect_args['ssl'] = 'require'
     elif ssl_mode == 'prefer':
@@ -46,6 +46,9 @@ if parsed_url.scheme.startswith('postgresql'):
         connect_args['ssl'] = 'verify-ca'
     elif ssl_mode == 'verify-full':
         connect_args['ssl'] = 'verify-full'
+    else:
+        # Default to prefer for cloud providers
+        connect_args['ssl'] = 'prefer'
     
     # Add connection timeout settings for cloud providers
     connect_args['command_timeout'] = 30  # Increased from 10 to 30 seconds
@@ -57,6 +60,10 @@ if parsed_url.scheme.startswith('postgresql'):
     }
     # Additional connection parameters for better reliability
     connect_args['prepared_statement_cache_size'] = 0  # Disable prepared statement cache for better compatibility
+    
+    # SSL-specific settings to prevent protocol errors
+    connect_args['ssl_context'] = None  # Let asyncpg handle SSL context
+    connect_args['record_class'] = None  # Use default record class
 
 # Create async engine
 async_engine = create_async_engine(
@@ -68,7 +75,10 @@ async_engine = create_async_engine(
     max_overflow=10,
     pool_timeout=60,  # Increased from 30 to 60 seconds for cloud deployments
     pool_recycle=3600,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    # Additional engine parameters for SSL stability
+    pool_reset_on_return='commit',
+    pool_validate=True
 )
 
 # Session factory
