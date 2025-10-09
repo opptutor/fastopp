@@ -26,7 +26,10 @@ async def init_db():
         print(f"🔍 Clean URL: {clean_url}")
 
         # Create engine with minimal psycopg3 configuration
-        connect_args = {}
+        connect_args = {
+            # Disable prepared statements to avoid psycopg3 issues
+            "prepare_threshold": None
+        }
         
         print(f"🔍 Connect args: {connect_args}")
 

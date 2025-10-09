@@ -10,7 +10,10 @@ def create_database_engine(settings: Settings = Depends(get_settings)):
     clean_url = settings.database_url
 
     # Create engine with minimal psycopg3 configuration
-    connect_args = {}
+    connect_args = {
+        # Disable prepared statements to avoid psycopg3 issues
+        "prepare_threshold": None
+    }
 
     return create_async_engine(
         clean_url,

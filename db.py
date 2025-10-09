@@ -21,7 +21,10 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 clean_url = DATABASE_URL
 
 # Create engine with minimal psycopg3 configuration
-connect_args = {}
+connect_args = {
+    # Disable prepared statements to avoid psycopg3 issues
+    "prepare_threshold": None
+}
 
 # Create async engine with conservative settings
 async_engine = create_async_engine(
