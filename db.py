@@ -30,50 +30,35 @@ if 'sslmode=' in clean_url:
         else:
             clean_url = base_url
 
-# Create engine with SSL configuration
+# Create engine with simplified SSL configuration
 connect_args = {}
 if parsed_url.scheme.startswith('postgresql'):
-    # Configure SSL for PostgreSQL connections with better error handling
+    # Use minimal SSL configuration to avoid protocol errors
     if ssl_mode == 'require':
         connect_args['ssl'] = 'require'
-    elif ssl_mode == 'prefer':
-        connect_args['ssl'] = 'prefer'
     elif ssl_mode == 'disable':
         connect_args['ssl'] = False
-    elif ssl_mode == 'allow':
-        connect_args['ssl'] = 'allow'
-    elif ssl_mode == 'verify-ca':
-        connect_args['ssl'] = 'verify-ca'
-    elif ssl_mode == 'verify-full':
-        connect_args['ssl'] = 'verify-full'
     else:
-        # Default to prefer for cloud providers
-        connect_args['ssl'] = 'prefer'
+        # Default to require for cloud providers (most reliable)
+        connect_args['ssl'] = 'require'
     
-    # Add connection timeout settings for cloud providers
-    connect_args['command_timeout'] = 30  # Increased from 10 to 30 seconds
+    # Minimal connection settings for stability
+    connect_args['command_timeout'] = 30
     connect_args['server_settings'] = {
-        'application_name': 'fastopp',
-        'tcp_keepalives_idle': '600',
-        'tcp_keepalives_interval': '30',
-        'tcp_keepalives_count': '3'
+        'application_name': 'fastopp'
     }
-    # Additional connection parameters for better reliability
-    connect_args['prepared_statement_cache_size'] = 0  # Disable prepared statement cache for better compatibility
 
-# Create async engine
+# Create async engine with conservative settings
 async_engine = create_async_engine(
     clean_url,
     echo=True,  # set to False in production
     future=True,
     connect_args=connect_args,
-    pool_size=5,
-    max_overflow=10,
-    pool_timeout=60,  # Increased from 30 to 60 seconds for cloud deployments
-    pool_recycle=3600,
-    pool_pre_ping=True,
-    # Additional engine parameters for SSL stability
-    pool_reset_on_return='commit'
+    pool_size=3,  # Reduced pool size for stability
+    max_overflow=5,  # Reduced overflow for stability
+    pool_timeout=30,  # Conservative timeout
+    pool_recycle=1800,  # 30 minutes recycle
+    pool_pre_ping=True
 )
 
 # Session factory
