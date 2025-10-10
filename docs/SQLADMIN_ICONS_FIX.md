@@ -13,6 +13,8 @@ The issue occurs because SQLAdmin's static assets (CSS, JavaScript, and icon fil
 - Icon fonts: `tabler-icons.woff2`, `fa-solid-900.woff2`, etc.
 - JavaScript files: `main.js`, `bootstrap.min.js`, etc.
 
+**Critical Path Fix**: SQLAdmin expects static files to be served at `/admin/statics/`, not `/sqladmin/static/`. This path mismatch was causing the 404 errors for font files.
+
 ## Solution Implemented
 
 ### 1. Static File Mounting
@@ -27,8 +29,10 @@ try:
     import os
     sqladmin_static_path = os.path.join(os.path.dirname(sqladmin.__file__), "statics")
     if os.path.exists(sqladmin_static_path):
-        app.mount("/sqladmin/static", StaticFiles(directory=sqladmin_static_path), name="sqladmin_static")
+        # Mount at the path SQLAdmin expects: /admin/statics/
+        app.mount("/admin/statics", StaticFiles(directory=sqladmin_static_path), name="sqladmin_static")
         print(f"✅ SQLAdmin static files mounted at: {sqladmin_static_path}")
+        print(f"✅ Mounted at path: /admin/statics/")
     else:
         print(f"⚠️  SQLAdmin static path not found: {sqladmin_static_path}")
 except ImportError:
@@ -42,7 +46,7 @@ except Exception as e:
 Added a custom route handler as a fallback for SQLAdmin static files:
 
 ```python
-@app.get("/sqladmin/static/{file_path:path}")
+@app.get("/admin/statics/{file_path:path}")
 async def sqladmin_static_fallback(file_path: str):
     """Fallback handler for SQLAdmin static files"""
     try:

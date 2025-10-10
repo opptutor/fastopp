@@ -44,8 +44,10 @@ try:
     import os
     sqladmin_static_path = os.path.join(os.path.dirname(sqladmin.__file__), "statics")
     if os.path.exists(sqladmin_static_path):
-        app.mount("/sqladmin/static", StaticFiles(directory=sqladmin_static_path), name="sqladmin_static")
+        # Mount at the path SQLAdmin expects: /admin/statics/
+        app.mount("/admin/statics", StaticFiles(directory=sqladmin_static_path), name="sqladmin_static")
         print(f"✅ SQLAdmin static files mounted at: {sqladmin_static_path}")
+        print(f"✅ Mounted at path: /admin/statics/")
     else:
         print(f"⚠️  SQLAdmin static path not found: {sqladmin_static_path}")
 except ImportError:
@@ -58,7 +60,7 @@ setup_admin(app, SECRET_KEY)
 
 
 # Add custom route for SQLAdmin static files as fallback
-@app.get("/sqladmin/static/{file_path:path}")
+@app.get("/admin/statics/{file_path:path}")
 async def sqladmin_static_fallback(file_path: str):
     """Fallback handler for SQLAdmin static files"""
     try:
