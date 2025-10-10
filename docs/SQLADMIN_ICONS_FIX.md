@@ -6,25 +6,50 @@ When deploying FastOpp to LeapCell, SQLAdmin interface displays broken icons in 
 
 ## Root Cause
 
-The issue occurs because SQLAdmin's static assets (CSS, JavaScript, and icon files) are not being properly served in the LeapCell production environment. SQLAdmin relies on these static files to display icons correctly.
+The issue occurs because FontAwesome font files are failing to download due to CORS (Cross-Origin Resource Sharing) issues. The browser console shows:
 
-## Solution: SQLAdmin Automatic Static File Serving
+```
+downloadable font: download failed (font-family: "Font Awesome 6 Free" style:normal weight:900 stretch:100 src index:0): status=2152398924 source: https://your-app.leapcell.dev/admin/statics/webfonts/fa-solid-900.woff2
+```
 
-**Key Discovery**: SQLAdmin automatically handles static file serving at `/admin/statics/` with proper MIME types. No manual mounting or custom routes are needed!
+This indicates that the font files are being served but with incorrect headers, causing the browser to reject them.
 
-### Simple Implementation
+## Solution: CDN FontAwesome CSS Injection
 
-The fix is much simpler than initially thought. Just ensure SQLAdmin is properly configured:
+**Key Discovery**: FontAwesome font files are failing to download due to CORS issues. The cleanest solution is to use a CDN-hosted FontAwesome CSS instead of trying to serve fonts locally.
+
+### Implementation
+
+1. **CDN FontAwesome CSS**: Use CloudFlare CDN for reliable FontAwesome delivery
+2. **CSS Injection Middleware**: Added middleware to inject CDN CSS into SQLAdmin pages
+3. **No Local Fonts**: Eliminates CORS and font file serving issues
+4. **Reliable Icons**: CDN ensures consistent icon display across all environments
 
 ```python
-from fastapi import FastAPI
-from sqladmin import Admin
-from yourmodels import engine
-
-app = FastAPI()
-
-admin = Admin(app, engine)
-# ⚠️ No need to manually mount "/admin/statics" — SQLAdmin does it automatically!
+# Add middleware to inject FontAwesome CDN CSS for reliable icon display
+@app.middleware("http")
+async def inject_fontawesome_cdn(request, call_next):
+    """Inject FontAwesome CDN CSS to fix SQLAdmin boolean icons"""
+    response = await call_next(request)
+    
+    # Only inject CSS for SQLAdmin pages with HTML content
+    if (request.url.path.startswith("/admin") and 
+        response.headers.get("content-type", "").startswith("text/html") and
+        hasattr(response, 'body') and 
+        response.body is not None):
+        
+        try:
+            # Inject FontAwesome CDN CSS into the HTML head
+            html = response.body.decode("utf-8")
+            if "<head>" in html and "font-awesome" not in html.lower():
+                cdn_css = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2qNjV4BKRQ0w/0f7Kf1L6J6gI5P1eF6E1C5g6e2BV3kpJ4lQRdXf34xe4k1zQ3PJV+Q==" crossorigin="anonymous" referrerpolicy="no-referrer">'
+                html = html.replace("<head>", f"<head>{cdn_css}")
+                response.body = html.encode("utf-8")
+        except Exception:
+            # If there's any error with the middleware, just pass through
+            pass
+    
+    return response
 ```
 
 ### Production Environment Detection

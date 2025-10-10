@@ -104,7 +104,30 @@ security = HTTPBasic()
 # Setup admin interface
 setup_admin(app, settings.secret_key)
 
-# SQLAdmin automatically handles static file serving - no custom routes needed
+# Add middleware to inject FontAwesome CDN CSS for reliable icon display
+@app.middleware("http")
+async def inject_fontawesome_cdn(request, call_next):
+    """Inject FontAwesome CDN CSS to fix SQLAdmin boolean icons"""
+    response = await call_next(request)
+    
+    # Only inject CSS for SQLAdmin pages with HTML content
+    if (request.url.path.startswith("/admin") and 
+        response.headers.get("content-type", "").startswith("text/html") and
+        hasattr(response, 'body') and 
+        response.body is not None):
+        
+        try:
+            # Inject FontAwesome CDN CSS into the HTML head
+            html = response.body.decode("utf-8")
+            if "<head>" in html and "font-awesome" not in html.lower():
+                cdn_css = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2qNjV4BKRQ0w/0f7Kf1L6J6gI5P1eF6E1C5g6e2BV3kpJ4lQRdXf34xe4k1zQ3PJV+Q==" crossorigin="anonymous" referrerpolicy="no-referrer">'
+                html = html.replace("<head>", f"<head>{cdn_css}")
+                response.body = html.encode("utf-8")
+        except Exception:
+            # If there's any error with the middleware, just pass through
+            pass
+    
+    return response
 
 # Include routers
 app.include_router(health_router)
