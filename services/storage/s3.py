@@ -104,11 +104,19 @@ class S3Storage(StorageInterface):
     def file_exists(self, path: str) -> bool:
         """Check if a file exists in S3."""
         try:
-            self.client.head_object(Bucket=self.bucket, Key=path)
+            print(f"DEBUG: Checking if file exists: {path} in bucket: {self.bucket}")
+            response = self.client.head_object(Bucket=self.bucket, Key=path)
+            print(f"DEBUG: File exists: {path}")
             return True
         except ClientError as e:
+            print(f"DEBUG: ClientError for {path}: {e}")
             if e.response["Error"]["Code"] == "404":
+                print(f"DEBUG: File not found (404): {path}")
                 return False
+            print(f"DEBUG: Other S3 error: {e}")
+            raise RuntimeError(f"Failed to check file existence in S3: {e}")
+        except Exception as e:
+            print(f"DEBUG: Unexpected error checking {path}: {e}")
             raise RuntimeError(f"Failed to check file existence in S3: {e}")
     
     def delete_file(self, path: str) -> bool:
@@ -124,6 +132,7 @@ class S3Storage(StorageInterface):
     def list_files(self, prefix: str = "") -> List[str]:
         """List files in S3 with optional prefix filter."""
         try:
+            print(f"DEBUG: Listing files with prefix: '{prefix}' in bucket: {self.bucket}")
             response = self.client.list_objects_v2(
                 Bucket=self.bucket,
                 Prefix=prefix
@@ -132,10 +141,13 @@ class S3Storage(StorageInterface):
             files = []
             for obj in response.get("Contents", []):
                 files.append(obj["Key"])
+                print(f"DEBUG: Found file: {obj['Key']}")
             
+            print(f"DEBUG: Total files found: {len(files)}")
             return files
             
         except ClientError as e:
+            print(f"DEBUG: Error listing files: {e}")
             raise RuntimeError(f"Failed to list files in S3: {e}")
     
     def get_file_url(self, path: str) -> str:
