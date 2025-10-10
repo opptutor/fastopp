@@ -6,8 +6,9 @@ A minimal FastAPI application with authentication and protected content
 import os
 import sys
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, FileResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from dotenv import load_dotenv
 
@@ -36,8 +37,42 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_change_in_production")
 # Enable sessions (required by sqladmin authentication backend)
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
+# Mount SQLAdmin static files for proper icon and CSS serving
+# This ensures SQLAdmin assets are accessible in production deployments
+try:
+    import sqladmin
+    import os
+    sqladmin_static_path = os.path.join(os.path.dirname(sqladmin.__file__), "statics")
+    if os.path.exists(sqladmin_static_path):
+        app.mount("/sqladmin/static", StaticFiles(directory=sqladmin_static_path), name="sqladmin_static")
+        print(f"✅ SQLAdmin static files mounted at: {sqladmin_static_path}")
+    else:
+        print(f"⚠️  SQLAdmin static path not found: {sqladmin_static_path}")
+except ImportError:
+    print("⚠️  SQLAdmin not available for static file mounting")
+except Exception as e:
+    print(f"⚠️  Error mounting SQLAdmin static files: {e}")
+
 # Mount SQLAdmin with authentication backend
 setup_admin(app, SECRET_KEY)
+
+
+# Add custom route for SQLAdmin static files as fallback
+@app.get("/sqladmin/static/{file_path:path}")
+async def sqladmin_static_fallback(file_path: str):
+    """Fallback handler for SQLAdmin static files"""
+    try:
+        import sqladmin
+        import os
+        sqladmin_static_path = os.path.join(os.path.dirname(sqladmin.__file__), "statics")
+        full_path = os.path.join(sqladmin_static_path, file_path)
+
+        if os.path.exists(full_path) and os.path.isfile(full_path):
+            return FileResponse(full_path)
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
+    except Exception:
+        raise HTTPException(status_code=404, detail="SQLAdmin static file not available")
 
 # Setup templates
 templates = Jinja2Templates(directory="templates")
