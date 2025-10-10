@@ -74,10 +74,6 @@ async def add_sample_registrants():
         }
     ]
 
-    # Setup photo directories using environment variable
-    upload_dir = os.getenv("UPLOAD_DIR", "static/uploads")
-    sample_photos_dir = Path(upload_dir) / "sample_photos"
-    
     # Get storage instance
     storage = get_storage()
 
@@ -95,16 +91,15 @@ async def add_sample_registrants():
             # Copy sample photo if it exists
             photo_url = None
             photo_filename = registrant_data.pop('photo_filename')
-            sample_photo_path = sample_photos_dir / photo_filename
+            sample_photo_path = f"sample_photos/{photo_filename}"
 
-            if sample_photo_path.exists():
+            if storage.file_exists(sample_photo_path):
                 # Generate unique filename for the photo
                 unique_filename = f"{uuid.uuid4()}_{photo_filename}"
                 storage_path = f"photos/{unique_filename}"
 
-                # Read the sample photo and save to storage
-                with open(sample_photo_path, "rb") as f:
-                    photo_content = f.read()
+                # Read the sample photo from storage and save to photos directory
+                photo_content = storage.get_file(sample_photo_path)
                 
                 photo_url = storage.save_file(
                     content=photo_content,
