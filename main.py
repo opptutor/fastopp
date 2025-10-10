@@ -132,6 +132,15 @@ async def serve_font_files(font_file: str):
     except Exception as e:
         raise HTTPException(status_code=404, detail=f"Font file error: {str(e)}")
 
+# Add favicon route to prevent 404 errors
+@app.get("/favicon.ico")
+async def favicon():
+    """Return a simple favicon to prevent 404 errors"""
+    from fastapi.responses import Response
+    # Return a minimal 1x1 transparent PNG
+    favicon_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xdb\x00\x00\x00\x00IEND\xaeB`\x82'
+    return Response(content=favicon_data, media_type="image/png")
+
 # Middleware to inject FontAwesome CDN CSS
 @app.middleware("http")
 async def inject_fontawesome_cdn(request: Request, call_next):
@@ -165,7 +174,7 @@ async def inject_fontawesome_cdn(request: Request, call_next):
                     "font-awesome" not in html.lower() and 
                     "cdnjs.cloudflare.com" not in html):
                     
-                    # Inject FontAwesome CDN CSS
+                    # Inject FontAwesome CDN CSS early in head to prevent layout warnings
                     cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
     <style>
         @font-face {
@@ -184,11 +193,11 @@ async def inject_fontawesome_cdn(request: Request, call_next):
         }
     </style>'''
                     
-                    # Inject before closing head tag
-                    if "</head>" in html:
-                        html = html.replace("</head>", f"{cdn_css}</head>")
-                    elif "<head>" in html:
+                    # Inject early in head, right after opening head tag
+                    if "<head>" in html:
                         html = html.replace("<head>", f"<head>{cdn_css}")
+                    elif "</head>" in html:
+                        html = html.replace("</head>", f"{cdn_css}</head>")
                     else:
                         html = html.replace("</body>", f"{cdn_css}</body>")
                     
