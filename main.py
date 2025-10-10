@@ -104,9 +104,64 @@ security = HTTPBasic()
 # Setup admin interface
 setup_admin(app, settings.secret_key)
 
-# SQLAdmin with CDN approach - the middleware approach is too complex
-# The CDN CSS injection will work better in production where the browser
-# can load the CDN resources directly
+# Add a custom route to inject FontAwesome CDN CSS into admin pages
+@app.get("/admin/")
+async def admin_with_cdn():
+    """Redirect to admin with CDN CSS injection"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/admin/", status_code=302)
+
+# Add middleware to inject FontAwesome CDN CSS automatically
+@app.middleware("http")
+async def inject_fontawesome_cdn_auto(request, call_next):
+    """Automatically inject FontAwesome CDN CSS for SQLAdmin pages"""
+    response = await call_next(request)
+    
+    # Only inject for SQLAdmin pages with HTML content
+    if (request.url.path.startswith("/admin") and 
+        response.headers.get("content-type", "").startswith("text/html")):
+        
+        try:
+            # Get HTML content - handle different response types
+            html = None
+            if hasattr(response, 'body') and response.body:
+                html = response.body.decode("utf-8")
+            elif hasattr(response, 'content') and response.content:
+                html = response.content.decode("utf-8")
+            elif hasattr(response, 'text'):
+                html = response.text
+            else:
+                return response
+                
+            # Check if FontAwesome CDN is already present
+            if html and "cdnjs.cloudflare.com" not in html and "font-awesome" not in html.lower():
+                # Inject FontAwesome CDN CSS
+                cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">'''
+                
+                # Find the head tag and inject CSS
+                if "<head>" in html:
+                    html = html.replace("<head>", f"<head>{cdn_css}")
+                elif "<head " in html:
+                    html = html.replace("<head ", f"<head {cdn_css} ")
+                
+                # Update response - handle different response types
+                if hasattr(response, 'body'):
+                    response.body = html.encode("utf-8")
+                elif hasattr(response, 'content'):
+                    response.content = html.encode("utf-8")
+                elif hasattr(response, 'text'):
+                    response.text = html
+                else:
+                    # Create new response for other types
+                    from fastapi.responses import HTMLResponse
+                    return HTMLResponse(content=html, status_code=response.status_code, headers=dict(response.headers))
+                    
+        except Exception as e:
+            # If there's any error, just pass through
+            print(f"CDN injection error: {e}")
+            pass
+    
+    return response
 
 # Include routers
 app.include_router(health_router)
