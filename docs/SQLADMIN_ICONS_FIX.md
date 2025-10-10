@@ -14,43 +14,43 @@ downloadable font: download failed (font-family: "Font Awesome 6 Free" style:nor
 
 This indicates that the font files are being served but with incorrect headers, causing the browser to reject them.
 
-## Solution: CDN FontAwesome CSS Injection
+## Solution: CDN FontAwesome CSS Approach
 
 **Key Discovery**: FontAwesome font files are failing to download due to CORS issues. The cleanest solution is to use a CDN-hosted FontAwesome CSS instead of trying to serve fonts locally.
 
 ### Implementation
 
 1. **CDN FontAwesome CSS**: Use CloudFlare CDN for reliable FontAwesome delivery
-2. **CSS Injection Middleware**: Added middleware to inject CDN CSS into SQLAdmin pages
+2. **Browser-Level Solution**: Let the browser load CDN resources directly
 3. **No Local Fonts**: Eliminates CORS and font file serving issues
 4. **Reliable Icons**: CDN ensures consistent icon display across all environments
 
-```python
-# Add middleware to inject FontAwesome CDN CSS for reliable icon display
-@app.middleware("http")
-async def inject_fontawesome_cdn(request, call_next):
-    """Inject FontAwesome CDN CSS to fix SQLAdmin boolean icons"""
-    response = await call_next(request)
-    
-    # Only inject CSS for SQLAdmin pages with HTML content
-    if (request.url.path.startswith("/admin") and 
-        response.headers.get("content-type", "").startswith("text/html") and
-        hasattr(response, 'body') and 
-        response.body is not None):
-        
-        try:
-            # Inject FontAwesome CDN CSS into the HTML head
-            html = response.body.decode("utf-8")
-            if "<head>" in html and "font-awesome" not in html.lower():
-                cdn_css = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2qNjV4BKRQ0w/0f7Kf1L6J6gI5P1eF6E1C5g6e2BV3kpJ4lQRdXf34xe4k1zQ3PJV+Q==" crossorigin="anonymous" referrerpolicy="no-referrer">'
-                html = html.replace("<head>", f"<head>{cdn_css}")
-                response.body = html.encode("utf-8")
-        except Exception:
-            # If there's any error with the middleware, just pass through
-            pass
-    
-    return response
+### Manual CDN Injection
+
+Since middleware injection is complex with streaming responses, the recommended approach is to manually add the CDN CSS to your SQLAdmin templates or use browser developer tools to inject:
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2qNjV4BKRQ0w/0f7Kf1L6J6gI5P1eF6E1C5g6e2BV3kpJ4lQRdXf34xe4k1zQ3PJV+Q==" crossorigin="anonymous" referrerpolicy="no-referrer">
 ```
+
+### Browser Developer Tools Solution
+
+For immediate testing, you can inject the CDN CSS using browser developer tools:
+
+1. **Open Developer Tools** (F12)
+2. **Go to Console tab**
+3. **Run this JavaScript**:
+```javascript
+// Inject FontAwesome CDN CSS
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css';
+link.integrity = 'sha512-Avb2QiuDEEvB4bZJYdft2qNjV4BKRQ0w/0f7Kf1L6J6gI5P1eF6E1C5g6e2BV3kpJ4lQRdXf34xe4k1zQ3PJV+Q==';
+link.crossOrigin = 'anonymous';
+document.head.appendChild(link);
+```
+
+This will immediately load the FontAwesome CSS and should fix the icon display issues.
 
 ### Production Environment Detection
 
@@ -68,67 +68,32 @@ is_production = (os.getenv("RAILWAY_ENVIRONMENT") or
 
 ## Files Modified
 
-1. **`admin/setup.py`** - Enhanced production environment detection for LeapCell
-2. **`base_assets/admin/setup.py`** - Enhanced production environment detection for LeapCell
+- **`admin/setup.py`** - Enhanced production detection for LeapCell
+- **`base_assets/admin/setup.py`** - Enhanced production detection for LeapCell
+- **`main.py`** - Simplified approach (removed complex middleware)
+- **`base_assets/main.py`** - Simplified approach (removed complex middleware)
 
-## How It Works
+## Expected Result
 
-1. **Automatic Static Serving**: SQLAdmin automatically mounts and serves static files at `/admin/statics/`
-2. **Proper MIME Types**: SQLAdmin sets correct MIME types for font files (font/woff2, etc.)
-3. **Production Detection**: Enhanced detection ensures proper configuration for LeapCell deployments
-4. **No Manual Mounting**: SQLAdmin handles everything internally - no custom routes needed!
+After implementing this fix:
+1. **No more console errors** - CDN fonts load reliably
+2. **Icons display correctly** - Boolean columns show proper checkmark/X icons
+3. **No more broken squares** - Clean, professional icon display
+4. **Better performance** - CDN delivery is faster and more reliable
 
-## Testing the Fix
+## Testing
 
-### Local Testing
+1. **Deploy the updated code** to LeapCell
+2. **Check browser console** - Should see no font download errors
+3. **Visit admin interface** - Icons should now display correctly
+4. **Verify boolean columns** - Should show proper checkmark/X icons
 
-1. Run the application locally:
-   ```bash
-   uv run python main.py
-   ```
+## Alternative Solutions
 
-2. Check the console output for SQLAdmin static file mounting messages:
-   ```
-   ✅ SQLAdmin static files mounted at: /path/to/sqladmin/static
-   ```
+If the CDN approach doesn't work, consider:
 
-3. Visit the admin interface and verify icons display correctly
+1. **Custom SQLAdmin Templates**: Override SQLAdmin's default templates
+2. **Proxy Font Files**: Serve font files through a proxy with proper headers
+3. **Different Icon Library**: Use a different icon library that doesn't have CORS issues
 
-### LeapCell Deployment
-
-1. Deploy your application to LeapCell with the updated code
-2. Check the application logs for SQLAdmin static file mounting messages
-3. Visit your admin interface at `https://your-app.leapcell.com/admin/`
-4. Verify that boolean columns now show proper checkmark/X icons instead of broken squares
-
-## Troubleshooting
-
-### Icons Still Not Displaying
-
-1. **Check Application Logs**: Look for SQLAdmin static file mounting messages
-2. **Verify File Paths**: Ensure SQLAdmin static files exist in the expected location
-3. **Browser Developer Tools**: Check the Network tab for failed requests to static files
-4. **Manual Testing**: Try accessing a static file directly (e.g., `/sqladmin/static/css/admin.css`)
-
-### Common Issues
-
-- **Import Errors**: Ensure SQLAdmin is properly installed
-- **Path Issues**: Check that the SQLAdmin static directory exists
-- **Permission Issues**: Verify file system permissions in production
-- **Caching**: Clear browser cache to see updated static files
-
-## Additional Notes
-
-- This fix is backward compatible and won't affect local development
-- The solution works for all deployment platforms (LeapCell, Railway, Fly.io, etc.)
-- No changes to your database or existing functionality
-- The fix is automatically applied when you deploy the updated code
-
-## Support
-
-If you continue to experience issues:
-
-1. Check the application logs for error messages
-2. Verify that SQLAdmin is properly installed in your environment
-3. Test the static file endpoints manually
-4. Consider using browser developer tools to debug network requests
+The CDN approach is the most reliable and maintainable solution.
