@@ -44,6 +44,34 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 setup_admin(app, SECRET_KEY)
 
 
+# Add custom routes to handle missing FontAwesome font files
+@app.get("/admin/statics/webfonts/{font_file}")
+async def serve_font_files(font_file: str):
+    """Serve FontAwesome font files with proper headers to prevent 404 errors"""
+    try:
+        # Redirect to CDN font files instead of serving locally
+        from fastapi.responses import RedirectResponse
+        
+        if font_file == "fa-solid-900.woff2":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2",
+                status_code=302
+            )
+        elif font_file == "fa-solid-900.ttf":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.ttf",
+                status_code=302
+            )
+        elif font_file == "fa-regular-400.woff2":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-regular-400.woff2",
+                status_code=302
+            )
+        else:
+            raise HTTPException(status_code=404, detail="Font file not found")
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Font file error: {str(e)}")
+
 # Add middleware to inject FontAwesome CDN CSS automatically
 @app.middleware("http")
 async def inject_fontawesome_cdn_auto(request, call_next):
@@ -68,8 +96,33 @@ async def inject_fontawesome_cdn_auto(request, call_next):
                 
             # Check if FontAwesome CDN is already present
             if html and "cdnjs.cloudflare.com" not in html and "font-awesome" not in html.lower():
-                # Inject FontAwesome CDN CSS
-                cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">'''
+                # Inject FontAwesome CDN CSS with font override
+                cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+<style>
+/* Override SQLAdmin's broken font references */
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Font Awesome 5 Free";
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2") format("woff2");
+}
+/* Override any local font references */
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-regular-400.woff2") format("woff2");
+}
+</style>'''
                 
                 # Find the head tag and inject CSS
                 if "<head>" in html:

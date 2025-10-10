@@ -104,62 +104,103 @@ security = HTTPBasic()
 # Setup admin interface
 setup_admin(app, settings.secret_key)
 
-# Add a custom route to inject FontAwesome CDN CSS into admin pages
-@app.get("/admin/")
-async def admin_with_cdn():
-    """Redirect to admin with CDN CSS injection"""
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/admin/", status_code=302)
+# Add custom routes to handle missing FontAwesome font files
+@app.get("/admin/statics/webfonts/{font_file}")
+async def serve_font_files(font_file: str):
+    """Serve FontAwesome font files with proper headers to prevent 404 errors"""
+    try:
+        # Redirect to CDN font files instead of serving locally
+        from fastapi.responses import RedirectResponse
+        
+        if font_file == "fa-solid-900.woff2":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2",
+                status_code=302
+            )
+        elif font_file == "fa-solid-900.ttf":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.ttf",
+                status_code=302
+            )
+        elif font_file == "fa-regular-400.woff2":
+            return RedirectResponse(
+                url="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-regular-400.woff2",
+                status_code=302
+            )
+        else:
+            raise HTTPException(status_code=404, detail="Font file not found")
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Font file error: {str(e)}")
 
-# Add middleware to inject FontAwesome CDN CSS automatically
+# Middleware to inject FontAwesome CDN CSS
 @app.middleware("http")
-async def inject_fontawesome_cdn_auto(request, call_next):
-    """Automatically inject FontAwesome CDN CSS for SQLAdmin pages"""
+async def inject_fontawesome_cdn(request: Request, call_next):
+    """Inject FontAwesome CDN CSS into admin pages"""
     response = await call_next(request)
     
-    # Only inject for SQLAdmin pages with HTML content
-    if (request.url.path.startswith("/admin") and 
-        response.headers.get("content-type", "").startswith("text/html")):
-        
+    # Only process admin HTML pages (not static assets)
+    if (request.url.path.startswith("/admin/") and 
+        not request.url.path.startswith("/admin/statics/") and
+        not request.url.path.startswith("/admin/static/") and
+        not request.url.path.endswith(('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.woff', '.woff2', '.ttf', '.eot'))):
         try:
-            # Get HTML content - handle different response types
-            html = None
-            if hasattr(response, 'body') and response.body:
-                html = response.body.decode("utf-8")
-            elif hasattr(response, 'content') and response.content:
-                html = response.content.decode("utf-8")
+            # Get response body
+            body = b""
+            if hasattr(response, 'body'):
+                body = response.body
+            elif hasattr(response, 'content'):
+                body = response.content
             elif hasattr(response, 'text'):
-                html = response.text
-            else:
-                return response
+                body = response.text.encode('utf-8')
+            elif hasattr(response, 'body_iterator'):
+                # Handle streaming responses
+                async for chunk in response.body_iterator:
+                    body += chunk
+            
+            if body:
+                html = body.decode('utf-8')
                 
-            # Check if FontAwesome CDN is already present
-            if html and "cdnjs.cloudflare.com" not in html and "font-awesome" not in html.lower():
-                # Inject FontAwesome CDN CSS
-                cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">'''
-                
-                # Find the head tag and inject CSS
-                if "<head>" in html:
-                    html = html.replace("<head>", f"<head>{cdn_css}")
-                elif "<head " in html:
-                    html = html.replace("<head ", f"<head {cdn_css} ")
-                
-                # Update response - handle different response types
-                if hasattr(response, 'body'):
-                    response.body = html.encode("utf-8")
-                elif hasattr(response, 'content'):
-                    response.content = html.encode("utf-8")
-                elif hasattr(response, 'text'):
-                    response.text = html
-                else:
-                    # Create new response for other types
-                    from fastapi.responses import HTMLResponse
-                    return HTMLResponse(content=html, status_code=response.status_code, headers=dict(response.headers))
+                # Check if this is an HTML page and doesn't already have FontAwesome CDN
+                if ("<html" in html.lower() and 
+                    "font-awesome" not in html.lower() and 
+                    "cdnjs.cloudflare.com" not in html):
                     
+                    # Inject FontAwesome CDN CSS
+                    cdn_css = '''<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+    <style>
+        @font-face {
+            font-family: "Font Awesome 6 Free";
+            font-style: normal;
+            font-weight: 900;
+            font-display: block;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: "Font Awesome 5 Free";
+            font-style: normal;
+            font-weight: 900;
+            font-display: block;
+            src: url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2") format("woff2");
+        }
+    </style>'''
+                    
+                    # Inject before closing head tag
+                    if "</head>" in html:
+                        html = html.replace("</head>", f"{cdn_css}</head>")
+                    elif "<head>" in html:
+                        html = html.replace("<head>", f"<head>{cdn_css}")
+                    else:
+                        html = html.replace("</body>", f"{cdn_css}</body>")
+                    
+                    # Return new response with proper headers (no Content-Length)
+                    from fastapi.responses import HTMLResponse
+                    new_headers = dict(response.headers)
+                    # Remove Content-Length to let FastAPI calculate it
+                    new_headers.pop('content-length', None)
+                    return HTMLResponse(content=html, status_code=response.status_code, headers=new_headers)
+        
         except Exception as e:
-            # If there's any error, just pass through
-            print(f"CDN injection error: {e}")
-            pass
+            print(f"FontAwesome injection error: {e}")
     
     return response
 
